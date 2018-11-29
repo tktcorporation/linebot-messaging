@@ -1,0 +1,54 @@
+// Place all the styles related to the forms controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.form-card {
+    margin: 1em;
+
+    .form-data {
+        text-align: center;
+        font-weight: bold;
+    }
+}
+
+.active-circle {
+    display: inline-block;
+    margin: 0 1em;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #3be755;
+}
+
+.stand-by-circle {
+    display: inline-block;
+    margin: 0 1em;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #e7a23f;
+}
+
+.switch_active_button {
+    margin-right: 1em;
+}
+
+.quick-reply-box {
+    margin: 0.5em;
+
+    .quick-reply-item {
+        margin: 0.3em;
+
+        span:nth-child(1) {
+            position: absolute;
+            display: none;
+        }
+    }
+
+    .quick-reply-item:hover span:nth-child(1) {
+        display: inline;
+    }
+
+    .quick-reply-item:hover span:nth-child(2) {
+        opacity: 0;
+    }
+}

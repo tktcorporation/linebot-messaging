@@ -1,0 +1,99 @@
+== render 'shared/flash'
+.columns.max-height
+  .column.is-2.side-menu.is-hidden-mobile
+    = link_to '<i class="far fa-arrow-alt-circle-left"></i>'.html_safe, bot_lineusers_path(@bot), class: "is-size-2"
+    label.label.is-large
+      = @bot.name
+    .users-list
+      .users-box
+        label.label 未返信
+        - @lineusers[:not_replied].each do |lineuser|
+          .user-box
+            - if lineuser.is_unfollowed == true
+              .unfollowed-cover
+            = link_to "", bot_chat_path(params[:bot_id], lineuser.id), class: "link"
+            .user.columns
+              .column.is-3.side-icon
+                - if lineuser.pictureUrl
+                  = image_tag lineuser.pictureUrl, class: "post-icon"
+              .column.is-9
+                p= lineuser.name
+                p.about
+                  = lineuser.lastmessage.content
+    .users-list
+      .users-box
+        label.label 返信済み
+        - @lineusers[:replied].each do |lineuser|
+          .user-box
+            = link_to "", bot_chat_path(params[:bot_id], lineuser.id), class: "link"
+            .user.columns
+              .column.is-3.side-icon
+                - if lineuser.pictureUrl
+                  = image_tag lineuser.pictureUrl, class: "post-icon"
+              .column.is-9
+                p= lineuser.name
+                p.about
+                  - if lineuser.lastmessage
+                    = lineuser.lastmessage.content
+                  - else
+  .column.is-5.talk-box.content-body
+    - if @lineuser
+      header.navbar.is-white.is-fixed-top.is-hidden-tablet
+        .container
+          .navbar-brand
+            .navbar-item.is-size-5
+              = @lineuser.name
+              | とのトークルーム
+            .navbar-item.float-right
+              = link_to '<i class="far fa-arrow-alt-circle-left"></i>'.html_safe, bot_lineusers_path(@bot), class: "is-size-4"
+      .header-space.is-hidden-tablet
+        p 　
+        p 　
+        p 　
+      .room-bar.is-hidden-mobile
+        label.label.inline-box
+          = @lineuser.name
+          | とのトークルーム
+    #messages-box.scroll-message
+      - if @lineuser
+        - @lineuser.messages.each do |message|
+          .message-box
+            - if message.to_bot
+              .user-side
+                  - if @lineuser.pictureUrl
+                    = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
+                  .message
+                    = message.content
+                  span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
+            - else
+              .bot-side
+                .message.float-right
+                  p = message.content
+                span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
+    - if @bot && @lineuser
+      = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
+        = text_field_tag :message, "", placeholder: "メッセージ", class: "input", 'required'=>''
+        = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+      = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
+        = text_field_tag :name, "", placeholder: "名前の更新", class: "input", 'required'=>''
+        = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+  .column.is-5
+    - if @lineuser.converted_lineuser
+      .label CV済み
+    - else
+      .label 未CV
+    table.table.is-fullwidth
+      thread
+        tr
+          - @quick_reply_list.each do |quick_reply|
+            th
+              = quick_reply.name
+      tbody
+        tr
+        - @quick_reply_list.each do |quick_reply|
+          td
+            - if index = @lineuser.response_data.pluck(:quick_reply_id).index(quick_reply.id)
+              = @lineuser.response_data[index].response_text
+            - else
+              span NULL
+

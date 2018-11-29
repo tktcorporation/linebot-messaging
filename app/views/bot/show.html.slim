@@ -1,0 +1,8 @@
+.container
+  .columnis-6
+    label.label.is-large 作業ログ
+    .logs-box.box.scroll-message
+      - @bot.logs.each do |log|
+        .log-box
+          = log.text
+

@@ -1,0 +1,66 @@
+.columns.is-centered
+  .column.is-3
+    label.label.is-large 個人トーク
+    .users-list
+      .users-box
+         - @bot.lineusers.each do |lineuser|
+          .user-box
+            = link_to "", bot_chat_path(@bot.id, lineuser.id), class: "link"
+            .user
+              p = lineuser.name
+              - if last_message = lineuser.messages.last
+                p.about = last_message.content
+                p.about = last_message.created_at.strftime("%m-%d %H:%M")
+              - else
+                span.about トーク履歴なし
+  .column.is-3
+    label.label.is-large リマインドリスト
+    .button.new-remind-button
+      i.far.fa-calendar-plus
+      span 追加
+    .reminds-box.scroll-message
+      - @bot.reminds.each do |remind|
+        .remind-box
+          = link_to "", edit_bot_remind_path(@bot, remind.id), class: "link"
+          .remind
+            p = remind.name
+            - if remind.enable
+              i.far.fa-calendar-alt
+            - else
+              i.far.fa-calendar-minus
+            span ：
+            = remind.ignition_time.strftime("%m-%d %H:%M")
+.modal#new-remind-modal
+  .modal-background
+  .modal-content
+    .modal-content-box
+      label.label.is-large リマインド登録
+      = form_with model: @newremind, url: bot_remind_index_path(@bot), data: { parsley_validate: "" }, local: true, html: { class: "form" } do |f|
+        label.label リマインド名
+        .field
+          p.control
+            = f.text_field :name, placeholder: "名前", class: "input", required: ""
+        label.label 送信内容
+        .field
+          p.control
+            = f.text_field :text, placeholder: "送信内容", class: "input", required: ""
+        label.label 送信日時
+        .field
+          p.control
+            = f.datetime_select :ignition_time, :use_month_numbers => true, :start_year => Time.now.year, :end_year => Time.now.year + 1, :minute_step => 60
+        label.label 対象ユーザー
+        .field
+          p.control
+            = collection_check_boxes :remind_user, :lineusers, @bot.lineusers, :id, :name, include_hidden: false do |b|
+              = b.check_box data: { parsley_mincheck: "1" }, required: ""
+              = b.label { b.text }
+            - if false
+              = select_tag :users, options_for_select(@bot.lineusers.map{|lineuser| [lineuser.name, lineuser.id]}), class: 'select'
+
+        label.label 有効化
+        .field
+          p.control
+            = f.check_box :enable
+        p.control
+          = f.submit "追加", class: "button is-info"
+  button.modal-close.is-large aria-label="close"

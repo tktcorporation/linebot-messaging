@@ -1,0 +1,15 @@
+- if 1 > 0
+  p sample
+
+= form_tag root_path method: :post do
+  = text_field_tag :message, "", placeholder: "メッセージ"
+  = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button"
+
+.container
+  .box
+    = form_with model: post, url: root_path, local: true, method: :create, html: { class: "form" } do |f|
+      = f.text_field :message, placeholder: "メッセージ"
+      = f.submit '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button"
+- str = "abcde"
+- if str == "abcde"
+  p = str

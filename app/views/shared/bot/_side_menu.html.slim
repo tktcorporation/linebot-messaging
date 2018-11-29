@@ -1,0 +1,64 @@
+.label.is-spaced LINEBOT
+.bot-side-menu-items.is-size-7
+  .bot-side-menu-item
+    = link_to "", bot_path(@bot_id), class: "cover"
+    p
+      i.far.fa-address-book.is-size-3
+    p ダッシュボード
+  .bot-side-menu-item
+    = link_to "", bot_response_data_path(@bot_id), class: "cover"
+    p
+      i.fas.fa-chart-pie.is-size-3
+    p 分析
+  .bot-side-menu-item
+    = link_to "", bot_lineusers_path(@bot_id), class: "cover"
+    p
+      i.far.fa-address-book.is-size-3
+    p ユーザーリスト
+  .bot-side-menu-item
+    = link_to "", bot_custom_message_index_path(@bot_id), class: "cover"
+    p
+      i.far.fa-comment.is-size-3
+    p カスタムメッセ
+  .bot-side-menu-item
+    = link_to "", bot_forms_path(@bot_id), class: "cover"
+    p
+      i.far.fa-comments.is-size-3
+    p 会話フロー
+  .bot-side-menu-item
+    = link_to "", edit_bot_path(@bot_id), class: "cover"
+    p
+      i.fas.fa-cog.is-size-3
+    p 設定
+//aside.menu.bot-side-menu
+  - if @bots
+    p.menu-label
+      | Botリスト
+    ul.menu-list
+      - @bots.each do |bot|
+        li = link_to bot.name, bot_path(bot), class: "is-active" if current_page?(bot_path(bot))
+  ul.menu-list
+    li
+      - if params[:bot_id]
+        = link_to bot_forms_path do
+          span 会話フロー
+      - if @quick_reply
+        = link_to bot_forms_path(@quick_reply.form.bot_id) do
+          span 会話フロー
+        ul
+          - @quick_reply.form.bot.forms.each do |form|
+            li = link_to form.name, form_path(form)
+  p.menu-label
+    | Administration
+  ul.menu-list
+    li
+      a Team Settings
+    li
+      a Manage Your Team
+      ul
+        li
+          a Members
+        li
+          a Plugins
+        li
+          a Add a member

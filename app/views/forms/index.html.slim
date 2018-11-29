@@ -1,0 +1,86 @@
+- if @active_form
+  span.active-circle
+  span アクティブ(動作中)
+  .columns
+    .column.is-one-third
+      .card.form-card.is-one-third
+        header.card-header
+          p.card-header-title = @active_form.name
+          = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, form_path(@active_form.id), class: "card-header-icon"
+        .card-content
+          p = @active_form.describe_text
+        footer.card-footer
+          - active_converted_lineusers_count = @active_form.converted_lineusers.to_a.count
+          - active_form_session_count = @active_form.session_lineusers.to_a.count
+          .card-footer-item
+            .form-data
+              p Session
+              p.is-size-5 = active_form_session_count
+          .card-footer-item
+            .form-data
+              p Converted
+              p.is-size-5 = active_converted_lineusers_count
+          .card-footer-item
+            .form-data
+              p CVR
+              p.is-size-5
+                - if active_form_session_count != 0
+                  = (active_converted_lineusers_count / active_form_session_count).to_f * 100
+                - else
+                  span -
+                span %
+
+hr.hr style="margin: 0;"
+
+span.stand-by-circle
+span 待機中
+.columns.is-multiline
+  - if @forms
+    - @forms.each do |form|
+      .column.is-one-third
+        .card.form-card.is-one-third
+          header.card-header
+            p.card-header-title = form.name
+            = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, form_path(form.id), class: "card-header-icon"
+          .card-content
+            p = form.describe_text
+          footer.card-footer
+            - converted_lineusers_count = form.converted_lineusers.to_a.count
+            - form_session_count = form.session_lineusers.to_a.count
+            .card-footer-item
+              .form-data
+                p Session
+                p.is-size-5 = form_session_count
+            .card-footer-item
+              .form-data
+                p Converted
+                p.is-size-5 = converted_lineusers_count
+            .card-footer-item
+              .form-data
+                p CVR
+                p.is-size-5
+                  - if form_session_count != 0
+                    = (converted_lineusers_count / form_session_count).to_f * 100
+                  - else
+                    span -
+                  span %
+.columns
+  .column.is-1
+    .button.new-form-button ＋
+
+#new-form-modal.modal
+  .modal-background
+  .modal-content
+    .modal-content-box
+      = form_with model: @new_form, url: bot_forms_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        label.label 名前(管理用)
+        .field
+          .control
+            = f.text_field :name, class: "input", required: ""
+        label.label 説明文(管理用)
+        .field
+          .control
+            = f.text_field :describe_text, class: "input", required: ""
+        p.control
+          = f.submit "追加", class: "button is-info"
+  button.modal-close.is-large aria-label="close"

@@ -1,0 +1,51 @@
+<p>linebot</p>
+<div class="container">
+  <div class="columns">
+    <div class="column is-3">
+      <div class="users-list">
+        <div class="users-box">
+          <% @userslist.each_with_index do |user, index|%>
+            <div class="user-box">
+              <%= link_to "", "/chat/#{user.id}", class: "link" %>
+              <div class="user">
+                <p><%= user.name %></p>
+                <p class="about">
+                  <% if @last_messages[index] %>
+                    <%= @last_messages[index].content %>
+                  <% else %>
+
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="column is-9">
+      <p><%= @users[:lineuser].name %> とのトークルーム</p>
+      <div class="messages-box">
+        <% @messages.each do |message|%>
+          <div class="message-box">
+            <%if message.user_id == "U72798cffe98b02650a359df76ca76b36"%>
+              <div class="message user-side">
+                <p><%= @users[:lineuser].name %>　｜　<%= message.content %></p>
+              </div>
+            <% elsif message.user_id == "1" %>
+              <div class="message bot-side">
+                <p><%= @users[:bot].name %>　｜　<%= message.content %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+      </div>
+      <%= link_to "テスト送信", "/chat/test_push", class: "button is-primary", method: :post %>
+      <%= form_tag "/chat/push", method: :post do %>
+          <%= text_field_tag :message, "", placeholder: "メッセージ", class: "input" %>
+          <%= submit_tag "送信", class: "button is-info" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+

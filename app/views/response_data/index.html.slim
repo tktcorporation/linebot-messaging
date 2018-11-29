@@ -1,0 +1,21 @@
+.container
+  table.table.is-fullwidth
+    thread
+      tr
+        th
+          ユーザー名
+        - @quick_reply_list.each do |quick_reply|
+          th
+            = quick_reply.name
+    tbody
+      - @lineusers.each do |lineuser|
+        tr
+          td
+            = link_to lineuser.name, bot_chat_path(params[:bot_id], lineuser.id)
+          - @quick_reply_list.each do |quick_reply|
+            td
+              - if index = lineuser.response_data.pluck(:quick_reply_id).index(quick_reply.id)
+                = lineuser.response_data[index].response_text
+              - else
+                span NULL
+

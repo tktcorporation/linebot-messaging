@@ -1,0 +1,101 @@
+<div class="columns max-height">
+  <div class="column is-2 is-hidden-mobile">
+    <div class="side-menu">
+      <div class="side-menu-title">
+        <span>Botリスト</span>
+      </div>
+      <div class="side-menu-list-box">
+        <% @bots.each do |bot|%>
+          <div class="side-menu-list-item">
+            <%= link_to "#{bot.name}", bot_path(bot) %>
+          </div>
+        <% end %>
+      </div>
+      <div class="centered">
+        <%= link_to "ログアウト", logout_path, method: :delete, class: "button", id: "side-logout" %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-10">
+    <div class="container">
+      <div class="level-space">
+        <nav class="level">
+          <!-- Left side -->
+          <div class="level-left">
+            <div class="level-item">
+              <span class="is-size-3 align-middle">追加済みLINEbot </span>
+            </div>
+          </div>
+          <!-- Right side -->
+          <div class="level-right">
+            <div class="level-item">
+              <button class="button is-info new-bot-button"><i class="fas fa-plus"></i>新規bot登録</button>
+              <%= link_to "ログアウト", logout_path, method: :delete, class: "button is-hidden-tablet" %>
+            </div>
+          </div>
+        </nav>
+        <hr class="hr" style="margin: 0;">
+      </div>
+      <table class="table is-fullwidth is-hoverable" id="bot-table">
+        <thead>
+          <tr>
+            <th>bot</th>
+            <th>登録日</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @bots %>
+            <% @bots.each do |bot|%>
+              <tr data-href= <%= bot_path(bot) %> >
+                <td><%= bot.name %></td>
+                <td><%= bot.created_at %></td>
+                <td><%= link_to "管理", bot_path(bot) %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="is-centered is-spaced">
+        <button class="button is-info new-bot-button"><i class="fas fa-plus"></i> 新規bot登録</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="new-bot-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="modal-content-box">
+      <label class="label is-large"> 新規Bot登録</label>
+      <%= form_with model: @bot, url: bot_index_path, data: { parsley_validate: "" }, html: { class: "form" }, local: true do |f| %>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <%= f.text_field :name, placeholder: "名前", class: "input form-control", 'required' => "" %>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <%= f.text_field :channel_secret, placeholder: "channel_secret", class: "input form-control", 'required' => "" %>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <%= f.text_field :channel_token, placeholder: "channel_token",class: "input form-control", 'required' => "" %>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            <%= f.text_field :description, placeholder: "説明(任意)",class: "input form-control" %>
+          </p>
+        </div>
+        <p class="control">
+          <%= f.submit "新規登録", class: "button is-success" %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<script type="text/javascript">
+  Parsley.options.trigger = "keyup focusout change input";
+</script>

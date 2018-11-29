@@ -1,0 +1,56 @@
+section.hero.is-success
+  .hero-body
+    .container
+      h1.title.is-spaced LINE Bot Messaging
+      h2.subtitle ラインボットをもっとべんりに、もっとかんたんに
+.container
+  .columns.is-centered
+    .column.is-6
+      #top-login-box.box.is-spaced
+        label.label.is-large ログイン
+        .login-validates.error
+        = form_with model: @user, url: login_path, method: :create, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+          .field
+            .control.has-icons-left.has-icons-right
+              = f.text_field :email, placeholder: "メールアドレス", 'data-parsley-type' => "email", class: "input", id: "login-email", type: "email", 'required' => ""
+              span.icon.is-small.is-left
+                i.fas.fa-envelope
+              span.icon.is-small.is-right
+                i.fas.fa-check
+          .field
+            .control.has-icons-left
+              = f.password_field :password,  placeholder: "パスワード", class: "input", id: "login-password", 'required' => ""
+              span.icon.is-small.is-left
+                i.fas.fa-lock
+          p.control
+            = f.submit "ログイン", class: "button is-success"
+            span.button.signup-button 新規登録
+#signup-modal.modal
+  .modal-background
+  .modal-content
+    .modal-content-box
+      label.label.is-large 新規アカウント登録
+      .error-message.error
+      = form_with model: @user, url: user_path, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        .field
+          .control.has-icons-left.has-icons-right
+            = f.text_field :email, placeholder: "メールアドレス",class: "input form-control", 'required' => "", type: "email"
+            span.icon.is-small.is-left
+              i.fas.fa-envelope
+            span.icon.is-small.is-right
+              i.fas.fa-check
+        .field
+          p.control.has-icons-left
+            = f.password_field :password,  placeholder: "パスワード", class: "input form-control",'required' => "", 'data-parsley-length'=>"[6, 20]"
+            span.icon.is-small.is-left
+              i.fas.fa-lock
+        .field
+          p.control.has-icons-left
+            = f.password_field :password_confirmation,  placeholder: "パスワードを再入力", 'data-parsley-equalto' => "#user_password", class: "input form-control", 'required' => ""
+            span.icon.is-small.is-left
+              i.fas.fa-lock
+        p.control
+          = f.submit "新規登録", class: "button is-success"
+  button.modal-close.is-large aria-label="close"
+javascript:
+  | Parsley.options.trigger = "keyup focusout change input";

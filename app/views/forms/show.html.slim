@@ -1,0 +1,56 @@
+.columns.is-centered
+  .column.is-6
+    - if @form.is_active
+      p
+        span.active-circle.vertical-middle
+        span.vertical-middle アクティブ(動作中)
+        = link_to "無効化", switch_active_form_path(@form), method: :patch, class: "button vertical-middle is-danger is-outlined float-right is-small switch_active_button"
+    - else
+      p
+        span.stand-by-circle.vertical-middle
+        span.vertical-middle 待機中
+        = link_to "有効化", switch_active_form_path(@form), method: :patch, class: "button vertical-middle is-success is-outlined float-right is-small switch_active_button"
+
+    - @quick_replies.each_with_index do |quick_reply, index|
+      .box.quick-reply-box
+        = "#{index + 1}番目　"
+        = quick_reply.name
+        span.float-right
+          i.fas.fa-times
+        label.label text
+        p = quick_reply.text
+        label.label item
+        - if quick_reply.quick_reply_items[0]
+          - quick_reply.quick_reply_items.each do |item|
+            = link_to quick_reply_item_path(item.id), method: :delete, class: "quick-reply-item button is-small", data: { confirm: '削除しますか？' } do
+              span
+                i.far.fa-trash-alt
+              span = item.text
+        - else
+          p.is-size-7 （itemを追加しない場合は通常メッセージとして送信されます。）
+        span.new-quick-reply-item-button.button.is-small.quick-reply-item ＋
+        = form_with model: quick_reply.quick_reply_items.new, url: quick_reply_quick_reply_items_path(quick_reply.id), local: true, data: { parsley_validate: "" }, html: { class: "form", style: 'display: none;' } do |f|
+          label.label テキスト(選択肢)
+          .field
+            .control
+              = f.text_field :text, class: "input", required: ""
+          p.control
+            = f.submit "追加", class: "button is-info"
+    .button.new-quick-reply-button ＋
+
+#new-quick-reply-modal.modal
+  .modal-background
+  .modal-content
+    .modal-content-box
+      = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+        .field
+          .control
+            = f.text_field :name, class: "input", required: ""
+        label.label テキスト（質問時、ユーザー側に表示されます）
+        .field
+          .control
+            = f.text_field :text, class: "input", required: ""
+        p.control
+          = f.submit "追加", class: "button is-info"
+  button.modal-close.is-large aria-label="close"

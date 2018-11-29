@@ -1,0 +1,51 @@
+.container
+  .columns.is-centered
+    .column.is-10
+      .box.is-spaced
+        label.label.is-large Bot設定
+        = render partial: "shared/error_messages", locals: {model: @bot}
+        = form_with model: @bot, url: bot_path, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+          label.label 管理用Bot名
+          .field
+            p.control
+              = f.text_field :name, class: "input", required: ""
+            p ここに表示される名前は管理用のものであり、ユーザー側からはLINEDevelopperで設定された名前が表示されます
+          label.label 説明(任意)
+          .field
+            p.control
+              = f.text_field :description, class: "input"
+          label.label CallBackURL
+          .field
+            p.control
+              | https://#{text_field_tag '', '', value: "linebot-messaging.herokuapp.com/callback/#{@bot.callback_hash}", class: "input", 'readonly'=>''}
+          label.label ChannelToken
+          .field
+            p.control
+              = f.text_field :channel_token, class: "input", required: ""
+          label.label ChannelSecret
+          .field
+            p.control
+              = f.text_field :channel_secret, class: "input", required: ""
+          label.label LINENotify アクセストークン (LINENotifyからの通知を有効にする場合は必須)
+          = fields_for @bot.notify_token do |af|
+            .field
+              p.control
+                = af.text_field :access_token, class: "input", required: ""
+          .field
+            .control
+              label.checkbox
+                = f.check_box :notify, {:checked => @notify_checked}, "true", "false"
+                | LINENotifyからの通知を有効にする
+          p.control
+            = f.submit "更新", class: "button is-info"
+            //= link_to "戻る", bot_path(params[:id]), class: "button left-margin"
+javascript:
+   var checkbox = $('#bot_notify')
+   var notify_token = $('#notify_token_access_token')
+   checkbox.change(function() {
+     if (checkbox.prop("checked")) {
+       notify_token.attr("required", "");
+     }else{
+       notify_token.removeAttr("required", "");
+     }
+   });

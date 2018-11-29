@@ -1,0 +1,45 @@
+- content_for :content do
+  - if @bot
+    - @bot_id = @bot.id
+  - else
+    - if params[:bot_id]
+      - @bot_id = params[:bot_id]
+    - if @form
+      - @bot_id = @form.bot_id
+  .columns.clear-margin
+    .column.is-1.bot-side-menu.is-hidden-mobile
+      = render "shared/bot/side_menu" do
+    .column.is-11.content-body
+      header.navbar.is-white.is-fixed-top.is-hidden-tablet
+        .container
+          .navbar-brand
+            a.is-size-3 href="/user"
+              i.fas.fa-chevron-left
+
+            .navbar-burger.burger data-target="navMenu"
+              span
+              span
+              span
+          #navMenu.navbar-menu
+            .navbar-item = link_to "ダッシュボード", bot_path(@bot_id)
+            .navbar-item = link_to "分析", bot_response_data_path(@bot_id)
+            .navbar-item = link_to "ユーザーリスト", bot_lineusers_path(@bot_id)
+            .navbar-item = link_to "カスタムメッセージ", bot_custom_message_index_path(@bot_id)
+            .navbar-item = link_to "会話フロー", bot_forms_path(@bot_id)
+            .navbar-item = link_to "設定", edit_bot_path(@bot_id)
+      .header-space.is-hidden-tablet
+        p 　
+        p 　
+        p 　
+      .level-space.is-hidden-mobile
+        nav.level
+          .level-left
+            .level-item
+              label.label.is-large ボット名
+          .level-right
+            .level-item
+              = link_to "戻る", "/", class: "button"
+        hr.hr style="margin: 0;"
+      .scroll-field
+        = yield
+= render template: 'layouts/application'

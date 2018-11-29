@@ -1,0 +1,67 @@
+// Place all the styles related to the lineusers controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.users-list {
+    overflow: auto;
+    height: 40%;
+
+    .users-box {
+        padding: 1em 0 0 0;
+        margin: 1em 0;
+        border-radius: 0.3em;
+        background-color: white;
+    }
+
+    .user-box {
+        position: relative;
+
+        a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            text-indent: -999px;
+        }
+
+        border-bottom: solid 1px #ddd;
+        padding: 10px;
+
+        .about {
+            color: #aaa;
+        }
+    }
+
+    .user-box:hover {
+        background-color: #f8f8f8;
+    }
+}
+
+.reminds-box {
+    padding: 1em;
+    margin: 1em 0 0 0;
+    border-radius: 0.3em;
+    background-color: white;
+    height: 100%;
+    overflow: auto;
+
+    .remind-box {
+        padding: 10px;
+        border-bottom: solid 1px #ddd;
+        position: relative;
+
+        a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            text-indent: -999px;
+        }
+    }
+
+    .remind-box:hover {
+        background-color: #f8f8f8;
+    }
+}

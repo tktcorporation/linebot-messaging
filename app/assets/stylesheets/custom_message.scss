@@ -1,0 +1,13 @@
+// Place all the styles related to the custom_message controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.search-box {
+    margin-bottom: 2em;
+}
+
+.custom-reminds {
+    .reminds-box {
+        overflow: scroll;
+        height: 35vh;
+    }
+}

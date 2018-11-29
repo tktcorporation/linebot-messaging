@@ -1,0 +1,42 @@
+.container
+  .columns.is-centered
+    .column.is-5
+      - @quick_replies.each_with_index do |quick_reply, index|
+        .box
+          = "#{index + 1}番目　"
+          = quick_reply.name
+          label.label text
+          p = quick_reply.text
+          label.label item
+          - quick_reply.quick_reply_items.each do |item|
+            = link_to item.text, quick_reply_item_path(item.id), method: :delete, class: "quick-reply-item button is-small"
+          span.new-quick-reply-item-button.button.is-small ＋
+          = form_with model: quick_reply.quick_reply_items.new, url: quick_reply_quick_reply_items_path(quick_reply.id), local: true, data: { parsley_validate: "" }, html: { class: "form", style: 'display: none;' } do |f|
+            label.label テキスト
+            .field
+              .control
+                = f.text_field :text, class: "input", required: ""
+            p.control
+              = f.submit "追加", class: "button is-info"
+      .button.new-quick-reply-button ＋
+      .box
+        .label リザルトメッセージ
+        p これで質問は終了です
+
+
+#new-quick-reply-modal.modal
+  .modal-background
+  .modal-content
+    .modal-content-box
+      = form_with model: @quick_reply, url: bot_quick_replies_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        label.label 名前
+        .field
+          .control
+            = f.text_field :name, class: "input", required: ""
+        label.label テキスト
+        .field
+          .control
+            = f.text_field :text, class: "input", required: ""
+        p.control
+          = f.submit "追加", class: "button is-info"
+  button.modal-close.is-large aria-label="close"

@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="columns is-centered">
+    <div class="column is-6">
+      <div class="box is-spaced">
+        <label class="label is-large">リマインド編集</label>
+        <%= form_with model: @remind, url: bot_remind_path, data: { parsley_validate: "" }, html: { class: "form" } do |f| %>
+          <label class="label">リマインド名</label>
+          <div class="field">
+            <p class="control">
+              <%= f.text_field :name, class: "input", required: "" %>
+            </p>
+          </div>
+          <label class="label">送信内容</label>
+          <div class="field">
+            <p class="control">
+              <%= f.text_field :text, class: "input", required: "" %>
+            </p>
+          </div>
+          <label class="label">送信日時</label>
+          <div class="field">
+            <p class="control">
+              <%= f.datetime_select :ignition_time, :use_month_numbers => true, :start_year => Time.now.year, :end_year => Time.now.year + 1, :minute_step => 60 %>
+            </p>
+          </div>
+          <label class="label">対象ユーザー</label>
+          <div class="field">
+            <p class="control has-icons-left">
+              <%= collection_check_boxes :remind_user, :lineusers, @lineusers_list, :id, :name, include_hidden: false, checked: @checked_lineuser_array do |b| %>
+                <%= b.check_box data: { parsley_mincheck: "1" }, required: "" %>
+                <%= b.label { b.text }  %>
+              <% end%>
+            </p>
+          </div>
+          <label class="label">有効化</label>
+          <div class="field">
+            <p class="control">
+              <%= f.check_box :enable %>
+            </p>
+          </div>
+          <p class="control">
+            <%= submit_tag "更新", class: "button is-info" %>
+            <%= link_to "戻る", bot_path(params[:bot_id]), class: "button left-margin" %>
+            <%= link_to "削除", bot_remind_path(params[:bot_id], @remind.id), class: "button left-margin", data: { confirm: '削除しますか？' }, method: :delete %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

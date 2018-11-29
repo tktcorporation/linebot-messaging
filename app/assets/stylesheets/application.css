@@ -1,0 +1,103 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require bulma
+ *= require parsley
+ *= require_tree .
+ *= require_self
+ */
+
+.flash {
+    position: fixed;
+    top: 20px;
+    right: 50px;
+    display: inline-block;
+    z-index: 100;
+    background-color: #F0A32F;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: white;
+}
+
+.inline-box {
+    display: inline-block;
+}
+
+.error {
+    font-size: 0.9em;
+    color: #F0A32F;
+}
+
+body {
+    height: 100vh
+}
+
+.max-height {
+  height: 100%;
+}
+
+.content-body {
+  background-color: #f4fafa;
+  height: 100vh;
+}
+
+.scroll-field {
+    overflow: auto;
+    height: 90%;
+}
+
+.bot-side-menu {
+    margin: 0;
+    text-align: center;
+    background-color: #3a3d4b;
+    color: white;
+}
+
+.bot-side-menu-items {
+  font-weight: 600;
+}
+
+.bot-side-menu-item a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-indent: -999px;
+}
+
+.bot-side-menu-item {
+    position: relative;
+    margin: 4em 0;
+}
+
+.columns.clear-margin {
+    margin: 0;
+}
+
+.float-right {
+    float: right;
+}
+
+.vertical-middle {
+    vertical-align: middle;
+}
+
+.unfollowed-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 30;
+    background: rgba(0,0,0,0.3);
+}

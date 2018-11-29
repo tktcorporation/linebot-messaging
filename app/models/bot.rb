@@ -1,0 +1,43 @@
+class Bot < ApplicationRecord
+  has_many :logs, ->{ where(deleted: false) }
+  has_many :reminds, ->{ where(deleted: false) }
+  has_many :lineusers, ->{ where(deleted: false) }
+  has_many :forms, ->{ where(deleted: false) }
+  has_many :quick_replies, through: :forms
+  has_one :notify_token, ->{ where(deleted: false) }
+  has_one :google_api_set
+  belongs_to :user
+
+  scope :undeleted, ->{ where(deleted: false) }
+
+  validates :name, presence: true
+  validates :channel_token, presence: true
+  validates :channel_secret, presence: true
+  validates :user_id, presence: true
+  validates :callback_hash, presence: true
+
+  def destroy
+    self.deleted = true
+    save
+  end
+
+  def self.get_plural_with_user_id(current_user_id)
+    self.undeleted.where(user_id: current_user_id)
+  end
+
+  def self.get(bot_id)
+    self.undeleted.find(bot_id)
+  end
+
+  def self.get_with_channel_secret(channel_secret)
+    self.undeleted.find_by(channel_secret: channel_secret)
+  end
+
+  def self.get_with_callback_hash(callback_hash)
+    self.find_by(callback_hash: callback_hash)
+  end
+
+  def self.get_with_callback_hash_of_google_auth(callback_hash)
+    self.find_by(callback_hash_of_google_auth: callback_hash)
+  end
+end
