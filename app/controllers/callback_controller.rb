@@ -1,4 +1,6 @@
 class CallbackController < ApplicationController
+  require 'line/bot'
+
   protect_from_forgery except: :callback
   skip_before_action :require_sign_in!
   def callback
