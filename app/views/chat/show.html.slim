@@ -74,7 +74,7 @@
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
         = text_field_tag :message, "", placeholder: "メッセージ", class: "input", 'required'=>''
         = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-      = form_tag update_name_bot_chat(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
+      = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
         = text_field_tag :name, "", placeholder: "名前の更新", class: "input", 'required'=>''
         = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
   .column.is-5
