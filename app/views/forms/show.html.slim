@@ -15,8 +15,9 @@
       .box.quick-reply-box
         = "#{index + 1}番目　"
         = quick_reply.name
-        span.float-right
-          i.fas.fa-times
+        = link_to quick_reply_path(quick_reply.id), method: :delete, data: { confirm: '削除しますか？' } do
+          span.float-right
+            i.fas.fa-times
         label.label text
         p = quick_reply.text
         label.label item

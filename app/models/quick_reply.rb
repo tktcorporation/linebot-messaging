@@ -24,6 +24,10 @@ class QuickReply < ApplicationRecord
     self.find(id)
   end
 
+  def self.get_before_quick_reply_plural(quick_reply)
+    self.undeleted.where(form_id: quick_reply.form_id, next_reply_id: quick_reply.id)
+  end
+
   def self.create(form_id, quick_reply_params)
     form = Form.get(form_id)
     quick_reply = form.quick_replies.new(quick_reply_params)
@@ -38,16 +42,26 @@ class QuickReply < ApplicationRecord
     end
   end
 
-  def self.delete(id)
-    quick_reply = self.get(id)
-    if before_quick_replies = self.where(form_id: quick_reply.form_id, next_reply_id: quick_reply.id)
-      if quick_reply.next_reply_id.present?
-        before_quick_replies.update_all(next_reply_id: quick_reply.next_reply_id)
+  def relational_delete
+    QuickReply.transaction do
+      before_quick_replies = QuickReply.get_before_quick_reply_plural(self)
+      if before_quick_replies.present?
+        if self.next_reply_id.present?
+          before_quick_replies.update_all(next_reply_id: self.next_reply_id)
+        else
+          before_quick_replies.update_all(next_reply_id: nil)
+        end
       else
-        before_quick_replies.update_all(next_reply_id: nil)
+        if self.next_reply_id.present?
+          self.form.update_attributes(first_reply_id: self.next_reply_id)
+        else
+          self.form.update_attributes(first_reply_id: nil)
+        end
       end
+      self.destroy
     end
-
+  rescue => e
+    p e.message
   end
 
   def self.extract_by_phase_of_lineuser(lineuser, form)
