@@ -19,9 +19,10 @@ class QuickRepliesController < ApplicationController
     redirect_to "/forms/#{params[:form_id]}"
   end
 
-  def delete
-    QuickReply.delete(params[:id])
-    redirect_to "/forms/#{params[:form_id]}"
+  def destroy
+    quick_reply = QuickReply.get(params[:id])
+    quick_reply.relational_delete
+    redirect_to "/forms/#{quick_reply.form.id}"
   end
 
   private

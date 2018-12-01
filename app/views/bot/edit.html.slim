@@ -17,7 +17,7 @@
           label.label CallBackURL
           .field
             p.control
-              | https://#{text_field_tag '', '', value: "linebot-messaging.herokuapp.com/callback/#{@bot.callback_hash}", class: "input", 'readonly'=>''}
+              | https://#{text_field_tag '', '', value: "#{@domain}/callback/#{@bot.callback_hash}", class: "input", 'readonly'=>''}
           label.label ChannelToken
           .field
             p.control

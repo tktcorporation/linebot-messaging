@@ -11,6 +11,7 @@ class BotController < ApplicationController
   end
   def edit
     @bot = Bot.get(params[:id])
+    @domain = ENV.fetch('DOMAIN_NAME')
     if @bot.notify_token
       @access_token = @bot.notify_token.access_token
       @notify_checked = @bot.notify

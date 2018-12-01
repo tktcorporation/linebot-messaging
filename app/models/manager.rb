@@ -243,7 +243,7 @@ class  Manager
         notify_token = NotifyToken.get_with_bot_id(bot_id).access_token
         LineNotify.send(text, notify_token)
       end
-      puts "log crested"
+      puts "log created"
     end
   end
 
