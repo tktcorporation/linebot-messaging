@@ -5,7 +5,7 @@ class GoogleCalendar
   require 'fileutils'
 
   def self.callback_process(bot, code)
-    client = Signet::OAuth2::Client.new(client_options(bot))
+    client = Signet::OAuth2::Client.new(self.client_options(bot))
     client.code = code
     response = client.fetch_access_token!
     google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
@@ -82,7 +82,7 @@ class GoogleCalendar
   end
 
   private
-  def client_options(bot)
+  def self.client_options(bot)
     return client_option = {
       client_id: bot.google_api_set.client_id,
       client_secret: bot.google_api_set.client_secret,
