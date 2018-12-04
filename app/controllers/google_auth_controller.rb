@@ -15,7 +15,7 @@ class GoogleAuthController < ApplicationController
   def callback
     #bot = Bot.get_by_google_auth_hash(params[:hash])
     bot = Bot.get(1)
-    GoogleCalendar.callback_process(bot, code)
+    GoogleCalendar.callback_process(bot, params[:code])
     redirect_to bot_url(id: 1)
   end
 
