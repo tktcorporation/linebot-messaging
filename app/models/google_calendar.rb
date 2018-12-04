@@ -1,13 +1,3 @@
-CLIENT_OPTIONS = {
-      client_id: ENV['GOOGLE_CLIENT_ID'],
-      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
-      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri: 'https://catalyst-app-production.herokuapp.com/google_auth/callback',
-      additional_parameters: {prompt:'consent'},
-    }
-
 class GoogleCalendar
   require 'google/apis/calendar_v3'
   require 'googleauth'
@@ -15,7 +5,7 @@ class GoogleCalendar
   require 'fileutils'
 
   def self.callback_process(bot, code)
-    client = Signet::OAuth2::Client.new(CLIENT_OPTIONS)
+    client = Signet::OAuth2::Client.new(client_options(bot))
     client.code = code
     response = client.fetch_access_token!
     google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
@@ -29,8 +19,8 @@ class GoogleCalendar
 
   def self.create_event
     client = Signet::OAuth2::Client.new(
-      client_id: ENV['GOOGLE_CLIENT_ID'],
-      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+      client_id: Bot.find(1).google_api_set.client_id,
+      client_secret: Bot.find(1).google_api_set.client_secret,
       access_token: Bot.find(1).google_api_set.access_token,
       refresh_token: Bot.find(1).google_api_set.refresh_token,
       token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
@@ -63,8 +53,8 @@ class GoogleCalendar
 
   def self.get_events
     client = Signet::OAuth2::Client.new(
-      client_id: ENV['GOOGLE_CLIENT_ID'],
-      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+      client_id: Bot.find(1).google_api_set.client_id,
+      client_secret: Bot.find(1).google_api_set.client_secret,
       access_token: Bot.find(1).google_api_set.access_token,
       refresh_token: Bot.find(1).google_api_set.refresh_token,
       token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
@@ -89,6 +79,19 @@ class GoogleCalendar
       p "=============================="
     end
     response.items
+  end
+
+  private
+  def client_options(bot)
+    CLIENT_OPTIONS = {
+      client_id: bot.google_api_set.client_id,
+      client_secret: bot.google_api_set.client,
+      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+      token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
+      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
+      redirect_uri: 'https://catalyst-app-production.herokuapp.com/google_auth/callback',
+      additional_parameters: {prompt:'consent'},
+    }
   end
 
 end
