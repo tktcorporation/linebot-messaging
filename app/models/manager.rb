@@ -14,9 +14,7 @@ class  Manager
   def self.push(lineuser, text)
     saved_message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: false)
     bot = lineuser.bot
-    if saved_message.save
-      puts("save success")
-    end
+    saved_message.save!
 
     message = {
       type: 'text',
