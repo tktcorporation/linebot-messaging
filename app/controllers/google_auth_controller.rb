@@ -32,7 +32,7 @@ class GoogleAuthController < ApplicationController
   def client_options(bot)
     return client_option = {
       client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client,
+      client_secret: bot.google_api_set.client_secret,
       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
       scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
