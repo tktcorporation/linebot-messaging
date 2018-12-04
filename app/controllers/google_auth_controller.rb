@@ -30,7 +30,7 @@ class GoogleAuthController < ApplicationController
 
   private
   def client_options(bot)
-    CLIENT_OPTIONS = {
+    return client_option = {
       client_id: bot.google_api_set.client_id,
       client_secret: bot.google_api_set.client,
       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',

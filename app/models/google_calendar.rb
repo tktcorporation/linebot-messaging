@@ -48,7 +48,7 @@ class GoogleCalendar
     google_api_token.expires_in = response['expires_in']
     google_api_token.refresh_token = response['refresh_token']
     google_api_token.token_type = response['token_type']
-    retry
+    #retry
   end
 
   def self.get_events
