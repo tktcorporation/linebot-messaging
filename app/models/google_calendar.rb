@@ -78,10 +78,11 @@ class GoogleCalendar
 
     p "===========イベント一覧==========="
     calendar_items.each do |event|
-      p event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
-      p event.end.date_time, event.summary
-      p event.description
-      p event.id
+      p "start:" + event.start.date_time.strftime("%Y-%m-%d %H:%M:%S") if event.start
+      p "end:" + event.end.date_time.strftime("%Y-%m-%d %H:%M:%S") if event.end
+      p "summary:" + event.summary
+      p "description:" + event.description
+      p "id:" + event.id
       p "=============================="
     end
   end
