@@ -63,7 +63,7 @@ class GoogleCalendar
 
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
-    ids = service.list_calendar_lists.items.map(&id)
+    ids = service.list_calendar_lists.items.map(&:id)
 
     p ids.inspect
 
