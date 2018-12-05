@@ -76,6 +76,8 @@ class GoogleCalendar
       end
     end
 
+    p calendar_items.inspect
+
     p "===========イベント一覧==========="
     calendar_items.each do |event|
       p "start:" + event.start.date_time.strftime("%Y-%m-%d %H:%M:%S") if event.start
