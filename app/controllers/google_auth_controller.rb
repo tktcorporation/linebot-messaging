@@ -28,9 +28,13 @@ class GoogleAuthController < ApplicationController
     calendar_events = GoogleCalendar.get_events
     available_array = []
     47.times do |i|
-      available_array.push(0)
+      if i == 0
+        available_array.push(1)
+      else
+        available_array.push(0)
+      end
     end
-    day = Time.parse("2018/12/08 19:23:55")
+    day = Time.parse("2018/12/07 19:23:55")
     calendar_events.each do |event|
       available_array = Manager.available_time(event, day, available_array)
     end
