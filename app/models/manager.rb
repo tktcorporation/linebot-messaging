@@ -311,18 +311,19 @@ class  Manager
   def self.available_time(calendar_event, day, available_array)
     time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     if calendar_event.start.date.present?
-      if Time.parse(calendar_event.start.date) <= time && time <= Time.parse(calendar_event.end.date)
+      if Time.parse(calendar_event.start.date) <= time && time < Time.parse(calendar_event.end.date)
         filled_array = []
-        47.times do |i|
+        48.times do |i|
           filled_array.push(1)
         end
         available_array = filled_array
       end
     else
-      47.times do |i|
+      48.times do |i|
         start_period = time + (60*30*i)
         end_period = time + (60*30*(i+1))
         if calendar_event.start.date_time.to_time <= end_period && start_period <= calendar_event.end.date_time.to_time
+          p start_period
           available_array[i] = 1
         end
       end
@@ -337,7 +338,7 @@ class  Manager
     7.times do |i|
       p (day + (60*60*24*(i))).strftime("%Y年 %m月%d日")
       #self.push(lineuser, (day + (60*60*24*(i))).strftime("%Y年 %m月%d日"))
-      47.times do |j|
+      48.times do |j|
         time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
         if available_array_week[i][j] == 0
           start_time = time + (60*30*(j))
@@ -347,6 +348,23 @@ class  Manager
         end
       end
     end
+  end
+
+  def self.available_array_week(day)
+    calendar_events = GoogleCalendar.get_events
+    available_array_week = []
+    7.times do |i|
+      available_array = []
+      48.times do |j|
+        available_array.push(0)
+      end
+      calendar_events.each do |event|
+        available_array = Manager.available_time(event, day + (60*60*24*(i)), available_array)
+      end
+      available_array_week.push(available_array)
+    end
+    p available_array_week
+    available_array_week
   end
 
 end
