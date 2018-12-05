@@ -309,7 +309,7 @@ class  Manager
   end
 
   def self.available_time(calendar_event, day, available_array)
-    time = Time.local(day.year, day.mounth, day.day, 0, 0, 0, 0)
+    time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     if calendar_event.start.date.present?
       if Time.parse(calendar_event.start.date) <= time && time <= Time.parse(calendar_event.end.date)
         filled_array = []
