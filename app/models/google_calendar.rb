@@ -65,32 +65,32 @@ class GoogleCalendar
     service.authorization = client
     ids = service.list_calendar_lists.items.map(&:id)
 
+    p "「「「ids」」」"
     p ids.inspect
 
-    calendar_items = []
-    ids.each do |calendar_id|
-      response = service.list_events(calendar_id,
-                                    max_results: 256,
-                                    single_events: true,
-                                    order_by: 'startTime',
-                                    time_min: Time.now.iso8601,
-                                    time_max: (Time.now + 24*60*60*7*0).iso8601)
-      response.items.each do |calendar_item|
-        calendar_items.push(calendar_item)
-      end
-    end
+    #calendar_items = []
+    #ids.each do |calendar_id|
+    #  response = service.list_events(calendar_id,
+    #                                max_results: 256,
+    #                                single_events: true,
+    #                                order_by: 'startTime',
+    #                                time_min: Time.now.iso8601,
+    #                                time_max: (Time.now + 24*60*60*7*0).iso8601)
+    #  response.items.each do |calendar_item|
+    #    calendar_items.push(calendar_item)
+    #  end
+    #end
 
-    p calendar_items.inspect
+    #p calendar_items.inspect
 
-    p "=============================="
-    calendar_items.each do |event|
-      p event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
-      p event.end.date_time, event.summary
-      p event.description
-      p event.id
-      p "=============================="
-    end
-    p response.items.inspect
+    #p "=============================="
+    #calendar_items.each do |event|
+    #  p event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
+    #  p event.end.date_time, event.summary
+    #  p event.description
+    #  p event.id
+    #  p "=============================="
+    #end
   end
 
   private
