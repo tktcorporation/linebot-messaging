@@ -26,20 +26,21 @@ class GoogleAuthController < ApplicationController
 
   def get_events
     calendar_events = GoogleCalendar.get_events
-    available_array = []
-    47.times do |i|
-      if i == 0
-        available_array.push(1)
-      else
+    day = Time.now
+    available_array_week = []
+    7.times do |i|
+      available_array = []
+      47.times do |j|
         available_array.push(0)
       end
+      calendar_events.each do |event|
+        available_array = Manager.available_time(event, day + (60*60*24*(i)), available_array)
+      end
+      available_array_week.push(available_array)
     end
-    day = Time.parse("2018/12/07 19:23:55")
-    calendar_events.each do |event|
-      available_array = Manager.available_time(event, day, available_array)
-    end
-    p "======available_array========="
-    p available_array
+    p "======available_array_week========="
+    p available_array_week
+    Manager.extract_free_time(available_array_week, day)
     redirect_to "/"
   end
 

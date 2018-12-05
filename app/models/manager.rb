@@ -330,4 +330,23 @@ class  Manager
     available_array
   end
 
+  def self.extract_free_time(available_array_week, day)
+    #lineuser = Lineuser.get(13)
+    p "直近1週間で空いている日は"
+    #self.push(lineuser, "直近1週間で空いている日は")
+    7.times do |i|
+      p (day + (60*60*24*(i))).strftime("%Y年 %m月%d日")
+      #self.push(lineuser, (day + (60*60*24*(i))).strftime("%Y年 %m月%d日"))
+      47.times do |j|
+        time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
+        if available_array_week[i][j] == 0
+          start_time = time + (60*30*(j))
+          end_time = time + (60*30*(j+1))
+          p "#{start_time.strftime("%H:%M")} ~ #{end_time.strftime("%H:%M")}"
+          #self.push(lineuser, "#{start_time.strftime("%H:%M")} ~ #{end_time.strftime("%H:%M")}")
+        end
+      end
+    end
+  end
+
 end
