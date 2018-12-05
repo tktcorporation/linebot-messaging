@@ -68,7 +68,10 @@ class GoogleCalendar
     p "「「「ids」」」"
     p ids.inspect
 
-    response = service.list_events(ids[0])
+    response = service.list_events(ids[0],
+      time_min: Time.now.iso8601,
+      time_max: (Time.now + 7.days).iso8601
+      )
     p "「「「response」」」"
     p response.inspect
     p "「「「items」」」"
