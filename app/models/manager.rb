@@ -3,6 +3,7 @@ class  Manager
   require 'securerandom'
   require 'json'
   require 'line/bot'  # gem 'line-bot-api'
+  require "time"
 
   def self.client(bot)
     Line::Bot::Client.new { |config|
@@ -305,6 +306,28 @@ class  Manager
       end
     end
     sorted_lineusers
+  end
+
+  def self.available_time(calendar_event, day, available_array)
+    time = Time.local(day.year, day.mounth, day.day, 0, 0, 0, 0)
+    if calendar_event.start.date.present?
+      if Time.parse(calendar_event.start.date) <= time && time <= Time.parse(calendar_event.end.date)
+        filled_array = []
+        47.times do |i|
+          filled_array.push(1)
+        end
+        available_array = filled_array
+      end
+    else
+      47.times do |i|
+        start_period = time + (60*30*i)
+        end_period = time + (60*30*(i+1))
+        if calendar_event.start.date_time.to_time <= end_period && start_period <= calendar_event.end.date_time.to_time
+          available_array[i] = 1
+        end
+      end
+    end
+    available_array
   end
 
 end
