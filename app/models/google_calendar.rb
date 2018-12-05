@@ -63,15 +63,27 @@ class GoogleCalendar
 
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
+    ids = service.list_calendar_lists.items.map(&id)
 
-    response = service.list_events("primary",
+    p ids.inspect
+
+    calendar_items = []
+    ids.each do |calendar_id|
+      response = service.list_events(calendar_id,
                                     max_results: 256,
                                     single_events: true,
                                     order_by: 'startTime',
                                     time_min: Time.now.iso8601,
                                     time_max: (Time.now + 24*60*60*7*0).iso8601)
+      response.items.each do |calendar_item|
+        calendar_items.push(calendar_item)
+      end
+    end
+
+    p calendar_items.inspect
+
     p "=============================="
-    response.items.each do |event|
+    calendar_items.each do |event|
       p event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
       p event.end.date_time, event.summary
       p event.description
@@ -92,6 +104,14 @@ class GoogleCalendar
       redirect_uri: 'https://catalyst-app-production.herokuapp.com/google_auth/callback',
       additional_parameters: {prompt:'consent'},
     }
+  end
+
+  def self.ids
+    service.list_calendar_lists.items.map(&id)
+  end
+
+  def self.client
+
   end
 
 end
