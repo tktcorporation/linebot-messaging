@@ -91,7 +91,7 @@ class GoogleCalendar
         p "end_date:" + event.end.date
       end
       p "summary:" + event.summary
-      p "description:" + event.description
+      p "description:" + event.description if event.description.present?
       p "id:" + event.id
       p "=============================="
     end
