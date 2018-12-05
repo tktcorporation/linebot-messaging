@@ -5,6 +5,7 @@ class GoogleAuthController < ApplicationController
   require 'googleauth'
   require 'googleauth/stores/file_token_store'
   require 'fileutils'
+  require 'time'
 
   def redirect
     bot = Bot.get(1)
@@ -24,7 +25,17 @@ class GoogleAuthController < ApplicationController
   end
 
   def get_events
-    GoogleCalendar.get_events
+    calendar_events = GoogleCalendar.get_events
+    available_array = []
+    47.times do |i|
+      available_array.push(0)
+    end
+    day = Time.parse("2018/12/08 19:23:55")
+    calendar_events.each do |event|
+      available_array = Manager.available_time(event, day, available_array)
+    end
+    p "======available_array========="
+    p available_array
     redirect_to "/"
   end
 
