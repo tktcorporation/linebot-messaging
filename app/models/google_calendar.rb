@@ -68,6 +68,12 @@ class GoogleCalendar
     p "「「「ids」」」"
     p ids.inspect
 
+    response = service.list_events(ids[0])
+    p "「「「response」」」"
+    p response.inspect
+    p "「「「items」」」"
+    p response.items.inspect
+
     #calendar_items = []
     #ids.each do |calendar_id|
     #  response = service.list_events(calendar_id,
