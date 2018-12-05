@@ -28,7 +28,7 @@ class GoogleCalendar
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
-    calendar_id = "tktcorporation.go@gmail.com"
+    calendar_id = "primary"
     unique_id = "tkt1212"
     event_id = Modules::Base32.encode32hex(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
@@ -64,7 +64,7 @@ class GoogleCalendar
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
 
-    response = service.list_events("tktcorporation.go@gmail.com",
+    response = service.list_events("primary",
                                     max_results: 256,
                                     single_events: true,
                                     order_by: 'startTime',
@@ -78,7 +78,7 @@ class GoogleCalendar
       p event.id
       p "=============================="
     end
-    response.items
+    p response.items.inspect
   end
 
   private
