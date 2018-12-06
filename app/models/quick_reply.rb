@@ -103,6 +103,7 @@ class QuickReply < ApplicationRecord
 
   def times_param(day, num, start_count)
     #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
+    day = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     calendar_events = GoogleCalendar.get_events(self.form.bot)
     available_array = []
     48.times do |j|
