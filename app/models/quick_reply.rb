@@ -20,16 +20,6 @@ class QuickReply < ApplicationRecord
     save
   end
 
-  def set_lineuser_to_next_reply_id
-    #quick_reply_itemを無視、quick_replyのnext_reply_idのみを参照してlineuserにnext_reply_idをセットする
-    if self.next_reply_id.present?
-      switch_quick_reply_id = self.next_reply_id
-      lineuser.update_attributes!(quick_reply_id: switch_quick_reply_id)
-    else
-      lineuser.update_attributes!(quick_reply_id: nil)
-    end
-  end
-
   def self.get(id)
     self.find(id)
   end
