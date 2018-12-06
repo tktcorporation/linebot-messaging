@@ -60,14 +60,12 @@ class  Manager
       #data[:id]にはquick_reply_item_idが入っている
       quick_reply_item = QuickReplyItem.get(data[:id])
       quick_reply = quick_reply_item.quick_reply
-      ResponseDatum.save_data(lineuser, quick_reply.id, text)
+      ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
       Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
-      p quick_reply.inspect
     when 3
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
-      p quick_reply.inspect
     end
     self.advance_lineuser_phase(lineuser, quick_reply.form)
   end
