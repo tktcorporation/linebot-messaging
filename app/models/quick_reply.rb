@@ -110,6 +110,7 @@ class QuickReply < ApplicationRecord
     end
     available_day_array = Manager.available_array_day(calendar_events, day, available_array)
     items_array = []
+    day += 60*30*start_count
     num.times do |i|
       count = start_count
       day += 60*30
