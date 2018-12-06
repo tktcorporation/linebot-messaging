@@ -98,10 +98,10 @@ class GoogleCalendar
     return nil if quick_reply.reply_type != 3
     day = Time.now
     duration_days = quick_reply.quick_reply_schedule.duration_days
-
     items_array = []
     duration_days.times do |i|
-      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + (day + (60*60*24*(i))).strftime("%Y-%m-%d")
+      day += 60*60*24 if i != 0
+      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + day.strftime("%Y-%m-%d")
       pushed_item = {:type=>"action",
                 :action=>{
                           :type => "postback",
