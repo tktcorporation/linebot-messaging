@@ -95,7 +95,7 @@ class QuickReply < ApplicationRecord
     duration_days.times do |i|
       day += 60*60*24 if i != 0
       data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
-      item = self.create_item(data, day.strftime("%m月%d日"))
+      item = QuickReply.create_item(data, day.strftime("%m月%d日"))
       items_array.push(item)
     end
     return {:items => items_array}
@@ -115,7 +115,7 @@ class QuickReply < ApplicationRecord
       day += 60*30*i
       if available_day_array[count + i] == 0
         data = "[4][time]" + day.strftime("%Y-%m-%d %H:%M")
-        item = self.create_item(data, day.strftime("%H:%M"))
+        item = QuickReply.create_item(data, day.strftime("%H:%M"))
         items_array.push(item)
       end
     end
