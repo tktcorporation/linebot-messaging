@@ -69,7 +69,7 @@ class QuickReply < ApplicationRecord
     self.find_by(form_id: form.id, id: lineuser.quick_reply_id)
   end
 
-  def self.quick_reply_items_param(quick_reply)
+  def items_param
     items = quick_reply.quick_reply_items
     items_array = []
     items.each do |item|
@@ -84,6 +84,52 @@ class QuickReply < ApplicationRecord
               }
       items_array.push(pushed_item)
     end
-    quick_reply = {:items => items_array}
+    return {:items => items_array}
+  end
+
+  def days_param
+    return nil if quick_reply.reply_type != 3
+    day = Time.now
+    duration_days = quick_reply.quick_reply_schedule.duration_days
+    items_array = []
+    duration_days.times do |i|
+      day += 60*60*24 if i != 0
+      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + day.strftime("%Y-%m-%d")
+      pushed_item = self.pushed_item(data, day.strftime("%m月%d日"))
+      items_array.push(pushed_item)
+    end
+    return {:items => items_array}
+  end
+
+  def times_param(day, num, start_count)
+    #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
+    calendar_events = GoogleCalendar.get_events(self.form.bot)
+    available_array = []
+    48.times do |j|
+      available_array.push(0)
+    end
+    available_day_array = Manager.available_array_day(calendar_events, day, available_array)
+    items_array = []
+    num.times do |i|
+      count = start_count
+      day += 60*30*i
+      if available_day_array[count + i] == 0
+        data = "[4][time]" + day.strftime("%Y-%m-%d %H:%M")
+        pushed_item = self.pushed_item(data, day.strftime("%H:%M"))
+        items_array.push(pushed_item)
+      end
+    end
+    return {:items => items_array}
+  end
+
+  def self.pushed_item(data, label)
+    return pushed_item = {:type=>"action",
+                  :action=>{
+                            :type => "postback",
+                            :label => label,
+                            :data => data,
+                            :text => label
+                            }
+                }
   end
 end
