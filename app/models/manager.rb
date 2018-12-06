@@ -54,6 +54,7 @@ class  Manager
 
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
+    quick_reply = nil
     case data[:reply_type]
     when 1
       #data[:id]にはquick_reply_item_idが入っている
