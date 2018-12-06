@@ -18,12 +18,12 @@ class GoogleCalendar
     google_api_token.save!
   end
 
-  def self.create_event
+  def self.create_event(bot)
     client = Signet::OAuth2::Client.new(
-      client_id: Bot.find(1).google_api_set.client_id,
-      client_secret: Bot.find(1).google_api_set.client_secret,
-      access_token: Bot.find(1).google_api_set.access_token,
-      refresh_token: Bot.find(1).google_api_set.refresh_token,
+      client_id: bot.google_api_set.client_id,
+      client_secret: bot.google_api_set.client_secret,
+      access_token: bot.google_api_set.access_token,
+      refresh_token: bot.google_api_set.refresh_token,
       token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
     )
     client.refresh!
@@ -43,7 +43,7 @@ class GoogleCalendar
 
   rescue Google::Apis::AuthorizationError
     response = client.refresh!
-    google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: 1)
+    google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
     google_api_token.access_token = response['access_token']
     google_api_token.scope = response['scope']
     google_api_token.expires_in = response['expires_in']
@@ -52,12 +52,12 @@ class GoogleCalendar
     #retry
   end
 
-  def self.get_events
+  def self.get_events(bot)
     client = Signet::OAuth2::Client.new(
-      client_id: Bot.find(1).google_api_set.client_id,
-      client_secret: Bot.find(1).google_api_set.client_secret,
-      access_token: Bot.find(1).google_api_set.access_token,
-      refresh_token: Bot.find(1).google_api_set.refresh_token,
+      client_id: bot.google_api_set.client_id,
+      client_secret: bot.google_api_set.client_secret,
+      access_token: bot.google_api_set.access_token,
+      refresh_token: bot.google_api_set.refresh_token,
       token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
     )
     client.refresh!
