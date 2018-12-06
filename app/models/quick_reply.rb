@@ -1,7 +1,7 @@
 class QuickReply < ApplicationRecord
   has_many :quick_reply_items, ->{ where(deleted: false) }
   has_many :response_data
-  has_one :quick_reply_schedule
+  has_one :quick_reply_schedule, dependent: :destroy
   belongs_to :form
   belongs_to :lineuser, optional: true
 

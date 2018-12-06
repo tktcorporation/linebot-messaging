@@ -21,7 +21,7 @@ class GoogleAuthController < ApplicationController
   end
 
   def create_event
-    GoogleCalendar.create_event
+    GoogleCalendar.create_event(QuickReply.find(37), Time.now, 1, Lineuser.find(13))
   end
 
   def get_events

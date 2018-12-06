@@ -32,13 +32,17 @@ class GoogleCalendar
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
-    calendar_id = "catalist"
+    calendar_id = "primary"
     unique_id = "catalist#{SecureRandom.hex(8)}"
-    event_id = Base64.encode64(unique_id).gsub("=","")
+    event_id = "CDGN8OBCD5PN8"
+    #Base64.strict_encode64(unique_id).gsub("=","")
+    p event_id
     event = Google::Apis::CalendarV3::Event.new({
-          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
-          summary: quick_reply.quick_reply_schedule.summary,
+          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: DateTime.parse("2018-12-08T10:00").rfc3339),
+          #start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
+          #end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: DateTime.parse("2018-12-08T11:00").rfc3339),
+          summary: quick_reply.quick_reply_schedule.summary.to_s,
           description: "「#{lineuser.name}」の#{quick_reply.quick_reply_schedule.summary}",
           id: event_id,
         })
