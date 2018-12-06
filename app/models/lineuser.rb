@@ -66,6 +66,10 @@ class Lineuser < ApplicationRecord
     session_lineuser.save
   end
 
+  def set_next_reply_id(next_reply_id)
+    self.update_attributes!(quick_reply_id: next_reply_id)
+  end
+
   def self.get_plural_with_bot_id(bot_id)
     bot = Bot.get(bot_id)
     self.where(bot_id: bot.id)
