@@ -72,7 +72,7 @@ class QuickReply < ApplicationRecord
     items = quick_reply.quick_reply_items
     items_array = []
     items.each do |item|
-      data = "[#{item.id}]" + item.text
+      data = "[#{quick_reply.reply_type}][#{item.id}]" + item.text
       pushed_item = {:type=>"action",
                 :action=>{
                           :type => "postback",
