@@ -72,7 +72,7 @@ class  Manager
         text: day.strftime("%m月%d日"),
         quickReply: quick_reply.times_param(day, 10, 20)
       }
-      self.client(bot).push_message(lineuser.uid, message)
+      self.client(lineuser.bot).push_message(lineuser.uid, message)
       #Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
     when 4
     end
