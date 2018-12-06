@@ -101,7 +101,7 @@ class GoogleCalendar
 
     items_array = []
     duration_days.times do |i|
-      data = "(quick_reply.reply_type)[#{quick_reply.id}]" + (day + (60*60*24*(i))).strftime("%Y-%m-%d")
+      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + (day + (60*60*24*(i))).strftime("%Y-%m-%d")
       pushed_item = {:type=>"action",
                 :action=>{
                           :type => "postback",
