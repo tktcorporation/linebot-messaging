@@ -60,24 +60,29 @@ class  Manager
       quick_reply_item = QuickReplyItem.get(data[:id])
       quick_reply = quick_reply_item.quick_reply
       ResponseDatum.save_data(lineuser, quick_reply.id, text)
+      Manager.set_lineuser_to_quick_reply_id(quick_reply_item)
     when 3
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
-    end
-
-    #次の準備
-    if quick_reply_item.next_reply_id.present?
-      switch_quick_reply_id = quick_reply_item.next_reply_id
-      lineuser.update_attributes!(quick_reply_id: switch_quick_reply_id)
-    else
-      if quick_reply.next_reply_id.present?
-        switch_quick_reply_id = quick_reply.next_reply_id
-        lineuser.update_attributes!(quick_reply_id: switch_quick_reply_id)
-      else
-        lineuser.update_attributes!(quick_reply_id: quick_reply.next_reply_id)
-      end
+      Manager.set_lineuser_to_quick_reply_id(quick_reply)
     end
     self.advance_lineuser_phase(lineuser, quick_reply.form)
+  end
+
+  def self.set_lineuser_to_quick_reply_id(quick_reply_or_item)
+    case quick_reply_or_item
+    when QuickReplyItem
+      quick_reply_item = quick_reply_or_item
+      if quick_reply_item.next_reply_id.present?
+        switch_quick_reply_id = quick_reply_item.next_reply_id
+        lineuser.update_attributes!(quick_reply_id: switch_quick_reply_id)
+      else
+        quick_reply_item.quick_reply.set_lineuser_to_next_reply_id
+      end
+    when QuickReply
+      quick_reply = quick_reply_or_item
+      quick_reply.set_lineuser_to_next_reply_id
+    end
   end
 
   def self.push_quick_reply(lineuser, quick_reply)
