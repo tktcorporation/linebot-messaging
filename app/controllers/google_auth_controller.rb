@@ -25,7 +25,6 @@ class GoogleAuthController < ApplicationController
   end
 
   def get_events
-    p "======available_array_week========="
     day = Time.now
     Manager.extract_free_time(Manager.available_array_week(day), day)
     redirect_to "/"

@@ -3,6 +3,7 @@ class GoogleCalendar
   require 'googleauth'
   require 'googleauth/stores/file_token_store'
   require 'fileutils'
+  require 'time'
 
   def self.callback_process(bot, code)
     client = Signet::OAuth2::Client.new(self.client_options(bot))
@@ -91,6 +92,28 @@ class GoogleCalendar
       p "=============================="
     end
     return calendar_items
+  end
+
+  def self.quick_reply_days(quick_reply)
+    return nil if quick_reply.reply_type != 3
+    day = Time.now
+    duration_days = quick_reply.quick_reply_schedule.duration_days
+
+    items_array = []
+    duration_days.times do |i|
+      day += (60*60*24*(i))
+      data = "(quick_reply.reply_type)[#{quick_reply.id}]" + day.strftime("%Y-%m-%d")
+      pushed_item = {:type=>"action",
+                :action=>{
+                          :type => "postback",
+                          :label => day.strftime("%m月%d日"),
+                          :data => data,
+                          :text => day.strftime("%m月%d日")
+                          }
+              }
+      items_array.push(pushed_item)
+    end
+    quick_reply = {:items => items_array}
   end
 
   private
