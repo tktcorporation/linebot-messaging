@@ -5,6 +5,7 @@ class GoogleCalendar
   require 'fileutils'
   require 'time'
   require 'securerandom'
+  require 'base64'
 
   def self.callback_process(bot, code)
     client = Signet::OAuth2::Client.new(self.client_options(bot))
@@ -32,8 +33,8 @@ class GoogleCalendar
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
     calendar_id = "catalist"
-    unique_id = ("catalist#{SecureRandom.hex(8)}")
-    event_id = Modules::Base32.encode32hex(unique_id).gsub("=","")
+    unique_id = "catalist#{SecureRandom.hex(8)}"
+    event_id = Base64.encode64(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
           start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
           end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
