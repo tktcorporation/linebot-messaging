@@ -10,4 +10,9 @@ class ResponseDatum < ApplicationRecord
     self.where(lineuser_id: lineuser_id).includes(:lineuser, :quick_reply)
   end
 
+  def self.save_data(lineuser, quick_reply_id, text)
+    response_data = lineuser.response_data.find_or_initialize_by(quick_reply_id: quick_reply_id)
+    response_data.update_attributes!(response_text: data[:text])
+  end
+
 end

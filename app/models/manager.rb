@@ -53,11 +53,19 @@ class  Manager
   end
 
   def self.postback_event(event, lineuser)
-    data = event['postback']['data'].match(/\[(?<id>.+)\](?<text>.+)/)
-    quick_reply_item = QuickReplyItem.get(data[:id])
-    response_data = lineuser.response_data.find_or_initialize_by(quick_reply_id: quick_reply_item.quick_reply_id)
-    response_data.update_attributes!(response_text: data[:text])
-    quick_reply = quick_reply_item.quick_reply
+    data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
+    case data[:reply_type]
+    when 1
+      #data[:id]にはquick_reply_item_idが入っている
+      quick_reply_item = QuickReplyItem.get(data[:id])
+      quick_reply = quick_reply_item.quick_reply
+      ResponseDatum.save_data(lineuser, quick_reply.id, text)
+    when 3
+      #data[:id]にはquick_reply_idが入っている
+      quick_reply = QuickReply.get(data[:id])
+    end
+
+    #次の準備
     if quick_reply_item.next_reply_id.present?
       switch_quick_reply_id = quick_reply_item.next_reply_id
       lineuser.update_attributes!(quick_reply_id: switch_quick_reply_id)
@@ -74,11 +82,24 @@ class  Manager
 
   def self.push_quick_reply(lineuser, quick_reply)
     bot = lineuser.bot
-    message = {
-      type: 'text',
-      text: quick_reply.text,
-      quickReply: QuickReply.quick_reply_items_param(quick_reply)
-    }
+    case quick_reply.reply_type
+    when 1
+      message = {
+        type: 'text',
+        text: quick_reply.text,
+        quickReply: QuickReply.quick_reply_items_param(quick_reply)
+      }
+    when 2
+
+    when 3
+      message = {
+        type: 'text',
+        text: quick_reply.text,
+        quickReply: GoogleCalendar.quick_reply_days(quick_reply)
+      }
+
+    end
+
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
@@ -138,7 +159,7 @@ class  Manager
 
   def self.advance_lineuser_phase(lineuser, form)
     if quick_reply = QuickReply.extract_by_phase_of_lineuser(lineuser, form)
-      if !quick_reply.is_normal_message
+      if !quick_reply.is_normal_message || quick_reply.reply_type != 0
         self.push_quick_reply(lineuser, quick_reply)
       else
         self.push(lineuser, quick_reply.text)
@@ -365,6 +386,23 @@ class  Manager
     end
     p available_array_week
     available_array_week
+  end
+
+  def self.push_quick_reply_calendar(lineuser, quick_reply)
+    bot = lineuser.bot
+    message = {
+      type: 'text',
+      text: quick_reply.text,
+      quickReply: QuickReply.quick_reply_items(quick_reply)
+    }
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
+      message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
+      if message.save
+        puts("save success")
+        lineuser.update_lastmessage(message)
+      end
+    end
   end
 
 end
