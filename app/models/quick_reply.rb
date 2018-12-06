@@ -70,10 +70,10 @@ class QuickReply < ApplicationRecord
   end
 
   def items_param
-    items = quick_reply.quick_reply_items
+    items = self.quick_reply_items
     items_array = []
     items.each do |item|
-      data = "[#{quick_reply.reply_type}][#{item.id}]" + item.text
+      data = "[#{self.reply_type}][#{item.id}]" + item.text
       pushed_item = {:type=>"action",
                 :action=>{
                           :type => "postback",
@@ -88,15 +88,15 @@ class QuickReply < ApplicationRecord
   end
 
   def days_param
-    return nil if quick_reply.reply_type != 3
+    return nil if reply_type != 3
     day = Time.now
-    duration_days = quick_reply.quick_reply_schedule.duration_days
+    duration_days = self.quick_reply_schedule.duration_days
     items_array = []
     duration_days.times do |i|
       day += 60*60*24 if i != 0
-      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + day.strftime("%Y-%m-%d")
-      pushed_item = self.pushed_item(data, day.strftime("%m月%d日"))
-      items_array.push(pushed_item)
+      data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
+      item = self.create_item(data, day.strftime("%m月%d日"))
+      items_array.push(item)
     end
     return {:items => items_array}
   end
@@ -115,14 +115,14 @@ class QuickReply < ApplicationRecord
       day += 60*30*i
       if available_day_array[count + i] == 0
         data = "[4][time]" + day.strftime("%Y-%m-%d %H:%M")
-        pushed_item = self.pushed_item(data, day.strftime("%H:%M"))
-        items_array.push(pushed_item)
+        item = self.create_item(data, day.strftime("%H:%M"))
+        items_array.push(item)
       end
     end
     return {:items => items_array}
   end
 
-  def self.pushed_item(data, label)
+  def self.create_item(data, label)
     return pushed_item = {:type=>"action",
                   :action=>{
                             :type => "postback",
