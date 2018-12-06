@@ -112,7 +112,7 @@ class QuickReply < ApplicationRecord
     items_array = []
     num.times do |i|
       count = start_count
-      day += 60*30*i
+      day += 60*30
       if available_day_array[count + i] == 0
         data = "[4][time]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
