@@ -62,12 +62,20 @@ class  Manager
       quick_reply = quick_reply_item.quick_reply
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
       Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
+      self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
-      Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+      day = Time.parse(data[:text])
+      message = {
+        type: 'text',
+        text: day.strftime("%m月%d日"),
+        quickReply: quick_reply.times_param(day, 10, 20)
+      }
+      self.client(bot).push_message(lineuser.uid, message)
+      #Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+    when 4
     end
-    self.advance_lineuser_phase(lineuser, quick_reply.form)
   end
 
   def self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_or_item)
@@ -103,7 +111,7 @@ class  Manager
       message = {
         type: 'text',
         text: quick_reply.text,
-        quickReply: QuickReply.quick_reply_items_param(quick_reply)
+        quickReply: quick_reply.items_param
       }
     when 2
 
@@ -111,7 +119,7 @@ class  Manager
       message = {
         type: 'text',
         text: quick_reply.text,
-        quickReply: GoogleCalendar.quick_reply_days(quick_reply)
+        quickReply: quick_reply.days_param
       }
 
     end
@@ -395,13 +403,18 @@ class  Manager
       48.times do |j|
         available_array.push(0)
       end
-      calendar_events.each do |event|
-        available_array = Manager.available_time(event, day + (60*60*24*(i)), available_array)
-      end
+      available_array = self.available_array_day(calendar_events, day + (60*60*24*(i)), available_array)
       available_array_week.push(available_array)
     end
     p available_array_week
     available_array_week
+  end
+
+  def self.available_array_day(calendar_events, day, available_array)
+    calendar_events.each do |event|
+      available_array = Manager.available_time(event, day, available_array)
+    end
+    return available_array
   end
 
   def self.push_quick_reply_calendar(lineuser, quick_reply)
