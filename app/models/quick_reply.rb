@@ -101,7 +101,7 @@ class QuickReply < ApplicationRecord
     return {:items => items_array}
   end
 
-  def times_param(day, num, start_count)
+  def times_param(quick_reply, day, num, start_count)
     #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
     day = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     calendar_events = GoogleCalendar.get_events(self.form.bot)
@@ -118,7 +118,7 @@ class QuickReply < ApplicationRecord
       count = start_count
       day += 60*30 if i != 0
       if available_day_array[count + i] == 0
-        data = "[4][time]" + day.strftime("%Y-%m-%d %H:%M")
+        data = "[4][#{quick_reply.id}]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
         items_array.push(item)
       end

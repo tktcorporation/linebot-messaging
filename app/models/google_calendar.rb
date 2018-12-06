@@ -4,6 +4,7 @@ class GoogleCalendar
   require 'googleauth/stores/file_token_store'
   require 'fileutils'
   require 'time'
+  require 'securerandom'
 
   def self.callback_process(bot, code)
     client = Signet::OAuth2::Client.new(self.client_options(bot))
@@ -18,7 +19,8 @@ class GoogleCalendar
     google_api_token.save!
   end
 
-  def self.create_event(bot)
+  def self.create_event(quick_reply, start_time, duration, lineuser)
+    bot = quick_reply.form.bot
     client = Signet::OAuth2::Client.new(
       client_id: bot.google_api_set.client_id,
       client_secret: bot.google_api_set.client_secret,
@@ -29,14 +31,14 @@ class GoogleCalendar
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
-    calendar_id = "primary"
-    unique_id = "tkt1212"
+    calendar_id = "catalist"
+    unique_id = ("catalist#{SecureRandom.hex(8)}")
     event_id = Modules::Base32.encode32hex(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
-          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: DateTime.parse("2018-12-03T10:00").rfc3339),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time:DateTime.parse("2018-12-04T10:00").rfc3339),
-          summary: 'aさん面談' ,
-          description: '説明文',
+          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
+          summary: quick_reply.quick_reply_schedule.summary,
+          description: "「#{lineuser.name}」の#{quick_reply.quick_reply_schedule.summary}",
           id: event_id,
         })
     service.insert_event(calendar_id, event)
@@ -92,27 +94,6 @@ class GoogleCalendar
       p "=============================="
     end
     return calendar_items
-  end
-
-  def self.quick_reply_days(quick_reply)
-    return nil if quick_reply.reply_type != 3
-    day = Time.now
-    duration_days = quick_reply.quick_reply_schedule.duration_days
-    items_array = []
-    duration_days.times do |i|
-      day += 60*60*24 if i != 0
-      data = "[#{quick_reply.reply_type}][#{quick_reply.id}]" + day.strftime("%Y-%m-%d")
-      pushed_item = {:type=>"action",
-                :action=>{
-                          :type => "postback",
-                          :label => day.strftime("%m月%d日"),
-                          :data => data,
-                          :text => day.strftime("%m月%d日")
-                          }
-              }
-      items_array.push(pushed_item)
-    end
-    quick_reply = {:items => items_array}
   end
 
   private
