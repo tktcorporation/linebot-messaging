@@ -77,9 +77,11 @@ class  Manager
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       time = Time.parse(data[:text])
+      #ここに確認処理をはさむ必要があるかもしれない
       GoogleCalendar.create_event(quick_reply, time, 1, lineuser)
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+      self.advance_lineuser_phase(lineuser, quick_reply.form)
     end
   end
 
@@ -119,7 +121,11 @@ class  Manager
         quickReply: quick_reply.items_param
       }
     when 2
-
+      message = {
+        type: 'text',
+        text: quick_reply.text
+      }
+      QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
       message = {
         type: 'text',
@@ -169,6 +175,16 @@ class  Manager
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
     message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
+    if lineuser.quick_reply_text_flag.present?
+      if lineuser.quick_reply_text_flag.is_accepting == true
+        #「これでいいですか？」などの確認作業を入れる必要あり
+        ResponseDatum.save_data(lineuser, lineuser.quick_reply_text_flag.quick_reply.id, text)
+        QuickReplyTextFlag.accepted(lineuser)
+        #quickreplyを次に進める
+        self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+        self.advance_lineuser_phase(lineuser, quick_reply.form)
+      end
+    end
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot_id, log_text)
     puts("seve message succes")
