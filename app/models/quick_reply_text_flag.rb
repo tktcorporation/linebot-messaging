@@ -7,7 +7,7 @@ class QuickReplyTextFlag < ApplicationRecord
 
   def self.initialize_accepting(quick_reply, lineuser)
     quick_reply_text = quick_reply.quick_reply_text
-    flag = quick_reply_text.quick_reply_text_flag.find_or_initialize_by(quick_reply_text_id: quick_reply_text.id)
+    flag = quick_reply_text.quick_reply_text_flags.find_or_initialize_by(quick_reply_text_id: quick_reply_text.id)
     flag.update_attributes!(is_accepting: true, lineuser_id: lineuser.id)
   end
 
