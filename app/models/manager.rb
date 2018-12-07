@@ -61,7 +61,7 @@ class  Manager
       quick_reply_item = QuickReplyItem.get(data[:id])
       quick_reply = quick_reply_item.quick_reply
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      Manager.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
+      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
@@ -91,11 +91,11 @@ class  Manager
         switch_quick_reply_id = quick_reply_item.next_reply_id
         lineuser.set_next_reply_id(switch_quick_reply_id)
       else
-        Manager.set_next_reply_id_from_quick_reply(quick_reply_item.quick_reply, lineuser)
+        self.set_next_reply_id_from_quick_reply(quick_reply_item.quick_reply, lineuser)
       end
     when QuickReply
       quick_reply = quick_reply_or_item
-      Manager.set_next_reply_id_from_quick_reply(quick_reply, lineuser)
+      self.set_next_reply_id_from_quick_reply(quick_reply, lineuser)
     end
   end
 
