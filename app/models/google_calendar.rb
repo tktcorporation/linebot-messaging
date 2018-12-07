@@ -32,7 +32,8 @@ class GoogleCalendar
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
-    calendar_id = "primary"
+    p service.authorization.inspect
+    calendar_id = "tktcorporation.go@gmail.com"
     unique_id = "catalist#{SecureRandom.hex(8)}"
     event_id = "CDGN8OBCD5PN8"
     #Base64.strict_encode64(unique_id).gsub("=","")
@@ -44,7 +45,7 @@ class GoogleCalendar
           end: Google::Apis::CalendarV3::EventDateTime.new(date_time: DateTime.parse("2018-12-08T11:00").rfc3339),
           summary: quick_reply.quick_reply_schedule.summary.to_s,
           description: "「#{lineuser.name}」の#{quick_reply.quick_reply_schedule.summary}",
-          id: event_id,
+          id: event_id
         })
     service.insert_event(calendar_id, event)
 
