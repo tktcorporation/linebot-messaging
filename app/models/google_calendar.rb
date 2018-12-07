@@ -40,7 +40,7 @@ class GoogleCalendar
           start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
           end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
           summary: quick_reply.quick_reply_schedule.summary.to_s,
-          description: "「#{lineuser.name}」の#{quick_reply.quick_reply_schedule.summary}"
+          description: "「#{quick_reply.quick_reply_schedule.summary}」ユーザー：「#{lineuser.name}」"
           #id: event_id
         })
     service.insert_event(calendar_id, event)
