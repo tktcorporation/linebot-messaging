@@ -178,7 +178,8 @@ class  Manager
     if lineuser.quick_reply_text_flag.present?
       if lineuser.quick_reply_text_flag.is_accepting == true
         #「これでいいですか？」などの確認作業を入れる必要あり
-        ResponseDatum.save_data(lineuser, lineuser.quick_reply_text_flag.quick_reply_text.quick_reply.id, text)
+        quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
+        ResponseDatum.save_data(lineuser, quick_reply.id, text)
         QuickReplyTextFlag.accepted(lineuser)
         #quickreplyを次に進める
         self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
