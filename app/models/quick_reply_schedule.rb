@@ -1,5 +1,5 @@
 class QuickReplySchedule < ApplicationRecord
-  belongs_to :quick_reply, optional: true
+  belongs_to :quick_reply
 
   validates :quick_reply_id, presence: true
   validates :duration_days, presence: true
