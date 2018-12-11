@@ -30,9 +30,9 @@ class QuickReply < ApplicationRecord
     self.undeleted.where(form_id: quick_reply.form_id, next_reply_id: quick_reply.id)
   end
 
-  def self.create(form_id, quick_reply_params)
+  def self.optional_create(form_id, quick_reply_params)
     form = Form.get(form_id)
-    quick_reply = form.quick_replies.new(quick_reply_params)
+    quick_reply = form.quick_replies.new(name: quick_reply_params[:name], text: quick_reply_params[:text], reply_type: quick_reply_params[:reply_type])
     if before_quick_reply = form.quick_replies.order(order_count: :desc).limit(1)[0]
       quick_reply.order_count = before_quick_reply.order_count + 1
       quick_reply.save!
@@ -42,6 +42,27 @@ class QuickReply < ApplicationRecord
       quick_reply.save!
       quick_reply.form.update_attributes!(first_reply_id: quick_reply.id)
     end
+    case quick_reply.reply_type
+    when 0
+    when 1
+    when 2
+      self.create_text(quick_reply)
+    when 3
+      self.create_schedule(quick_reply, quick_reply_params[:duration_days], quick_reply_params[:summary])
+    end
+    return quick_reply
+  end
+
+  def self.create_schedule(quick_reply, duration_days, summary)
+    quick_reply.is_normal_message = false
+    quick_reply.save!
+    QuickReplySchedule.create_option(quick_reply, duration_days, summary)
+  end
+
+  def self.create_text(quick_reply)
+    quick_reply.is_normal_message = false
+    quick_reply.save!
+    QuickReplyText.create_option(quick_reply)
   end
 
   def relational_delete

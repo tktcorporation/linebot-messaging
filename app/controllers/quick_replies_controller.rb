@@ -15,7 +15,9 @@ class QuickRepliesController < ApplicationController
   end
 
   def create
-    QuickReply.create(params[:form_id], quick_reply_params)
+    ActiveRecord::Base.transaction do
+      QuickReply.optional_create(params[:form_id], quick_reply_params)
+    end
     redirect_to "/forms/#{params[:form_id]}"
   end
 
@@ -30,6 +32,6 @@ class QuickRepliesController < ApplicationController
       QuickReply.get(params[:id]).form.bot.user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
     end
     def quick_reply_params
-      params.require(:quick_reply).permit(:name, :descrive_text, :text)
+      params.require(:quick_reply).permit(:name, :text, :reply_type, :summary, :duration_days)
     end
 end

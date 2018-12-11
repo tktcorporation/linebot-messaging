@@ -4,8 +4,8 @@ class QuickReplyText < ApplicationRecord
 
   validates :quick_reply_id, presence: true
 
-  def self.initialize(quick_reply)
-    quick_reply_text = quick_reply.quick_reply_text.find_or_initialize_by(quick_reply_id: quick_reply.id)
+  def self.create_option(quick_reply)
+    quick_reply_text = QuickReplyText.find_or_initialize_by(quick_reply_id: quick_reply.id)
     quick_reply_text.save
   end
 end
