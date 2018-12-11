@@ -3,14 +3,15 @@ class FormsController < ApplicationController
   layout 'bot_layout'
 
   def index
-    bot = Bot.get(params[:bot_id])
-    @forms = bot.forms.includes(:converted_lineusers, :session_lineusers).where(is_active: false)
-    @active_form = bot.forms.includes(:converted_lineusers, :session_lineusers).find_by(is_active: true)
+    @bot = Bot.get(params[:bot_id])
+    @forms = @bot.forms.includes(:converted_lineusers, :session_lineusers).where(is_active: false)
+    @active_form = @bot.forms.includes(:converted_lineusers, :session_lineusers).find_by(is_active: true)
     @new_form = Form.new
   end
 
   def show
     @form = Form.includes(:quick_replies).get(params[:id])
+    @bot = @form.bot
     @quick_replies = @form.quick_replies.includes(:quick_reply_items)
     @quick_reply = @form.quick_replies.new
   end
