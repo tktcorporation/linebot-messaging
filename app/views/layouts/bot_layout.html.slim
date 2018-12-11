@@ -35,7 +35,8 @@
         nav.level
           .level-left
             .level-item
-              label.label.is-large ボット名
+              label.label.is-large
+                = @bot.name
           .level-right
             .level-item
               = link_to "戻る", "/", class: "button"

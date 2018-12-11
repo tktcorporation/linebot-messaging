@@ -9,6 +9,7 @@ class LineusersController < ApplicationController
 
   def show
     form = Form.includes(:quick_replies).get(params[:id])
+    @bot = form.bot
     @quick_replies = form.quick_replies.includes(:quick_reply_items)
     @quick_reply = form.quick_replies.new
   end
