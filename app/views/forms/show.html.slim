@@ -75,21 +75,6 @@
       #tab-content
         .form-tab.is-active data-content="1"
           = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-            //label.label Type
-            //.field
-              .control
-                label.radio
-                  = f.radio_button :reply_type, 0, {required: ""}
-                  span normal
-                label.radio
-                  = f.radio_button :reply_type, 1, {}
-                  span select
-                label.radio
-                  = f.radio_button :reply_type, 2, {}
-                  span free text
-                label.radio
-                  = f.radio_button :reply_type, 3, {}
-                  span schedule
             label.label.is-large 通常メッセージ
             = f.hidden_field :reply_type, :value => 0
             label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
@@ -149,7 +134,7 @@
             label.label 何日先までで予定調整をするか
             .field
               .control
-                = f.number_field :duration_days, class: "input", required: ""
+                = f.number_field :duration_days, in: 1...8, class: "input", required: ""
             p.control
               = f.submit "追加", class: "button is-info"
 
