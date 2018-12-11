@@ -52,3 +52,17 @@
         opacity: 0;
     }
 }
+
+#tab-content {
+    .form-tab {
+        display: none;
+    }
+    .form-tab.is-active {
+        display: block;
+    }
+}
+
+.mini-label {
+    font-weight: 700;
+    display: block;
+}
