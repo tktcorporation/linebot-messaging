@@ -160,7 +160,7 @@ class GoogleCalendar
       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
       scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri:"https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback",
+      redirect_uri:"https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/#{bot.callback_hash}",
       additional_parameters: {prompt:'consent'},
     }
   end
