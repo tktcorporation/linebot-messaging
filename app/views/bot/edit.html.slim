@@ -5,11 +5,10 @@
         label.label.is-large Bot設定
         = render partial: "shared/error_messages", locals: {model: @bot}
         = form_with model: @bot, url: bot_path, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-          label.label 管理用Bot名
+          label.label 管理用Bot名 (ここに表示される名前は管理用のものであり、ユーザー側からはLINEDevelopperで設定された名前が表示されます)
           .field
             p.control
               = f.text_field :name, class: "input", required: ""
-            p ここに表示される名前は管理用のものであり、ユーザー側からはLINEDevelopperで設定された名前が表示されます
           label.label 説明(任意)
           .field
             p.control
@@ -26,11 +25,25 @@
           .field
             p.control
               = f.text_field :channel_secret, class: "input", required: ""
+
           label.label LINENotify アクセストークン (LINENotifyからの通知を有効にする場合は必須)
           = fields_for @bot.notify_token do |af|
             .field
               p.control
                 = af.text_field :access_token, class: "input", required: ""
+
+          label.label GoogleAPI ClientID  (カレンダー機能を使用する場合は必要)
+          = fields_for @bot.google_api_set do |af|
+            .field
+              p.control
+                = af.text_field :client_id, class: "input"
+
+          label.label GoogleAPI ClientSecret (カレンダー機能を使用する場合は必要)
+          = fields_for @bot.google_api_set do |af|
+            .field
+              p.control
+                = af.text_field :client_secret, class: "input"
+
           .field
             .control
               label.checkbox

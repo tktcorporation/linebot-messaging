@@ -21,7 +21,8 @@ class BotController < ApplicationController
   def update
     bot = Bot.get(params[:id])
     if bot.update(bot_params)
-      NotifyToken.update_or_create(params[:notify_token][:access_token], params[:id])
+      NotifyToken.update_or_create(params[:id], params[:notify_token][:access_token])
+      GoogleApiSet.update_or_create(params[:id], params[:google_api_set][:client_id], params[:google_api_set][:client_secret])
     else
       flash[:notice] = "更新に失敗しました"
     end
@@ -34,7 +35,7 @@ class BotController < ApplicationController
 
   private
     def bot_params
-      params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify)
+      params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify, :client_id, :client_secret)
     end
     def check_auth
       Bot.get(params[:id]).user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
