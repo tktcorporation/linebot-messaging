@@ -27,22 +27,22 @@
               = f.text_field :channel_secret, class: "input", required: ""
 
           label.label LINENotify アクセストークン (LINENotifyからの通知を有効にする場合は必須)
-          = fields_for @bot.notify_token do |af|
+          = f.fields_for :notify_token do |af|
             .field
               p.control
-                = af.text_field :access_token, class: "input", required: ""
+                = af.text_field :access_token, class: "input"
 
           label.label GoogleAPI ClientID  (カレンダー機能を使用する場合は必要)
-          = fields_for @bot.google_api_set do |af|
+          = f.fields_for :google_api_set do |bf|
             .field
               p.control
-                = af.text_field :client_id, class: "input"
+                = bf.text_field :client_id, class: "input"
 
           label.label GoogleAPI ClientSecret (カレンダー機能を使用する場合は必要)
-          = fields_for @bot.google_api_set do |af|
+          = f.fields_for :google_api_set do |bf|
             .field
               p.control
-                = af.text_field :client_secret, class: "input"
+                = bf.text_field :client_secret, class: "input"
 
           .field
             .control
