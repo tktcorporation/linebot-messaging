@@ -70,18 +70,32 @@ class  Manager
       message = {
         type: 'text',
         text: day.strftime("%m月%d日"),
-        quickReply: quick_reply.times_param(quick_reply, day, 10, 32)
+        quickReply: quick_reply.times_param(day, 10, 32)
       }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 4
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
-      time = Time.parse(data[:text])
-      #ここに確認処理をはさむ必要があるかもしれない
-      GoogleCalendar.create_event(quick_reply, time, 1, lineuser)
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
-      self.advance_lineuser_phase(lineuser, quick_reply.form)
+      #ここに確認処理をはさむ必要があるかもしれない
+      message = {
+        type: 'text',
+        text: "#{data[:text]}で決定しますか",
+        quickReply: quick_reply.check_param
+      }
+      self.client(lineuser.bot).push_message(lineuser.uid, message)
+    when 99
+      quick_reply = QuickReply.get(data[:id])
+      case data[:text]
+      when "決定"
+        response_text = quick_reply.response_datum.response_text
+        day = Time.parse(response_text)
+        GoogleCalendar.create_event(quick_reply, day, 1, lineuser)
+        self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+        self.advance_lineuser_phase(lineuser, quick_reply.form)
+      when "戻る"
+        self.advance_lineuser_phase(lineuser, quick_reply.form)
+      end
     end
   end
 
