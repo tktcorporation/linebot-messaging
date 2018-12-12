@@ -6,11 +6,8 @@ class NotifyToken < ApplicationRecord
     self.find_by(bot_id: bot_id)
   end
 
-  def self.update_or_create(token, bot_id)
-    if notify_token = self.get_with_bot_id(bot_id)
-      notify_token.update(access_token: token)
-    else
-      self.create(access_token: token, bot_id: bot_id)
-    end
+  def self.update_or_create(bot_id, token)
+    notify_token = self.find_or_initialize_by(bot_id: bot_id)
+    notify_token.update_attributes!(access_token: token)
   end
 end
