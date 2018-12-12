@@ -175,21 +175,38 @@ class  Manager
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
     message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
+    log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
+    self.push_log(lineuser.bot_id, log_text)
+    puts("seve message succes")
+    self.check_quick_reply_text(lineuser, text)
+    return message
+  end
+
+  def self.check_quick_reply_text(lineuser, text)
     if lineuser.quick_reply_text_flag.present?
       if lineuser.quick_reply_text_flag.is_accepting == true
-        #「これでいいですか？」などの確認作業を入れる必要あり
         quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
-        ResponseDatum.save_data(lineuser, quick_reply.id, text)
-        QuickReplyTextFlag.accepted(lineuser)
+        #確認処理
+        if text.length < 255
+          if quick_reply.response_datum.present?
+            if text == quick_reply.response_datum.response_text
+              QuickReplyTextFlag.accepted(lineuser)
+            else
+              ResponseDatum.save_data(lineuser, quick_reply.id, text)
+              self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
+            end
+          else
+            ResponseDatum.save_data(lineuser, quick_reply.id, text)
+            self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
+          end
+        else
+          self.push(lineuser, "255字以内で入力してください。")
+        end
         #quickreplyを次に進める
         self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
-    log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
-    self.push_log(lineuser.bot_id, log_text)
-    puts("seve message succes")
-    return message
   end
 
   def self.save_message(event, text)
