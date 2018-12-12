@@ -126,8 +126,9 @@ class QuickReply < ApplicationRecord
   def check_param
     items_array = []
     2.times do |i|
-      data = "[#{99}]" + "[#{id}]" + i == 0 ? "決定" : "戻る"
-      item = QuickReply.create_item(data, i == 0 ? "決定" : "戻る")
+      check = i == 0 ? "決定" : "戻る"
+      data = "[#{99}]" + "[#{id}]" + check
+      item = QuickReply.create_item(data, check)
       items_array.push(item)
     end
     return {:items => items_array}
