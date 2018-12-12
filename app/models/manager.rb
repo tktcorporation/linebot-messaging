@@ -188,8 +188,8 @@ class  Manager
         quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
         #確認処理
         if text.length < 255
-          if quick_reply.response_datum.present?
-            if text == quick_reply.response_datum.response_text
+          if quick_reply.response_data.present?
+            if text == quick_reply.response_data.response_text
               QuickReplyTextFlag.accepted(lineuser)
             else
               ResponseDatum.save_data(lineuser, quick_reply.id, text)
