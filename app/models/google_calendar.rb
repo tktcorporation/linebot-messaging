@@ -53,7 +53,7 @@ class GoogleCalendar
     google_api_token.expires_in = response['expires_in']
     google_api_token.refresh_token = response['refresh_token']
     google_api_token.token_type = response['token_type']
-    #retry
+    retry
   end
 
   def self.get_events(bot)
@@ -96,6 +96,15 @@ class GoogleCalendar
       p "=============================="
     end
     return calendar_items
+  rescue Google::Apis::AuthorizationError
+    response = client.refresh!
+    google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
+    google_api_token.access_token = response['access_token']
+    google_api_token.scope = response['scope']
+    google_api_token.expires_in = response['expires_in']
+    google_api_token.refresh_token = response['refresh_token']
+    google_api_token.token_type = response['token_type']
+    retry
   end
 
   private
