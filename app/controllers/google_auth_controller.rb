@@ -8,16 +8,16 @@ class GoogleAuthController < ApplicationController
   require 'time'
 
   def redirect
-    bot = Bot.get(1)
+    bot = Bot.get(params[:bot_id])
     client = Signet::OAuth2::Client.new(client_options(bot))
     redirect_to client.authorization_uri.to_s
   end
 
   def callback
     #bot = Bot.get_by_google_auth_hash(params[:hash])
-    bot = Bot.get(1)
+    bot = Bot.get_with_callback_hash(params[:hash])
     GoogleCalendar.callback_process(bot, params[:code])
-    redirect_to bot_url(id: 1)
+    redirect_to bot_url(id: bot.id)
   end
 
   def create_event
@@ -39,7 +39,7 @@ class GoogleAuthController < ApplicationController
       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
       scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri: 'https://catalyst-app-production.herokuapp.com/google_auth/callback',
+      redirect_uri: "https://catalyst-app-production.herokuapp.com/google_auth/callback/#{bot.callback_hash}",
       additional_parameters: {prompt:'consent'},
     }
   end
