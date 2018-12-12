@@ -135,7 +135,14 @@
             .field
               .control
                 = f.number_field :duration_days, in: 1...8, class: "input", required: ""
-            p.control
-              = f.submit "追加", class: "button is-info"
+            - if @bot.google_api_set.refresh_token.present?
+              p.control
+                = link_to "テスト作成", "/google_auth/test_create/#{@bot.id}", class: "button is-info"
+              p 現在時刻から30分間のテストイベントを登録されているGoogleCalendarに作成します。カレンダーに「テストイベント」という名前の予定が登録されていることを確認してから、下記の「追加」を行なってください。
+              p.control
+                = f.submit "追加", class: "button is-info"
+            - else
+              p.control
+                = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
 
   button.modal-close.is-large aria-label="close"

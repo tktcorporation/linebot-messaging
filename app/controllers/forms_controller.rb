@@ -11,7 +11,8 @@ class FormsController < ApplicationController
 
   def show
     @form = Form.includes(:quick_replies).get(params[:id])
-    @bot = @form.bot
+    bot_id = @form.bot.id
+    @bot = Bot.includes(:google_api_set).get(bot_id)
     @quick_replies = @form.quick_replies.includes(:quick_reply_items)
     @quick_reply = @form.quick_replies.new
   end
