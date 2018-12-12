@@ -21,7 +21,12 @@ class GoogleCalendar
   end
 
   def self.create_event(quick_reply, start_time, duration, lineuser)
+    retry_counter = 0
     bot = quick_reply.form.bot
+    if !bot.google_api_set.present?
+      Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
+      return nil
+    end
     client = Signet::OAuth2::Client.new(
       client_id: bot.google_api_set.client_id,
       client_secret: bot.google_api_set.client_secret,
@@ -44,6 +49,7 @@ class GoogleCalendar
           #id: event_id
         })
     service.insert_event(calendar_id, event)
+    return true
 
   rescue Google::Apis::AuthorizationError
     response = client.refresh!
@@ -53,10 +59,16 @@ class GoogleCalendar
     google_api_token.expires_in = response['expires_in']
     google_api_token.refresh_token = response['refresh_token']
     google_api_token.token_type = response['token_type']
-    #retry
+    retry_counter += 1
+    if retry_counter < 5
+      retry
+    else
+      Manager.push_log(bot.id, "カレンダーイベントの作成に失敗しました。「GoogleApi」の設定を確認してください。")
+    end
   end
 
   def self.get_events(bot)
+    retry_counter = 0
     client = Signet::OAuth2::Client.new(
       client_id: bot.google_api_set.client_id,
       client_secret: bot.google_api_set.client_secret,
@@ -96,6 +108,48 @@ class GoogleCalendar
       p "=============================="
     end
     return calendar_items
+  rescue Google::Apis::AuthorizationError
+    response = client.refresh!
+    google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
+    google_api_token.access_token = response['access_token']
+    google_api_token.scope = response['scope']
+    google_api_token.expires_in = response['expires_in']
+    google_api_token.refresh_token = response['refresh_token']
+    google_api_token.token_type = response['token_type']
+    retry_counter += 1
+    if retry_counter < 5
+      retry
+    else
+      Manager.push_log(bot.id, "カレンダーイベントの作成に失敗しました。「GoogleApi」の設定を確認してください。")
+    end
+  end
+
+  def self.test_create_event(bot, start_time, duration)
+    if !bot.google_api_set.present?
+      Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
+      return nil
+    end
+    client = Signet::OAuth2::Client.new(
+      client_id: bot.google_api_set.client_id,
+      client_secret: bot.google_api_set.client_secret,
+      access_token: bot.google_api_set.access_token,
+      refresh_token: bot.google_api_set.refresh_token,
+      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
+    )
+    client.refresh!
+    service = Google::Apis::CalendarV3::CalendarService.new
+    service.authorization = client
+    calendar_id = "primary"
+    event = Google::Apis::CalendarV3::Event.new({
+          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
+          summary: "テストイベント",
+          description: "テストイベント"
+        })
+    service.insert_event(calendar_id, event)
+    return true
+  rescue Google::Apis::AuthorizationError
+    Manager.push_log(bot.id, "カレンダーイベントの作成に失敗しました。「GoogleApi」の設定を確認してください。")
   end
 
   private
@@ -106,7 +160,7 @@ class GoogleCalendar
       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
       scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri: 'https://catalyst-app-production.herokuapp.com/google_auth/callback',
+      redirect_uri:"https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/#{bot.callback_hash}",
       additional_parameters: {prompt:'consent'},
     }
   end

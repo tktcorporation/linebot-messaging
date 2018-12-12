@@ -29,6 +29,10 @@ class Bot < ApplicationRecord
     self.undeleted.find(bot_id)
   end
 
+  def self.get_with_form_id(form_id)
+    self.undeleted.find_by(form_id: form_id)
+  end
+
   def self.get_with_channel_secret(channel_secret)
     self.undeleted.find_by(channel_secret: channel_secret)
   end

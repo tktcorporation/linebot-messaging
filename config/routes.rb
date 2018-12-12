@@ -6,8 +6,9 @@ Rails.application.routes.draw do
   post   '/callback', to: 'callback#callback'
   post   '/callback/:hash', to: 'callback#callback'
 
-  get '/google_auth/redirect'
-  get '/google_auth/callback'
+  get '/google_auth/redirect/:bot_id', to: 'google_auth#redirect'
+  get '/google_auth/callback/:hash', to: 'google_auth#callback'
+  get '/google_auth/test_create/:bot_id', to: 'google_auth#test_create'
   get '/google_auth/create_event'
   get '/google_auth/get_events'
 
