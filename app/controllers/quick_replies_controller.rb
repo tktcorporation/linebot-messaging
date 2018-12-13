@@ -23,8 +23,19 @@ class QuickRepliesController < ApplicationController
 
   def destroy
     quick_reply = QuickReply.get(params[:id])
-    quick_reply.relational_delete
+    ActiveRecord::Base.transaction do
+      quick_reply.relational_delete
+    end
     redirect_to "/forms/#{quick_reply.form.id}"
+  end
+
+  def update
+    quick_reply = QuickReply.get(params[:id])
+    ActiveRecord::Base.transaction do
+      quick_reply.update_attributes!(quick_reply_flow_params)
+      QuickReplyItem.update_nexts(items_flow_params)
+    end
+    #redirect_to "/forms/#{quick_reply.form.id}/edit_flow"
   end
 
   private
@@ -33,5 +44,11 @@ class QuickRepliesController < ApplicationController
     end
     def quick_reply_params
       params.require(:quick_reply).permit(:name, :text, :reply_type, :summary, :duration_days)
+    end
+    def quick_reply_flow_params
+      params.require(:quick_reply).permit(:next_reply_id)
+    end
+    def items_flow_params
+      params.require(:quick_reply).permit(quick_reply_items: :next_reply_id)[:quick_reply_items]
     end
 end

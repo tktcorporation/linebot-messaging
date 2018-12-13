@@ -17,6 +17,14 @@ class FormsController < ApplicationController
     @quick_reply = @form.quick_replies.new
   end
 
+  def edit_flow
+    @form = Form.includes(:quick_replies).get(params[:id])
+    bot_id = @form.bot.id
+    @bot = Bot.includes(:google_api_set).get(bot_id)
+    @quick_replies = @form.quick_replies.includes(:quick_reply_items)
+    @quick_replies_select_array = QuickReply.select_array(@quick_replies)
+  end
+
   def create
     bot = Bot.get(params[:bot_id])
     form = bot.forms.new(form_params)

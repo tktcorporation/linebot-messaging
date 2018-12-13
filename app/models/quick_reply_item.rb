@@ -18,4 +18,11 @@ class QuickReplyItem < ApplicationRecord
   def self.get(id)
     self.undeleted.find(id)
   end
+
+  def self.update_nexts(items_flow_params)
+    items_flow_params.to_h.map do |id, item_param|
+      item = self.get(id)
+      item.update_attributes(item_param)
+    end
+  end
 end
