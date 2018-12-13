@@ -65,6 +65,10 @@ class QuickReply < ApplicationRecord
     QuickReplyText.create_option(quick_reply)
   end
 
+  def self.select_array(quick_replies)
+    quick_replies.map{|reply| [reply.name, reply.id]}
+  end
+
   def relational_delete
     QuickReply.transaction do
       before_quick_replies = QuickReply.get_before_quick_reply_plural(self)

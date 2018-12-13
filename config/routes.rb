@@ -19,8 +19,9 @@ Rails.application.routes.draw do
       resources :forms, shallow: true do
         member do
           patch :switch_active
+          get :edit_flow
         end
-        resources :quick_replies, only: [:create, :destroy], shallow: true do
+        resources :quick_replies, only: [:create, :destroy, :update], shallow: true do
           resources :quick_reply_items, only: [:create, :destroy], shallow: true
         end
       end
