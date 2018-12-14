@@ -28,8 +28,8 @@ class QuickReply < ApplicationRecord
     items.each do |item|
       data = "[#{self.reply_type}][#{item.id}]" + item.text
       label = "回答：" + item.text
-      QuickReply.create_item(data, label)
-      items_array.push(pushed_item)
+      item = QuickReply.create_item(data, label)
+      items_array.push(item)
     end
     return {:items => items_array}
   end
