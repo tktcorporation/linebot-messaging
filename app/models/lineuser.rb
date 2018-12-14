@@ -67,6 +67,10 @@ class Lineuser < ApplicationRecord
     session_lineuser.save
   end
 
+  def is_converted
+    self.converted_lineuser.present? ? true : false
+  end
+
   def set_next_reply_id(next_reply_id)
     self.update_attributes!(quick_reply_id: next_reply_id)
   end

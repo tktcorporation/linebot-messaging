@@ -256,18 +256,24 @@ class  Manager
       lineuser = Lineuser.find_or_create(uid, bot_id)
       case event
       when Line::Bot::Event::Follow
-        self.follow_event(lineuser)
+        ActiveRecord::Base.transaction do
+          self.follow_event(lineuser)
+        end
       when Line::Bot::Event::Unfollow
         lineuser.quick_reply_id = nil
         lineuser.is_unfollowed = true
         lineuser.save
       when Line::Bot::Event::Postback
-        self.postback_event(event, lineuser)
+        ActiveRecord::Base.transaction do
+          self.postback_event(event, lineuser)
+        end
       when Line::Bot::Event::Message
         message = self.message_event(event, lineuser)
         lineuser.update_lastmessage(message)
       end
     end
+  rescue => e
+    logger.fatal e.message
   end
 
   def self.follow_event(lineuser)
@@ -297,12 +303,8 @@ class  Manager
       text = "[位置情報]"
     when Line::Bot::Event::MessageType::Sticker
       #スタンプが送信されるとadvance_lineuser_phase
-      if !ConvertedLineuser.get_with_lineuser(lineuser)
-        if response_data = lineuser.response_data[0]
-          form = response_data.quick_reply.form
-        else
-          form = Form.get_active_with_lineuser(lineuser)
-        end
+      if lineuser.is_converted
+        form = Form.get_active_with_lineuser(lineuser)
         if form
           self.advance_lineuser_phase(lineuser, form)
         end
