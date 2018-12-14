@@ -166,7 +166,7 @@ class QuickReply < ApplicationRecord
                             :type => "postback",
                             :label => label,
                             :data => data,
-                            :displayText => ("回答" + label)
+                            :displayText => ("回答：" + label)
                             }
                 }
   end
