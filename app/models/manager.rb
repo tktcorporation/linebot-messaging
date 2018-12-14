@@ -197,6 +197,7 @@ class  Manager
   end
 
   def self.check_quick_reply_text(lineuser, text)
+    return nil if text === /回答：.+/
     if lineuser.quick_reply_text_flag.present?
       if lineuser.quick_reply_text_flag.is_accepting == true
         quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
@@ -273,7 +274,7 @@ class  Manager
       end
     end
   rescue => e
-    logger.fatal e.message
+    Rails.logger.fatal e.message
   end
 
   def self.follow_event(lineuser)
