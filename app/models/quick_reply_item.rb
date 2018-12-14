@@ -20,6 +20,7 @@ class QuickReplyItem < ApplicationRecord
   end
 
   def self.update_nexts(items_flow_params)
+    #ループの数だけロードが走ってしまう
     items_flow_params.to_h.map do |id, item_param|
       item = self.get(id)
       item.update_attributes(item_param)
