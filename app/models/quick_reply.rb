@@ -27,7 +27,7 @@ class QuickReply < ApplicationRecord
     items_array = []
     items.each do |item|
       data = "[#{self.reply_type}][#{item.id}]" + item.text
-      label = "回答：" + item.text
+      label = item.text
       item = QuickReply.create_item(data, label)
       items_array.push(item)
     end
@@ -166,7 +166,7 @@ class QuickReply < ApplicationRecord
                             :type => "postback",
                             :label => label,
                             :data => data,
-                            :displayText => label
+                            :displayText => ("回答" + label)
                             }
                 }
   end
