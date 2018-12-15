@@ -5,13 +5,21 @@
         label.label.is-large フロー管理
       .column.is-6
         = link_to "フローの追加、削除", form_path(@form.id), class: "button vertical-middle is-info is-outlined float-right"
+    = form_with model: @form, url: form_path(@form.id), data: { parsley_validate: "" }, html: { class: "form"} do |f|
+      label.label First Reply
+      .field.has-addons
+        p.control
+          .select
+            = f.select :first_reply_id, @quick_replies_select_array + [["未選択", nil]], :prompt => "未選択", required: ""
+        p.control
+          = f.submit "更新", class: "button is-info"
     - @quick_replies.each_with_index do |quick_reply, index|
       .box.quick-reply-box
         .field
           label.label.is-large
             = quick_reply.name
         .field
-          label.mini-label type
+          label.mini-label Type
           - case quick_reply.reply_type
           - when 0
             span 通常メッセージ
@@ -22,16 +30,16 @@
           - when 3
             span スケジュール調整
         .field
-          label.mini-label text
+          label.mini-label Text
           span = quick_reply.text
         .field
           = form_with model: quick_reply, url: quick_reply_path(quick_reply.id), data: { parsley_validate: "" }, html: { class: "form"} do |f|
             - if quick_reply.reply_type == 1
               .columns
                 .column.is-4
-                  label.mini-label item
+                  label.mini-label Item
                 .column.is-4
-                  label.mini-label next
+                  label.mini-label Next
               - if quick_reply.quick_reply_items[0]
                 - @select_array = (@quick_replies_select_array + [["未選択", nil]])
                 - quick_reply.quick_reply_items.each do |item|
@@ -47,7 +55,7 @@
               - else
                 p.is-size-7 （通常メッセージ扱い）
             - @select_array = (@quick_replies_select_array + [["終了", nil]])
-            label.label next
+            label.label Next
             .field
               p.control
                 .select
