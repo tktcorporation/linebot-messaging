@@ -220,9 +220,6 @@ class  Manager
         else
           self.push(lineuser, "255字以内で入力してください。")
         end
-        #quickreplyを次に進める
-        self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
-        self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
   end
