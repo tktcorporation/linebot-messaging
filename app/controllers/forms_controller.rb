@@ -38,11 +38,16 @@ class FormsController < ApplicationController
     redirect_to form_url
   end
 
+  def update
+    form = Form.get(params[:id])
+    form.update_attributes!(form_params)
+  end
+
   private
     def check_auth
       Form.get(params[:id]).bot.user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
     end
     def form_params
-      params.require(:form).permit(:name, :describe_text)
+      params.require(:form).permit(:name, :describe_text, :first_reply_id)
     end
 end
