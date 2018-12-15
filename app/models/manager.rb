@@ -61,7 +61,7 @@ class  Manager
       quick_reply_item = QuickReplyItem.get(data[:id])
       quick_reply = quick_reply_item.quick_reply
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
+      self.set_lineuser_to_next_reply_id(lineuser, quick_reply_item)
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
@@ -80,7 +80,7 @@ class  Manager
       #ここに確認処理をはさむ必要があるかもしれない
       message = {
         type: 'text',
-        text: "#{data[:text]}で決定しますか",
+        text: "「#{data[:text]}」で決定しますか",
         quickReply: quick_reply.check_param
       }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
@@ -88,18 +88,25 @@ class  Manager
       quick_reply = QuickReply.get(data[:id])
       case data[:text]
       when "決定"
-        response_text = quick_reply.response_datum.response_text
-        day = Time.parse(response_text)
-        GoogleCalendar.create_event(quick_reply, day, 1, lineuser)
-        self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
-        self.advance_lineuser_phase(lineuser, quick_reply.form)
+        case quick_reply.reply_type.to_i
+        when 3
+          response_text = quick_reply.response_datum.response_text
+          day = Time.parse(response_text)
+          GoogleCalendar.create_event(quick_reply, day, 1, lineuser)
+          self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
+          self.advance_lineuser_phase(lineuser, quick_reply.form)
+         when 4
+          QuickReplyTextFlag.accepted(lineuser)
+          self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
+          self.advance_lineuser_phase(lineuser, quick_reply.form)
+        end
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
   end
 
-  def self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_or_item)
+  def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
     case quick_reply_or_item
     when QuickReplyItem
       quick_reply_item = quick_reply_or_item
@@ -203,22 +210,18 @@ class  Manager
         quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
         #確認処理
         if text.length < 255
-          if quick_reply.response_datum.present?
-            if text == quick_reply.response_datum.response_text
-              QuickReplyTextFlag.accepted(lineuser)
-            else
-              ResponseDatum.save_data(lineuser, quick_reply.id, text)
-              self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
-            end
-          else
-            ResponseDatum.save_data(lineuser, quick_reply.id, text)
-            self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
-          end
+          ResponseDatum.save_data(lineuser, quick_reply.id, text)
+          message = {
+            type: 'text',
+            text: "「#{text}」で決定しますか",
+            quickReply: quick_reply.check_param
+          }
+          self.client(lineuser.bot).push_message(lineuser.uid, message)
         else
           self.push(lineuser, "255字以内で入力してください。")
         end
         #quickreplyを次に進める
-        self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
+        self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
