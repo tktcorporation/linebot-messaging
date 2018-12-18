@@ -304,7 +304,7 @@ class  Manager
       text = "[位置情報]"
     when Line::Bot::Event::MessageType::Sticker
       #スタンプが送信されるとadvance_lineuser_phase
-      if lineuser.is_converted
+      if !lineuser.is_converted
         form = Form.get_active_with_lineuser(lineuser)
         if form
           self.advance_lineuser_phase(lineuser, form)
