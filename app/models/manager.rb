@@ -133,7 +133,6 @@ class  Manager
   end
 
   def self.push_quick_reply(lineuser, quick_reply)
-    p quick_reply.reply_type
     bot = lineuser.bot
     case quick_reply.reply_type
     when 1
@@ -149,17 +148,13 @@ class  Manager
       }
       QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
-      p 1
       message = {
         type: 'text',
         text: quick_reply.text,
         quickReply: quick_reply.days_param
       }
     end
-    p message.inspect
-    p 4
     response = self.client(bot).push_message(lineuser.uid, message)
-    p response.inspect
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
       if message.save
