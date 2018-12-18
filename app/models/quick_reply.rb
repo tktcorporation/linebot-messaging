@@ -42,7 +42,7 @@ class QuickReply < ApplicationRecord
     available_day_array = self.quick_reply_schedule.available_day.split("").map(&:to_i)
     duration_days.times do |i|
       day += 60*60*24# if i != 0 当日も入れたい場合はコメントアウトを切る
-      if available_day_array[wday] != 0
+      if available_day_array[day.wday] != 0
         data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
         item = QuickReply.create_item(data, day.strftime("%m月%d日"))
         items_array.push(item)
