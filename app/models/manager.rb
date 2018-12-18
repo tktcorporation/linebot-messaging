@@ -133,6 +133,7 @@ class  Manager
   end
 
   def self.push_quick_reply(lineuser, quick_reply)
+    p quick_reply.reply_type
     bot = lineuser.bot
     case quick_reply.reply_type
     when 1
@@ -154,8 +155,8 @@ class  Manager
         text: quick_reply.text,
         quickReply: quick_reply.days_param
       }
-
     end
+    p message.inspect
     p 4
     response = self.client(bot).push_message(lineuser.uid, message)
     p response.inspect
