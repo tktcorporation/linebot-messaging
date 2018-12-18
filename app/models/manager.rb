@@ -70,7 +70,7 @@ class  Manager
       message = {
         type: 'text',
         text: day.strftime("%m月%d日"),
-        quickReply: quick_reply.times_param(day, 10, 32)
+        quickReply: quick_reply.times_param(day)
       }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 4
@@ -92,10 +92,10 @@ class  Manager
         when 3
           response_text = quick_reply.response_datum.response_text
           day = Time.parse(response_text)
-          GoogleCalendar.create_event(quick_reply, day, 1, lineuser)
+          GoogleCalendar.create_event(quick_reply, day, lineuser)
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
           self.advance_lineuser_phase(lineuser, quick_reply.form)
-         when 4
+         when 2
           QuickReplyTextFlag.accepted(lineuser)
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
           self.advance_lineuser_phase(lineuser, quick_reply.form)
