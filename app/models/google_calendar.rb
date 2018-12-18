@@ -20,9 +20,10 @@ class GoogleCalendar
     google_api_token.save!
   end
 
-  def self.create_event(quick_reply, start_time, duration, lineuser)
+  def self.create_event(quick_reply, start_time, lineuser)
     retry_counter = 0
     bot = quick_reply.form.bot
+    quick_reply_schedule = quick_reply.quick_reply_schedule
     if !bot.google_api_set.present?
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
@@ -43,9 +44,9 @@ class GoogleCalendar
     #Base64.strict_encode64(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
           start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*duration).rfc3339),
-          summary: quick_reply.quick_reply_schedule.summary.to_s,
-          description: "「#{quick_reply.quick_reply_schedule.summary}」ユーザー：「#{lineuser.name}」"
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339),
+          summary: quick_reply_schedule.summary.to_s,
+          description: "「#{quick_reply_schedule.summary}」, ユーザー：「#{lineuser.name}」"
           #id: event_id
         })
     service.insert_event(calendar_id, event)

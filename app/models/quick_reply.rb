@@ -39,11 +39,14 @@ class QuickReply < ApplicationRecord
     day = Time.now
     duration_days = self.quick_reply_schedule.duration_days
     items_array = []
+    available_day_array = self.quick_reply_schedule.available_day.split("").map(&:to_i)
     duration_days.times do |i|
-      day += 60*60*24 if i != 0
-      data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
-      item = QuickReply.create_item(data, day.strftime("%m月%d日"))
-      items_array.push(item)
+      day += 60*60*24# if i != 0 当日も入れたい場合はコメントアウトを切る
+      if available_day_array[wday] != 0
+        data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
+        item = QuickReply.create_item(data, day.strftime("%m月%d日"))
+        items_array.push(item)
+      end
     end
     return {:items => items_array}
   end
@@ -59,8 +62,9 @@ class QuickReply < ApplicationRecord
     return {:items => items_array}
   end
 
-  def times_param(day, num, start_count)
+  def times_param(day)
     #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
+    quick_reply_schedule = self.quick_reply_schedule
     day = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     calendar_events = GoogleCalendar.get_events(self.form.bot)
     available_array = []
@@ -68,13 +72,12 @@ class QuickReply < ApplicationRecord
       available_array.push(0)
     end
     available_day_array = Manager.available_array_day(calendar_events, day, available_array)
-    p "==============available_day_array================="
-    p available_day_array
     items_array = []
-    day += 60*30*start_count
-    num.times do |i|
-      count = start_count
-      day += 60*30 if i != 0
+    duration = quick_reply_schedule.duration_num * 30
+    day += 60*60*(quick_reply_schedule.start_num)
+    count = quick_reply_schedule.start_num * 2
+    quick_reply_schedule.term_num.times do |i|
+      day += 60*duration if i != 0
       if available_day_array[count + i] == 0
         data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
