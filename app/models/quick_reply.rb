@@ -40,10 +40,12 @@ class QuickReply < ApplicationRecord
     time = Time.now
     quick_reply_schedule = self.quick_reply_schedule
     items_array = []
+    p quick_reply_schedule.available_day
     available_day_array = quick_reply_schedule.available_day.split("").map(&:to_i)
+    p available_day_array
     quick_reply_schedule.duration_days.times do |i|
       time += 60*60*24
-      p time.wday.inspect
+      p time.wday
       p available_day_array[time.wday]
       if available_day_array[time.wday] != 0
         data = "[#{reply_type}][#{id}]" + time.strftime("%Y-%m-%d")
