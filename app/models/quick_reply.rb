@@ -35,6 +35,7 @@ class QuickReply < ApplicationRecord
   end
 
   def days_param
+    p 2
     return nil if reply_type != 3
     day = Time.now
     duration_days = self.quick_reply_schedule.duration_days
@@ -164,6 +165,7 @@ class QuickReply < ApplicationRecord
   end
 
   def self.create_item(data, label)
+    p 3
     return pushed_item = {:type=>"action",
                   :action=>{
                             :type => "postback",

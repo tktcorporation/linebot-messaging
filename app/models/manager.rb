@@ -148,6 +148,7 @@ class  Manager
       }
       QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
+      p 1
       message = {
         type: 'text',
         text: quick_reply.text,
@@ -155,8 +156,9 @@ class  Manager
       }
 
     end
-
+    p 4
     response = self.client(bot).push_message(lineuser.uid, message)
+    p response.inspect
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
       if message.save
