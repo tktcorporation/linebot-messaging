@@ -37,15 +37,18 @@ class QuickReply < ApplicationRecord
   def days_param
     p 2
     return nil if reply_type != 3
-    day = Time.now
-    duration_days = self.quick_reply_schedule.duration_days
+    time = Time.now
+    quick_reply_schedule = self.quick_reply_schedule
     items_array = []
-    available_day_array = self.quick_reply_schedule.available_day.split("").map(&:to_i)
-    duration_days.times do |i|
-      day += 60*60*24# if i != 0 当日も入れたい場合はコメントアウトを切る
-      if available_day_array[day.wday] != 0
-        data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
-        item = QuickReply.create_item(data, day.strftime("%m月%d日"))
+    available_day_array = quick_reply_schedule.available_day.split("").map(&:to_i)
+    quick_reply_schedule.duration_days.times do |i|
+      time += 60*60*24
+      p time.wday.inspect
+      p available_day_array[time.wday]
+      if available_day_array[time.wday] != 0
+        data = "[#{reply_type}][#{id}]" + time.strftime("%Y-%m-%d")
+        item = QuickReply.create_item(data, time.strftime("%m月%d日"))
+        item.inspect
         items_array.push(item)
       end
     end
