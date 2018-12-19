@@ -15,6 +15,7 @@ class FormsController < ApplicationController
     @bot = Bot.includes(:google_api_set).get(bot_id)
     @quick_replies = @form.quick_replies.includes(:quick_reply_items)
     @quick_reply = @form.quick_replies.new
+    @days = ["日", "月", "火", "水", "木", "金", "土"]
   end
 
   def edit_flow
