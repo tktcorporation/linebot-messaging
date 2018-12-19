@@ -1,4 +1,7 @@
 .columns.is-centered
+  - if @error_message
+    label.label
+      = @error_message
   .column.is-3
     - if @form.is_active
       p
@@ -136,10 +139,47 @@
             .field
               .control
                 = f.text_field :summary, class: "input", required: ""
-            label.label 何日先までで予定調整をするか
-            .field
-              .control
-                = f.number_field :duration_days, in: 1...8, class: "input", required: ""
+
+            label.label 予定調整を行う曜日
+            table.table
+              thread
+                tr
+                  - @days.each do |day|
+                    th
+                      = day
+              tbody
+                tr
+                  - @days.each_with_index do |day, index|
+                    td
+                      label.checkbox
+                        = f.check_box :available_day, name: "quick_reply[available_day][#{index}]", "data-parsley-mincheck"=>"1"
+
+            .columns.is-multiline
+              .column.is-6
+                label.label 何日先までで予定調整を行うか
+                .field
+                  .control
+                    = f.number_field :duration_days, in: 1...8, class: "input", required: ""
+                    span 日先まで
+              .column.is-6
+                label.label 1予定の枠
+                .field
+                  .control
+                    = f.number_field :duration_num, in: 1...49, class: "input", required: ""
+                    span ×30分
+              .column.is-6
+                label.label 何時から予定調整を行うか(24時間制)
+                .field
+                  .control
+                    = f.number_field :start_num, in: 0...24, class: "input", required: ""
+                    span 時~
+              .column.is-6
+                label.label 予定調整を行う時間
+                .field
+                  .control
+                    = f.number_field :term_num, in: 1...11, class: "input", required: ""
+                    span × 1予定の枠 ÷ 2 (時間)
+
             - if @bot.google_api_set.refresh_token.present?
               p.control
                 = link_to "テスト作成", "/google_auth/test_create/#{@bot.id}", class: "button is-info"
