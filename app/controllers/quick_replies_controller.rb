@@ -16,9 +16,11 @@ class QuickRepliesController < ApplicationController
 
   def create
     ActiveRecord::Base.transaction do
-      QuickReply.optional_create(params[:form_id], quick_reply_params)
+      QuickReply.optional_create(params[:form_id], quick_reply_params, quick_reply_schedule_params)
     end
     redirect_to "/forms/#{params[:form_id]}"
+  rescue => e
+    render plain: e.message
   end
 
   def destroy
@@ -43,7 +45,10 @@ class QuickRepliesController < ApplicationController
       QuickReply.get(params[:id]).form.bot.user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
     end
     def quick_reply_params
-      params.require(:quick_reply).permit(:name, :text, :reply_type, :summary, :duration_days)
+      params.require(:quick_reply).permit(:name, :text, :reply_type)
+    end
+    def quick_reply_schedule_params
+      params.require(:quick_reply).permit(:summary, :duration_days, :duration_num, :start_num, :term_num, available_day: %i(0 1 2 3 4 5 6))
     end
     def quick_reply_flow_params
       params.require(:quick_reply).permit(:next_reply_id)
