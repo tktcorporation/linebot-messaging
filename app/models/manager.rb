@@ -54,7 +54,11 @@ class  Manager
 
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
-    quick_reply = nil
+    message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
+    if message.save
+      p "save success"
+      lineuser.update_lastmessage(message)
+    end
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
@@ -104,6 +108,7 @@ class  Manager
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
+
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
