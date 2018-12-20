@@ -4,6 +4,7 @@ ja:
     errors:
       messages:
         record_invalid: "登録に失敗しました: %{errors}"
+        unavailable: 'に使用できない文字(%{chars})が含まれています。'
         restrict_dependent_destroy:
           has_one: "%{record}が存在しているので削除できません"
           has_many: "%{record}が存在しているので削除できません"
