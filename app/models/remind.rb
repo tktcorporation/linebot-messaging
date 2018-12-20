@@ -6,8 +6,8 @@ class Remind < ApplicationRecord
   validates :bot_id, numericality: true
   validates :text, presence: true, lt4bytes: true, length: { in: 1..250 }
   validates :ignition_time, presence: true
-  validates :completed, presence: true, inclusion: { in: [true, false] }
-  validates :enable, presence: true, inclusion: { in: [true, false] }
+  validates :completed, inclusion: { in: [true, false] }
+  validates :enable, inclusion: { in: [true, false] }
 
 
   scope :undeleted, ->{ where(deleted: false) }
