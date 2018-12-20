@@ -10,11 +10,11 @@ class Bot < ApplicationRecord
 
   scope :undeleted, ->{ where(deleted: false) }
 
-  validates :name, presence: true
-  validates :channel_token, presence: true
-  validates :channel_secret, presence: true
-  validates :user_id, presence: true
-  validates :callback_hash, presence: true
+  validates :name, presence: true, lt4bytes: true
+  validates :channel_token, presence: true, lt4bytes: true
+  validates :channel_secret, presence: true, lt4bytes: true
+  validates :user_id, numericality: true
+  validates :callback_hash, presence: true, lt4bytes: true
 
   def destroy
     self.deleted = true

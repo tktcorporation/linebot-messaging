@@ -8,9 +8,11 @@ class QuickReply < ApplicationRecord
 
   scope :undeleted, ->{ where(deleted: false) }
 
-  validates :name, presence: true
-  validates :form_id, presence: true
-  validates :text, presence: true
+  validates :name, presence: true, lt4bytes: true, length: { in: 1..250 }
+  validates :form_id, numericality: true
+  validates :text, presence: true, lt4bytes: true, length: { in: 1..250 }
+  validates :reply_type, numericality: true
+
 
   def destroy
     self.deleted = true

@@ -2,8 +2,10 @@ class QuickReplyTextFlag < ApplicationRecord
   belongs_to :quick_reply_text
   belongs_to :lineuser
 
-  validates :quick_reply_text_id, presence: true
-  validates :lineuser_id, presence: true
+  validates :quick_reply_text_id, numericality: true
+  validates :lineuser_id, numericality: true
+  validates :is_accepting, presence: true, inclusion: { in: [true, false] }
+
 
   def self.initialize_accepting(quick_reply, lineuser)
     quick_reply_text = quick_reply.quick_reply_text

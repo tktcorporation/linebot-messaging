@@ -2,8 +2,9 @@ class QuickReplyItem < ApplicationRecord
   belongs_to :quick_reply
   scope :undeleted, ->{ where(deleted: false) }
 
-  validates :quick_reply_id, presence: true
-  validates :text, presence: true
+  validates :quick_reply_id, numericality: true
+  validates :text, presence: true, length: { in: 1..230 }
+  validates :next_reply_id, numericality: true, allow_blank: true
 
   def destroy
     quick_reply = self.quick_reply

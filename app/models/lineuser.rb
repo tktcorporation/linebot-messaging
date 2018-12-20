@@ -18,8 +18,10 @@ class Lineuser < ApplicationRecord
   has_one :quick_reply_text_flag
   belongs_to :bot
 
-  validates :uid, presence: true
-  validates :bot_id, presence: true
+  validates :uid, presence: true, lt4bytes: true
+  validates :bot_id, numericality: true
+  validates :pictureUrl, lt4bytes: true
+
 
   scope :unfollowed, ->{ where(is_unfollwed: false) }
 
