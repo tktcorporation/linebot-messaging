@@ -38,7 +38,9 @@ class QuickRepliesController < ApplicationController
       quick_reply.update_attributes!(quick_reply_flow_params)
       QuickReplyItem.update_nexts(items_flow_params)
     end
-    #redirect_to "/forms/#{quick_reply.form.id}/edit_flow"
+  rescue => e
+    flash[:notice] = e.message
+    redirect_to "/forms/#{quick_reply.form.id}/edit_flow"
   end
 
   private
