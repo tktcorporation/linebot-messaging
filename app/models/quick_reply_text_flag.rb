@@ -4,7 +4,7 @@ class QuickReplyTextFlag < ApplicationRecord
 
   validates :quick_reply_text_id, numericality: true
   validates :lineuser_id, numericality: true
-  validates :is_accepting, presence: true, inclusion: { in: [true, false] }
+  validates :is_accepting, inclusion: { in: [true, false] }
 
 
   def self.initialize_accepting(quick_reply, lineuser)
