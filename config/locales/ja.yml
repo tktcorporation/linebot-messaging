@@ -3,10 +3,17 @@ ja:
   activerecord:
     errors:
       messages:
-        record_invalid: "バリデーションに失敗しました: %{errors}"
+        record_invalid: "登録に失敗しました: %{errors}"
         restrict_dependent_destroy:
           has_one: "%{record}が存在しているので削除できません"
           has_many: "%{record}が存在しているので削除できません"
+    attributes:
+      quick_reply_schedule:
+        available_day: "有効な曜日"
+        term_num: "予定調整を行う時間"
+        start_num: "開始時間"
+        duration_num: "登録する予定の長さ"
+        duration_days: "予定調整を行う日数"
   date:
     abbr_day_names:
     - 日
