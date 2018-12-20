@@ -5,8 +5,9 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
-                    uniqueness: { case_sensitive: false }
-  validates :password,  presence: true, confirmation: :true
+                    uniqueness: { case_sensitive: false },
+                    lt4bytes: true
+  validates :password,  presence: true, confirmation: :true, length: { in: 8..32 }, lt4bytes: true
   scope :undeleted, ->{ where(deleted: false) }
   has_many :bots, ->{ where(deleted: false) }
   require "digest/sha2"
