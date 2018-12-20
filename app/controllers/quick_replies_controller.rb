@@ -20,7 +20,8 @@ class QuickRepliesController < ApplicationController
     end
     redirect_to "/forms/#{params[:form_id]}"
   rescue => e
-    render plain: e.message
+    flash[:notice] = e.message
+    redirect_to "/forms/#{params[:form_id]}"
   end
 
   def destroy
