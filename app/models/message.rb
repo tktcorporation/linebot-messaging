@@ -3,7 +3,7 @@ class Message < ApplicationRecord
 
   validates :content, presence: true
   validates :lineuser_id, presence: true, numericality: true
-  validates :to_bot, presence: true, inclusion: { in: [true, false] }
+  validates :to_bot, inclusion: { in: [true, false] }
 
   scope :undeleted, ->{ where(deleted: false) }
   scope :order_asc, ->{ order(created_at: :asc) }
