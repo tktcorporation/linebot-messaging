@@ -20,7 +20,7 @@ class QuickReplySchedule < ApplicationRecord
   private
     def available_day_cannot_in_all_of_off
       if available_day.present? && available_day == "0000000"
-        errors.add(:available_day, ":最低でも1つの曜日は有効にする必要があります")
+        errors.add(:available_day, "は最低でも1つ有効にする必要があります")
       end
     end
     def consistency_check
@@ -30,7 +30,7 @@ class QuickReplySchedule < ApplicationRecord
         start_time = time + 60 * 60 * start_num
         end_time = start_time + 60 * 30 * duration_num * term_num
         if end_time > tommorow
-          errors.add(:term_num, ":予定調整を行う時間は翌日にならないように設定してください")
+          errors.add(:term_num, "は翌日にならないように設定してください")
         end
       end
     end
