@@ -30,19 +30,19 @@
           = f.fields_for :notify_token do |af|
             .field
               p.control
-                = af.text_field :access_token, value: @bot.notify_token.access_token.present? ? @bot.notify_token.access_token : "", class: "input"
+                = af.text_field :access_token, value: @bot.notify_token.present?&&@bot.notify_token.access_token.present? ? @bot.notify_token.access_token : "", class: "input"
 
           label.label GoogleAPI ClientID  (カレンダー機能を使用する場合は必要)
           = f.fields_for :google_api_set do |bf|
             .field
               p.control
-                = bf.text_field :client_id, value: @bot.google_api_set.client_id.present? ? @bot.google_api_set.client_id : "" , class: "input"
+                = bf.text_field :client_id, value: @bot.google_api_set.present?&&@bot.google_api_set.client_id.present? ? @bot.google_api_set.client_id : "" , class: "input"
 
           label.label GoogleAPI ClientSecret (カレンダー機能を使用する場合は必要)
           = f.fields_for :google_api_set do |bf|
             .field
               p.control
-                = bf.text_field :client_secret, value: @bot.google_api_set.client_secret.present? ? @bot.google_api_set.client_secret : "", class: "input"
+                = bf.text_field :client_secret, value: @bot.google_api_set.present?&&@bot.google_api_set.client_secret.present? ? @bot.google_api_set.client_secret : "", class: "input"
 
           .field
             .control
