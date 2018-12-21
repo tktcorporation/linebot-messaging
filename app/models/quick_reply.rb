@@ -8,9 +8,11 @@ class QuickReply < ApplicationRecord
 
   scope :undeleted, ->{ where(deleted: false) }
 
-  validates :name, presence: true
-  validates :form_id, presence: true
-  validates :text, presence: true
+  validates :name, presence: true, lt4bytes: true, length: { in: 1..250 }
+  validates :form_id, numericality: true
+  validates :text, presence: true, lt4bytes: true, length: { in: 1..250 }
+  validates :reply_type, numericality: true
+
 
   def destroy
     self.deleted = true
@@ -22,6 +24,74 @@ class QuickReply < ApplicationRecord
     save
   end
 
+  def items_param
+    items = self.quick_reply_items
+    items_array = []
+    items.each do |item|
+      data = "[#{self.reply_type}][#{item.id}]" + item.text
+      label = item.text
+      item = QuickReply.create_item(data, label)
+      items_array.push(item)
+    end
+    return {:items => items_array}
+  end
+
+  def days_param
+    return nil if reply_type != 3
+    time = Time.now
+    quick_reply_schedule = self.quick_reply_schedule
+    items_array = []
+    available_day_array = quick_reply_schedule.available_day.split("").map(&:to_i)
+    quick_reply_schedule.duration_days.times do |i|
+      time += 60*60*24
+      if available_day_array[time.wday] != 0
+        data = "[#{reply_type}][#{id}]" + time.strftime("%Y-%m-%d")
+        item = QuickReply.create_item(data, time.strftime("%m月%d日"))
+        items_array.push(item)
+      end
+    end
+    return {:items => items_array}
+  end
+
+  def check_param
+    items_array = []
+    2.times do |i|
+      check = i == 0 ? "決定" : "戻る"
+      data = "[#{99}]" + "[#{id}]" + check
+      item = QuickReply.create_item(data, check)
+      items_array.push(item)
+    end
+    return {:items => items_array}
+  end
+
+  def times_param(day)
+    #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
+    quick_reply_schedule = self.quick_reply_schedule
+    day = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
+    calendar_events = GoogleCalendar.get_events(self.form.bot)
+    available_array = []
+    48.times do |j|
+      available_array.push(0)
+    end
+    available_day_array = Manager.available_array_day(calendar_events, day, available_array)
+    items_array = []
+    duration = quick_reply_schedule.duration_num * 30
+    day += 60*60*(quick_reply_schedule.start_num)
+    count = quick_reply_schedule.start_num * 2
+    quick_reply_schedule.term_num.times do |i|
+      day += 60*duration if i != 0
+      if available_day_array[count + i] == 0
+        data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
+        item = QuickReply.create_item(data, day.strftime("%H:%M"))
+        items_array.push(item)
+      end
+    end
+    data = "[#{99}]" + "[#{id}]" + "戻る"
+    item = QuickReply.create_item(data, "戻る")
+    items_array.push(item)
+    return {:items => items_array}
+  end
+
   def self.get(id)
     self.find(id)
   end
@@ -30,7 +100,7 @@ class QuickReply < ApplicationRecord
     self.undeleted.where(form_id: quick_reply.form_id, next_reply_id: quick_reply.id)
   end
 
-  def self.optional_create(form_id, quick_reply_params)
+  def self.optional_create(form_id, quick_reply_params, quick_reply_schedule_params)
     form = Form.get(form_id)
     quick_reply = form.quick_replies.new(name: quick_reply_params[:name], text: quick_reply_params[:text], reply_type: quick_reply_params[:reply_type])
     if before_quick_reply = form.quick_replies.order(order_count: :desc).limit(1)[0]
@@ -48,21 +118,25 @@ class QuickReply < ApplicationRecord
     when 2
       self.create_text(quick_reply)
     when 3
-      self.create_schedule(quick_reply, quick_reply_params[:duration_days], quick_reply_params[:summary])
+      self.create_schedule(quick_reply, quick_reply_schedule_params)
     end
     return quick_reply
   end
 
-  def self.create_schedule(quick_reply, duration_days, summary)
+  def self.create_schedule(quick_reply, quick_reply_schedule_params)
     quick_reply.is_normal_message = false
     quick_reply.save!
-    QuickReplySchedule.create_option(quick_reply, duration_days, summary)
+    QuickReplySchedule.create_option(quick_reply, quick_reply_schedule_params)
   end
 
   def self.create_text(quick_reply)
     quick_reply.is_normal_message = false
     quick_reply.save!
     QuickReplyText.create_option(quick_reply)
+  end
+
+  def self.select_array(quick_replies)
+    quick_replies.map{|reply| [reply.name, reply.id]}
   end
 
   def relational_delete
@@ -91,70 +165,14 @@ class QuickReply < ApplicationRecord
     self.find_by(form_id: form.id, id: lineuser.quick_reply_id)
   end
 
-  def items_param
-    items = self.quick_reply_items
-    items_array = []
-    items.each do |item|
-      data = "[#{self.reply_type}][#{item.id}]" + item.text
-      pushed_item = {:type=>"action",
-                :action=>{
-                          :type => "postback",
-                          :label => item.text,
-                          :data => data,
-                          :text => item.text
-                          }
-              }
-      items_array.push(pushed_item)
-    end
-    return {:items => items_array}
-  end
-
-  def days_param
-    return nil if reply_type != 3
-    day = Time.now
-    duration_days = self.quick_reply_schedule.duration_days
-    items_array = []
-    duration_days.times do |i|
-      day += 60*60*24 if i != 0
-      data = "[#{reply_type}][#{id}]" + day.strftime("%Y-%m-%d")
-      item = QuickReply.create_item(data, day.strftime("%m月%d日"))
-      items_array.push(item)
-    end
-    return {:items => items_array}
-  end
-
-  def times_param(quick_reply, day, num, start_count)
-    #day(Time)の空いている予定を、0時+30分*start_count(Int)から最大num(Int)個取得し、quick_reply用のparamで返す
-    day = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
-    calendar_events = GoogleCalendar.get_events(self.form.bot)
-    available_array = []
-    48.times do |j|
-      available_array.push(0)
-    end
-    available_day_array = Manager.available_array_day(calendar_events, day, available_array)
-    p "==============available_day_array================="
-    p available_day_array
-    items_array = []
-    day += 60*30*start_count
-    num.times do |i|
-      count = start_count
-      day += 60*30 if i != 0
-      if available_day_array[count + i] == 0
-        data = "[4][#{quick_reply.id}]" + day.strftime("%Y-%m-%d %H:%M")
-        item = QuickReply.create_item(data, day.strftime("%H:%M"))
-        items_array.push(item)
-      end
-    end
-    return {:items => items_array}
-  end
-
   def self.create_item(data, label)
+    p 3
     return pushed_item = {:type=>"action",
                   :action=>{
                             :type => "postback",
                             :label => label,
                             :data => data,
-                            :text => label
+                            :displayText => ("回答：" + label)
                             }
                 }
   end

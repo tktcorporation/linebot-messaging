@@ -1,6 +1,7 @@
 class NotifyToken < ApplicationRecord
   belongs_to :bot
-  validates :bot_id, presence: true
+  validates :bot_id, numericality: true
+  validates :access_token, lt4bytes: true
 
   def self.get_with_bot_id(bot_id)
     self.find_by(bot_id: bot_id)

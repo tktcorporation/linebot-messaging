@@ -1,6 +1,7 @@
 class RemindUser < ApplicationRecord
-  validates :remind_id, presence: true
-  validates :lineuser_id, presence: true
+  validates :remind_id, numericality: true
+  validates :lineuser_id, numericality: true
+
   belongs_to :remind
   belongs_to :lineuser
 
