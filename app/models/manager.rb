@@ -54,14 +54,18 @@ class  Manager
 
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
-    quick_reply = nil
+    message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
+    if message.save
+      p "save success"
+      lineuser.update_lastmessage(message)
+    end
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
       quick_reply_item = QuickReplyItem.get(data[:id])
       quick_reply = quick_reply_item.quick_reply
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_item)
+      self.set_lineuser_to_next_reply_id(lineuser, quick_reply_item)
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
@@ -70,22 +74,44 @@ class  Manager
       message = {
         type: 'text',
         text: day.strftime("%m月%d日"),
-        quickReply: quick_reply.times_param(quick_reply, day, 10, 32)
+        quickReply: quick_reply.times_param(day)
       }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 4
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
-      time = Time.parse(data[:text])
-      #ここに確認処理をはさむ必要があるかもしれない
-      GoogleCalendar.create_event(quick_reply, time, 1, lineuser)
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
-      self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
-      self.advance_lineuser_phase(lineuser, quick_reply.form)
+      #ここに確認処理をはさむ必要があるかもしれない
+      message = {
+        type: 'text',
+        text: "「#{data[:text]}」で決定しますか",
+        quickReply: quick_reply.check_param
+      }
+      self.client(lineuser.bot).push_message(lineuser.uid, message)
+    when 99
+      quick_reply = QuickReply.get(data[:id])
+      case data[:text]
+      when "決定"
+        case quick_reply.reply_type.to_i
+        when 3
+          response_text = quick_reply.response_datum.response_text
+          day = Time.parse(response_text)
+          GoogleCalendar.create_event(quick_reply, day, lineuser)
+          self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
+          self.advance_lineuser_phase(lineuser, quick_reply.form)
+         when 2
+          QuickReplyTextFlag.accepted(lineuser)
+          self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
+          self.advance_lineuser_phase(lineuser, quick_reply.form)
+        end
+      when "戻る"
+        self.advance_lineuser_phase(lineuser, quick_reply.form)
+      end
     end
+
   end
 
-  def self.set_lineuser_to_quick_reply_id(lineuser, quick_reply_or_item)
+  def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
     case quick_reply_or_item
     when QuickReplyItem
       quick_reply_item = quick_reply_or_item
@@ -132,9 +158,7 @@ class  Manager
         text: quick_reply.text,
         quickReply: quick_reply.days_param
       }
-
     end
-
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
@@ -183,28 +207,22 @@ class  Manager
   end
 
   def self.check_quick_reply_text(lineuser, text)
+    return nil if /回答：.+/ === text
     if lineuser.quick_reply_text_flag.present?
       if lineuser.quick_reply_text_flag.is_accepting == true
         quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
         #確認処理
         if text.length < 255
-          if quick_reply.response_datum.present?
-            if text == quick_reply.response_datum.response_text
-              QuickReplyTextFlag.accepted(lineuser)
-            else
-              ResponseDatum.save_data(lineuser, quick_reply.id, text)
-              self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
-            end
-          else
-            ResponseDatum.save_data(lineuser, quick_reply.id, text)
-            self.push(lineuser, "「#{text}」で決定してよろしいでしょうか。その場合は続けて「#{text}」を入力してください。間違って入力された場合は、正しい入力を行なってください。")
-          end
+          ResponseDatum.save_data(lineuser, quick_reply.id, text)
+          message = {
+            type: 'text',
+            text: "「#{text}」で決定しますか",
+            quickReply: quick_reply.check_param
+          }
+          self.client(lineuser.bot).push_message(lineuser.uid, message)
         else
           self.push(lineuser, "255字以内で入力してください。")
         end
-        #quickreplyを次に進める
-        self.set_lineuser_to_quick_reply_id(lineuser, quick_reply)
-        self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
   end
@@ -242,18 +260,24 @@ class  Manager
       lineuser = Lineuser.find_or_create(uid, bot_id)
       case event
       when Line::Bot::Event::Follow
-        self.follow_event(lineuser)
+        ActiveRecord::Base.transaction do
+          self.follow_event(lineuser)
+        end
       when Line::Bot::Event::Unfollow
         lineuser.quick_reply_id = nil
         lineuser.is_unfollowed = true
         lineuser.save
       when Line::Bot::Event::Postback
-        self.postback_event(event, lineuser)
+        ActiveRecord::Base.transaction do
+          self.postback_event(event, lineuser)
+        end
       when Line::Bot::Event::Message
         message = self.message_event(event, lineuser)
         lineuser.update_lastmessage(message)
       end
     end
+  rescue => e
+    Rails.logger.fatal e.message
   end
 
   def self.follow_event(lineuser)
@@ -283,12 +307,8 @@ class  Manager
       text = "[位置情報]"
     when Line::Bot::Event::MessageType::Sticker
       #スタンプが送信されるとadvance_lineuser_phase
-      if !ConvertedLineuser.get_with_lineuser(lineuser)
-        if response_data = lineuser.response_data[0]
-          form = response_data.quick_reply.form
-        else
-          form = Form.get_active_with_lineuser(lineuser)
-        end
+      if !lineuser.is_converted
+        form = Form.get_active_with_lineuser(lineuser)
         if form
           self.advance_lineuser_phase(lineuser, form)
         end

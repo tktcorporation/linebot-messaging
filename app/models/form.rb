@@ -6,9 +6,12 @@ class Form < ApplicationRecord
 
   scope :undeleted, ->{ where(deleted: false) }
 
-  validates :name, presence: true
-  validates :bot_id, presence: true
-  validates :describe_text, presence: true
+  validates :name, presence: true, lt4bytes: true
+  validates :bot_id, numericality: true
+  validates :describe_text, presence: true, lt4bytes: true
+  validates :deleted, inclusion: { in: [true, false] }
+  validates :is_active, inclusion: { in: [true, false] }
+  validates :first_reply_id, numericality: true, allow_blank: true
 
   def destroy
     self.deleted = true

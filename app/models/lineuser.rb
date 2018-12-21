@@ -18,8 +18,10 @@ class Lineuser < ApplicationRecord
   has_one :quick_reply_text_flag
   belongs_to :bot
 
-  validates :uid, presence: true
-  validates :bot_id, presence: true
+  validates :uid, presence: true, lt4bytes: true
+  validates :bot_id, numericality: true
+  validates :pictureUrl, lt4bytes: true
+
 
   scope :unfollowed, ->{ where(is_unfollwed: false) }
 
@@ -65,6 +67,10 @@ class Lineuser < ApplicationRecord
     session_lineuser = SessionLineuser.find_or_initialize_by(lineuser_id: self.id)
     session_lineuser.form_id = form.id
     session_lineuser.save
+  end
+
+  def is_converted
+    self.converted_lineuser.present? ? true : false
   end
 
   def set_next_reply_id(next_reply_id)
