@@ -13,6 +13,10 @@
             = f.select :first_reply_id, @quick_replies_select_array + [["未選択", nil]], :prompt => "未選択", required: ""
         p.control
           = f.submit "更新", class: "button is-info"
+    - if !@quick_replies.present?
+      hr.hr style="margin: 2em;"
+      p 登録されているフローがありません。
+      p フローの追加を行ってください。
     - @quick_replies.each_with_index do |quick_reply, index|
       .box.quick-reply-box
         .field
