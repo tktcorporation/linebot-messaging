@@ -25,7 +25,7 @@
               p CVR
               p.is-size-5
                 - if active_form_session_count != 0
-                  = (active_converted_lineusers_count / active_form_session_count).to_f * 100
+                  = (active_converted_lineusers_count.to_f / active_form_session_count.to_f) * 100
                 - else
                   span -
                 span %
