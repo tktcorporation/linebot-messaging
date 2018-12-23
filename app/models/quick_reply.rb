@@ -75,12 +75,13 @@ class QuickReply < ApplicationRecord
     end
     available_day_array = Manager.available_array_day(calendar_events, day, available_array)
     items_array = []
-    duration = quick_reply_schedule.duration_num * 30
+    duration_num = quick_reply_schedule.duration_num
     day += 60*60*(quick_reply_schedule.start_num)
     count = quick_reply_schedule.start_num * 2
     quick_reply_schedule.term_num.times do |i|
-      day += 60*duration if i != 0
-      if available_day_array[count + i] == 0
+      day += 60*duration_num * 30 if i != 0
+
+      if available_day_array[(count+i*duration_num)..(count+i*duration_num+duration_num-1)].all?{|n| n == 0 }
         data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
         items_array.push(item)
