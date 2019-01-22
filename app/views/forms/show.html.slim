@@ -65,129 +65,131 @@
 #new-quick-reply-modal.modal
   .modal-background
   .modal-content
-    .modal-content-box
-      .tabs.is-centered.is-boxed#tabs
-        ul
-          li.is-active data-tab="1"
-            a
-              span Normal
-          li data-tab="2"
-            a
-              span QuickReply
-          li data-tab="3"
-            a
-              span FreeText
-          li data-tab="4"
-            a
-              span Schedule
-      #tab-content
-        .form-tab.is-active data-content="1"
-          = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-            label.label.is-large 通常メッセージ
-            = f.hidden_field :reply_type, :value => 0
-            label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
-            .field
-              .control
-                = f.text_field :name, class: "input", required: ""
-            label.label テキスト（質問時、ユーザー側に表示されます）
-            .field
-              .control
-                = f.text_field :text, class: "input", required: ""
-            p.control
-              = f.submit "追加", class: "button is-info"
-        .form-tab data-content="2"
-          = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-            label.label.is-large 複数選択肢
-            = f.hidden_field :reply_type, :value => 1
-            label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
-            .field
-              .control
-                = f.text_field :name, class: "input", required: ""
-            label.label テキスト（質問時、ユーザー側に表示されます）
-            .field
-              .control
-                = f.text_field :text, class: "input", required: ""
-            p.control
-              = f.submit "追加", class: "button is-info"
-        .form-tab data-content="3"
-          = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-            label.label.is-large 自由入力
-            = f.hidden_field :reply_type, :value => 2
-            label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
-            .field
-              .control
-                = f.text_field :name, class: "input", required: ""
-            label.label テキスト（質問時、ユーザー側に表示されます）
-            .field
-              .control
-                = f.text_field :text, class: "input", required: ""
-            p.control
-              = f.submit "追加", class: "button is-info"
-        .form-tab data-content="4"
-          = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
-            label.label.is-large スケジュール調整
-            = f.hidden_field :reply_type, :value => 3
-            label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
-            .field
-              .control
-                = f.text_field :name, class: "input", required: ""
-            label.label テキスト（質問時、ユーザー側に表示されます）
-            .field
-              .control
-                = f.text_field :text, class: "input", required: ""
-            label.label 予定タイトル(この名前でカレンダーに登録されます)
-            .field
-              .control
-                = f.text_field :summary, class: "input", required: ""
-
-            label.label 予定調整を行う曜日
-            table.table
-              thread
-                tr
-                  - @days.each do |day|
-                    th
-                      = day
-              tbody
-                tr
-                  - @days.each_with_index do |day, index|
-                    td
-                      label.checkbox
-                        = f.check_box :available_day, name: "quick_reply[available_day][#{index}]", "data-parsley-mincheck"=>"1"
-
-            .columns.is-multiline
-              .column.is-6
-                label.label 何日先までで予定調整を行うか
-                .field
-                  .control
-                    = f.number_field :duration_days, in: 1...8, class: "input", required: ""
-                    span 日先まで
-              .column.is-6
-                label.label 1予定の枠
-                .field
-                  .control
-                    = f.number_field :duration_num, in: 1...49, class: "input", required: ""
-                    span ×30分
-              .column.is-6
-                label.label 何時から予定調整を行うか(24時間制)
-                .field
-                  .control
-                    = f.number_field :start_num, in: 0...24, class: "input", required: ""
-                    span 時~
-              .column.is-6
-                label.label 予定調整を行う時間
-                .field
-                  .control
-                    = f.number_field :term_num, in: 1...11, class: "input", required: ""
-                    span × 1予定の枠 ÷ 2 (時間)
-
-            - if @bot.google_api_set.refresh_token.present?
-              p.control
-                = link_to "テスト作成", "/google_auth/test_create/#{@bot.id}", class: "button is-info"
-              p 現在時刻から30分間のテストイベントを登録されているGoogleCalendarに作成します。カレンダーに「テストイベント」という名前の予定が登録されていることを確認してから、下記の「追加」を行なってください。
+    #app
+      .modal-content-box
+        .tabs.is-centered.is-boxed#tabs
+          ul
+            li data-tab="1" v-on:click="switchTab(1)" v-bind:class="{'is-active': isActive == 1}"
+              a
+                span Normal
+            li data-tab="2" v-on:click="switchTab(2)" v-bind:class="{'is-active': isActive == 2}"
+              a
+                span QuickReply
+            li data-tab="3" v-on:click="switchTab(3)" v-bind:class="{'is-active': isActive == 3}"
+              a
+                span FreeText
+            li data-tab="4" v-on:click="switchTab(4)" v-bind:class="{'is-active': isActive == 4}"
+              a
+                span Schedule
+        #tab-content
+          .form-tab v-if="isActive == 1"
+            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+              label.label.is-large 通常メッセージ
+              = f.hidden_field :reply_type, :value => 0
+              label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+              .field
+                .control
+                  = f.text_field :name, class: "input", required: ""
+              label.label テキスト（質問時、ユーザー側に表示されます）
+              .field
+                .control
+                  = f.text_field :text, class: "input", required: ""
               p.control
                 = f.submit "追加", class: "button is-info"
-            - else
+          .form-tab v-if="isActive == 2"
+            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+              label.label.is-large 複数選択肢
+              = f.hidden_field :reply_type, :value => 1
+              label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+              .field
+                .control
+                  = f.text_field :name, class: "input", required: ""
+              label.label テキスト（質問時、ユーザー側に表示されます）
+              .field
+                .control
+                  = f.text_field :text, class: "input", required: ""
               p.control
-                = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+                = f.submit "追加", class: "button is-info"
+          .form-tab v-if="isActive == 3"
+            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+              label.label.is-large 自由入力
+              = f.hidden_field :reply_type, :value => 2
+              label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+              .field
+                .control
+                  = f.text_field :name, class: "input", required: ""
+              label.label テキスト（質問時、ユーザー側に表示されます）
+              .field
+                .control
+                  = f.text_field :text, class: "input", required: ""
+              p.control
+                = f.submit "追加", class: "button is-info"
+          .form-tab v-if="isActive == 4"
+            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+              label.label.is-large スケジュール調整
+              = f.hidden_field :reply_type, :value => 3
+              label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+              .field
+                .control
+                  = f.text_field :name, class: "input", required: ""
+              label.label テキスト（質問時、ユーザー側に表示されます）
+              .field
+                .control
+                  = f.text_field :text, class: "input", required: ""
+              label.label 予定タイトル(この名前でカレンダーに登録されます)
+              .field
+                .control
+                  = f.text_field :summary, class: "input", required: ""
+
+              label.label 予定調整を行う曜日
+              table.table
+                thead
+                  tr
+                    - @days.each do |day|
+                      th
+                        = day
+                tbody
+                  tr
+                    - @days.each_with_index do |day, index|
+                      td
+                        label.checkbox
+                          = f.check_box :available_day, name: "quick_reply[available_day][#{index}]", "data-parsley-mincheck"=>"1"
+
+              .columns.is-multiline
+                .column.is-6
+                  label.label 何日先までで予定調整を行うか
+                  .field
+                    .control
+                      = f.number_field :duration_days, in: 1...8, class: "input", required: ""
+                      span 日先まで
+                .column.is-6
+                  label.label 1予定の枠
+                  .field
+                    .control
+                      = f.number_field :duration_num, in: 1...49, class: "input", required: ""
+                      span ×30分
+                .column.is-6
+                  label.label 何時から予定調整を行うか(24時間制)
+                  .field
+                    .control
+                      = f.number_field :start_num, in: 0...24, class: "input", required: ""
+                      span 時~
+                .column.is-6
+                  label.label 予定調整を行う時間
+                  .field
+                    .control
+                      = f.number_field :term_num, in: 1...11, class: "input", required: ""
+                      span × 1予定の枠 ÷ 2 (時間)
+
+              - if @bot.google_api_set.refresh_token.present?
+                p.control
+                  = link_to "テスト作成", "/google_auth/test_create/#{@bot.id}", class: "button is-info"
+                p 現在時刻から30分間のテストイベントを登録されているGoogleCalendarに作成します。カレンダーに「テストイベント」という名前の予定が登録されていることを確認してから、下記の「追加」を行なってください。
+                p.control
+                  = f.submit "追加", class: "button is-info"
+              - else
+                p.control
+                  = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
 
   button.modal-close.is-large aria-label="close"
+= javascript_pack_tag 'add_flow'
