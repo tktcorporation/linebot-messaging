@@ -48,7 +48,7 @@
             .field
               .control
                 label.checkbox
-                  = f.check_box :notify, {:checked => @notify_checked, "v-model"=>"notifyActive"}, "true", "false"
+                  = f.check_box :notify, {:checked => @notify_checked ? true : false, "v-on:change"=>"set_notify"}
                   | LINENotifyからの通知を有効にする
             p.control
               = f.submit "更新", class: "button is-info"
