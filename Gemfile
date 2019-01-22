@@ -28,6 +28,7 @@ gem 'rails-erd', group: [:development, :test]
 
 gem 'search_cop'
 
+gem 'webpacker'
 
 #gem 'sqlite3'
 # Use Puma as the app server
