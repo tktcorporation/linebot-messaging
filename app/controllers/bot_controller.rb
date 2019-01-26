@@ -21,7 +21,7 @@ class BotController < ApplicationController
   def update
     bot = Bot.get(params[:id])
     if bot.update(bot_params)
-      NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token]) if params[:bot][:notify_token][:access_token].present?
+      NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token])
       GoogleApiSet.update_or_create(params[:id], params[:bot][:google_api_set][:client_id], params[:bot][:google_api_set][:client_secret])
     else
       flash[:notice] = "更新に失敗しました"
