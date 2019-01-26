@@ -12,6 +12,16 @@ Rails.application.routes.draw do
   get '/google_auth/create_event'
   get '/google_auth/get_events'
 
+  namespace :api, format: 'json' do
+    resources :bot, except: [:new, :index] do
+      resources :messages, only: [:show, :index], param: :lineuser_id do#, shallow: true
+        member do
+          post :create
+          patch :update_name
+        end
+      end
+    end
+  end
 
   constraints(id: /[0-9]+/, bot_id: /[0-9]+/) do
     resources :bot, except: [:new, :index] do

@@ -35,4 +35,8 @@ vendor/bundle
 
 # Ignore memo
 /memo.md
-/hassyadai-manegement.md
+/hassyadai-manegement.md/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity
