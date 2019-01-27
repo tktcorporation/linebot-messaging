@@ -14,6 +14,6 @@ class QuickReplyTextFlag < ApplicationRecord
   end
 
   def self.accepted(lineuser)
-    lineuser.quick_reply_text_flag.update_attributes!(is_accepting: false)
+    lineuser.quick_reply_text_flags.find_by(is_accepting: true).update_attributes!(is_accepting: false)
   end
 end
