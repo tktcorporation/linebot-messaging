@@ -93,7 +93,7 @@
               label.label テキスト（質問時、ユーザー側に表示されます）
               .field
                 .control
-                  = f.text_field :text, class: "input", required: ""
+                  = f.text_area :text, class: "input", required: ""
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 2"
@@ -107,7 +107,7 @@
               label.label テキスト（質問時、ユーザー側に表示されます）
               .field
                 .control
-                  = f.text_field :text, class: "input", required: ""
+                  = f.text_area :text, class: "input", required: ""
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 3"
@@ -121,7 +121,7 @@
               label.label テキスト（質問時、ユーザー側に表示されます）
               .field
                 .control
-                  = f.text_field :text, class: "input", required: ""
+                  = f.text_area :text, class: "input", required: ""
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 4"
@@ -135,7 +135,7 @@
               label.label テキスト（質問時、ユーザー側に表示されます）
               .field
                 .control
-                  = f.text_field :text, class: "input", required: ""
+                  = f.text_area :text, class: "input", required: ""
               label.label 予定タイトル(この名前でカレンダーに登録されます)
               .field
                 .control
