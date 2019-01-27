@@ -49,10 +49,24 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.integer "first_reply_id"
   end
 
+  create_table "google_api_sets", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "access_token"
+    t.string "scope", default: "https://www.googleapis.com/auth/calendar", null: false
+    t.string "token_type", limit: 100
+    t.string "refresh_token"
+    t.integer "expires_in"
+    t.integer "bot_id"
+    t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.timestamp "updated_at"
+    t.string "email"
+    t.string "client_secret"
+    t.string "client_id"
+  end
+
   create_table "lineusers", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "uid", limit: 100, default: "", null: false
-    t.string "pictureUrl"
-    t.string "name", limit: 50, default: "undefind"
+    t.string "uid", limit: 100, default: "", null: false, collation: "utf8_general_ci"
+    t.string "pictureUrl", collation: "utf8_general_ci"
+    t.string "name", limit: 60, default: "undefind"
     t.integer "bot_id", null: false
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -65,7 +79,7 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
   end
 
   create_table "logs", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "text", default: "", null: false
+    t.text "text", null: false, collation: "utf8mb4_general_ci"
     t.integer "bot_id", null: false
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.boolean "deleted", default: false, null: false
@@ -73,7 +87,7 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
 
   create_table "messages", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.integer "lineuser_id", null: false
-    t.string "content", default: "", null: false
+    t.text "content", null: false
     t.boolean "to_bot", null: false
     t.boolean "deleted", default: false, null: false
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -100,10 +114,11 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.string "name", limit: 50, default: "", null: false
     t.string "text", default: "", null: false
     t.string "describe_text", limit: 100, default: ""
-    t.boolean "deleted", null: false
-    t.integer "order_count", default: 0, null: false
-    t.boolean "is_normal_message", default: true, null: false
+    t.boolean "deleted", default: false
+    t.integer "order_count", default: 0
+    t.boolean "is_normal_message", default: true
     t.integer "next_reply_id"
+    t.integer "reply_type", default: 0, comment: "0:普通のメッセージ、1:質問メッセージ、2:自由入力質問、3:スケジュール調整"
   end
 
   create_table "quick_reply_items", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -111,6 +126,28 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.string "text", limit: 50, default: "", null: false
     t.boolean "deleted", default: false, null: false
     t.integer "next_reply_id"
+  end
+
+  create_table "quick_reply_schedules", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "quick_reply_id", null: false
+    t.integer "duration_days", null: false
+    t.string "summary", default: "", null: false
+    t.string "description_text"
+    t.string "available_day", limit: 7, default: "", null: false
+    t.integer "duration_num"
+    t.integer "start_num"
+    t.integer "term_num", comment: "1~12"
+  end
+
+  create_table "quick_reply_text_flags", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "quick_reply_text_id", null: false
+    t.integer "lineuser_id", null: false
+    t.boolean "is_accepting", default: true, null: false
+  end
+
+  create_table "quick_reply_texts", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "quick_reply_id", null: false
+    t.integer "text_type"
   end
 
   create_table "remind_users", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -121,12 +158,12 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
 
   create_table "reminds", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", limit: 100, default: "", null: false
-    t.string "text"
-    t.datetime "ignition_time"
+    t.string "text", default: "", null: false
+    t.datetime "ignition_time", null: false
     t.integer "bot_id", null: false
     t.boolean "deleted", default: false, null: false
     t.boolean "completed", default: false, null: false
-    t.boolean "enable", default: true
+    t.boolean "enable", default: true, null: false
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
@@ -134,7 +171,7 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
   create_table "response_data", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lineuser_id", null: false
     t.integer "quick_reply_id", null: false
-    t.string "response_text", limit: 11, default: "", null: false
+    t.string "response_text", default: "", null: false, collation: "utf8mb4_general_ci"
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.boolean "deleted", default: false
@@ -152,8 +189,8 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "email", limit: 100, default: "", null: false
-    t.string "password_digest", limit: 100, default: "", null: false
-    t.string "remember_digest"
+    t.string "password_digest", limit: 100, default: "", null: false, collation: "utf8_bin"
+    t.string "remember_digest", default: "", collation: "utf8_bin"
     t.boolean "deleted", default: false, null: false
   end
 
