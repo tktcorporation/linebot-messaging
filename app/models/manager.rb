@@ -208,9 +208,9 @@ class  Manager
 
   def self.check_quick_reply_text(lineuser, text)
     return nil if /回答：.+/ === text
-    if lineuser.quick_reply_text_flag.present?
-      if lineuser.quick_reply_text_flag.is_accepting == true
-        quick_reply = lineuser.quick_reply_text_flag.quick_reply_text.quick_reply
+    if lineuser.quick_reply_text_flags.present?
+      if lineuser.quick_reply_text_flags.find_by(is_accepting: true).present?
+        quick_reply = lineuser.quick_reply_text_flags.find_by(is_accepting: true).quick_reply_text.quick_reply
         #確認処理
         if text.length < 255
           ResponseDatum.save_data(lineuser, quick_reply.id, text)
