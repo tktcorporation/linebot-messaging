@@ -23,9 +23,10 @@ Rails.application.routes.draw do
     end
   end
 
-  constraints(id: /[0-9]+/, bot_id: /[0-9]+/) do
+  constraints(id: /[0-9]+/, bot_id: /[0-9]+/, lineuser_id: /[0-9]+/) do
     resources :bot, except: [:new, :index] do
       resources :response_data, only: [:index], shallow: true
+      resources :images, only: [:show], shallow: true
       resources :forms, shallow: true do
         member do
           patch :switch_active
