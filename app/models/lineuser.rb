@@ -15,10 +15,13 @@ class Lineuser < ApplicationRecord
   has_one :session_lineuser
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
   has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id
+  has_many :quick_reply_text_flags
   belongs_to :bot
 
-  validates :uid, presence: true
-  validates :bot_id, presence: true
+  validates :uid, presence: true, lt4bytes: true
+  validates :bot_id, numericality: true
+  validates :pictureUrl, lt4bytes: true
+
 
   scope :unfollowed, ->{ where(is_unfollwed: false) }
 
@@ -64,6 +67,14 @@ class Lineuser < ApplicationRecord
     session_lineuser = SessionLineuser.find_or_initialize_by(lineuser_id: self.id)
     session_lineuser.form_id = form.id
     session_lineuser.save
+  end
+
+  def is_converted
+    self.converted_lineuser.present? ? true : false
+  end
+
+  def set_next_reply_id(next_reply_id)
+    self.update_attributes!(quick_reply_id: next_reply_id)
   end
 
   def self.get_plural_with_bot_id(bot_id)
