@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.integer "lineuser_id", null: false
     t.text "content", null: false
     t.boolean "to_bot", null: false
+    t.integer "msg_type", default: 0, null: false
     t.boolean "deleted", default: false, null: false
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -112,7 +113,7 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
   create_table "quick_replies", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "form_id", null: false
     t.string "name", limit: 50, default: "", null: false
-    t.string "text", default: "", null: false
+    t.text "text", null: false, collation: "utf8mb4_general_ci"
     t.string "describe_text", limit: 100, default: ""
     t.boolean "deleted", default: false
     t.integer "order_count", default: 0
