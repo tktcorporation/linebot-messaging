@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     setTimeout(function() {
         $('.flash').fadeOut();
-    }, 5000);
+    }, 9000);
 
     $('tbody tr[data-href]').addClass('clickable').click(function() {
         window.location = $(this).attr('data-href');

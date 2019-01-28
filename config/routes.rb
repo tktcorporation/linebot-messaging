@@ -6,20 +6,33 @@ Rails.application.routes.draw do
   post   '/callback', to: 'callback#callback'
   post   '/callback/:hash', to: 'callback#callback'
 
-  get '/google_auth/redirect'
-  get '/google_auth/callback'
+  get '/google_auth/redirect/:bot_id', to: 'google_auth#redirect'
+  get '/google_auth/callback/:hash', to: 'google_auth#callback'
+  get '/google_auth/test_create/:bot_id', to: 'google_auth#test_create'
   get '/google_auth/create_event'
   get '/google_auth/get_events'
 
+  namespace :api, format: 'json' do
+    resources :bot, except: [:new, :index] do
+      resources :messages, only: [:show, :index], param: :lineuser_id do#, shallow: true
+        member do
+          post :create
+          patch :update_name
+        end
+      end
+    end
+  end
 
-  constraints(id: /[0-9]+/, bot_id: /[0-9]+/) do
+  constraints(id: /[0-9]+/, bot_id: /[0-9]+/, lineuser_id: /[0-9]+/) do
     resources :bot, except: [:new, :index] do
       resources :response_data, only: [:index], shallow: true
+      resources :images, only: [:show], shallow: true
       resources :forms, shallow: true do
         member do
           patch :switch_active
+          get :edit_flow
         end
-        resources :quick_replies, only: [:create, :destroy], shallow: true do
+        resources :quick_replies, only: [:create, :destroy, :update], shallow: true do
           resources :quick_reply_items, only: [:create, :destroy], shallow: true
         end
       end
