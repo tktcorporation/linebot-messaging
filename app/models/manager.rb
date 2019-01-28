@@ -324,7 +324,7 @@ class  Manager
     when Line::Bot::Event::MessageType::Text
       message = self.save_message_from_event(event)
     when Line::Bot::Event::MessageType::Image
-      text = "[画像][{id}]"
+      text = "[画像][#{id}]"
       type = 1
     when Line::Bot::Event::MessageType::Video
       text = "[動画][#{id}]"
