@@ -199,13 +199,11 @@ class  Manager
   end
 
   def self.update_lineuser_profile(bot, uid)
-    json_profile = self.client(bot).get_profile(uid).body
-    profile = JSON.parse(json_profile)
+    response = self.client(bot).get_profile(uid).body
+    p response
+    profile = JSON.parse(response)
     lineuser = Lineuser.get_with_uid(uid)
-    lineuser.update(
-      pictureUrl: profile['pictureUrl'],
-      name: profile['displayName']
-      )
+    lineuser.update(pictureUrl: profile['pictureUrl'])#,name: profile['displayName']
   end
 
   def self.get_last_message(lineuser_id)
@@ -256,10 +254,10 @@ class  Manager
     end
   end
 
-  def self.save_message(event, text)
+  def self.save_message(event, type, text)
     uid = event['source']['userId']
     lineuser = Lineuser.get_with_uid(uid)
-    message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: true)
+    message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: true, msg_type: type)
     message.save
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot.id, log_text)
@@ -327,14 +325,19 @@ class  Manager
       message = self.save_message_from_event(event)
     when Line::Bot::Event::MessageType::Image
       text = "[画像][{id}]"
+      type = 1
     when Line::Bot::Event::MessageType::Video
       text = "[動画][#{id}]"
+      type = 2
     when Line::Bot::Event::MessageType::Audio
       text = "[音声][#{id}]"
+      type = 3
     when Line::Bot::Event::MessageType::File
       text = "[file][#{id}]"
+      type = 4
     when Line::Bot::Event::MessageType::Location
       text = "[位置情報]"
+      type = 5
     when Line::Bot::Event::MessageType::Sticker
       #スタンプが送信されるとadvance_lineuser_phase
       if !lineuser.is_converted
@@ -346,7 +349,7 @@ class  Manager
       text = "[スタンプ]"
     end
     if text
-      message = self.save_message(event, text)
+      message = self.save_message(event, type, text)
     end
     if message
       return message
@@ -523,4 +526,10 @@ class  Manager
     end
   end
 
+  def self.get_img_binary(message)
+    bot = message.lineuser.bot
+    msg = message.content.match(/.+\[id=(?<id>.+)\]/)
+    return false if msg.blank?
+    self.client(bot).get_message_content(msg[:id])
+  end
 end

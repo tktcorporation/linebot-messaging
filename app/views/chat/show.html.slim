@@ -63,7 +63,10 @@
                   - if @lineuser.pictureUrl
                     = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
                   .message
-                    = message.content
+                    - if message.msg_type == 1
+                      = link_to "コンテンツを表示", image_path(message.id), { :target => "_blank" }
+                    - else
+                      = message.content
                   span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
             - else
               .bot-side
