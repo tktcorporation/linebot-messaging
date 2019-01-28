@@ -321,17 +321,18 @@ class  Manager
   end
 
   def self.message_event(event, lineuser)
+    id = "id=" + event.message['id']
     case event.type
     when Line::Bot::Event::MessageType::Text
       message = self.save_message_from_event(event)
     when Line::Bot::Event::MessageType::Image
-      text = "[画像]"
+      text = "[画像][{id}]"
     when Line::Bot::Event::MessageType::Video
-      text = "[動画]"
+      text = "[動画][#{id}]"
     when Line::Bot::Event::MessageType::Audio
-      text = "[音声]"
+      text = "[音声][#{id}]"
     when Line::Bot::Event::MessageType::File
-      text = "[file]"
+      text = "[file][#{id}]"
     when Line::Bot::Event::MessageType::Location
       text = "[位置情報]"
     when Line::Bot::Event::MessageType::Sticker
