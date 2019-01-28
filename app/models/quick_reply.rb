@@ -167,7 +167,6 @@ class QuickReply < ApplicationRecord
   end
 
   def self.create_item(data, label)
-    p 3
     return pushed_item = {:type=>"action",
                   :action=>{
                             :type => "postback",
