@@ -258,7 +258,7 @@ class  Manager
     uid = event['source']['userId']
     lineuser = Lineuser.get_with_uid(uid)
     message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: true, msg_type: type)
-    message.save
+    message.save!
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot.id, log_text)
     puts("seve succes")
@@ -348,7 +348,7 @@ class  Manager
       end
       text = "[スタンプ]"
     end
-    if text
+    if text.present?
       message = self.save_message(event, type, text)
     end
     if message
