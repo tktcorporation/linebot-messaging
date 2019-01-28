@@ -10,7 +10,7 @@ class QuickReply < ApplicationRecord
 
   validates :name, presence: true, lt4bytes: true, length: { in: 1..250 }
   validates :form_id, numericality: true
-  validates :text, presence: true, lt4bytes: true
+  validates :text, presence: true#, lt4bytes: true
   validates :reply_type, numericality: true
 
 
