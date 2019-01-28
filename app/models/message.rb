@@ -2,8 +2,9 @@ class Message < ApplicationRecord
   belongs_to :lineuser
 
   validates :content, presence: true
-  validates :lineuser_id, presence: true, numericality: true
+  validates :lineuser_id, numericality: true
   validates :to_bot, inclusion: { in: [true, false] }
+  validates :msg_type, numericality: true
 
   scope :undeleted, ->{ where(deleted: false) }
   scope :order_asc, ->{ order(created_at: :asc) }
