@@ -66,12 +66,12 @@
                     - if message.msg_type == 1
                       = link_to "コンテンツを表示", image_path(message.id), { :target => "_blank" }
                     - else
-                      = message.content
+                      = simple_format h message.content
                   span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
             - else
               .bot-side
                 .message.float-right
-                  p = message.content
+                  = simple_format h message.content
                 span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
     - if @bot && @lineuser
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do

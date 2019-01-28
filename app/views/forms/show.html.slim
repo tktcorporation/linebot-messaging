@@ -40,7 +40,7 @@
                 span スケジュール調整
             .field
               label.mini-label text
-              span = quick_reply.text
+              = simple_format h quick_reply.text
             .field
               - if quick_reply.reply_type == 1
                 label.mini-label item
