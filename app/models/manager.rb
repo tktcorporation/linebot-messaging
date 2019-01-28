@@ -71,22 +71,14 @@ class  Manager
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       day = Time.parse(data[:text])
-      message = {
-        type: 'text',
-        text: day.strftime("%m月%d日"),
-        quickReply: quick_reply.times_param(day)
-      }
+      message = Manager::Flex.set_flex(day.strftime("%m月%d日"), quick_reply.times_param(day))
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 4
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
       #ここに確認処理をはさむ必要があるかもしれない
-      message = {
-        type: 'text',
-        text: "「#{data[:text]}」で決定しますか",
-        quickReply: quick_reply.check_param
-      }
+      message = Manager::Flex.set_flex("「#{data[:text]}」で決定しますか", quick_reply.check_param)
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 99
       quick_reply = QuickReply.get(data[:id])
@@ -169,6 +161,31 @@ class  Manager
     end
   end
 
+  def self.push_flex(lineuser, quick_reply)
+    bot = lineuser.bot
+    case quick_reply.reply_type
+    when 1
+      message = Manager::Flex.set_flex(quick_reply.text, quick_reply.items_param)
+    when 2
+      message = {
+        type: 'text',
+        text: quick_reply.text
+      }
+      QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
+    when 3
+      message = Manager::Flex.set_flex(quick_reply.text, quick_reply.days_param)
+    end
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
+      message = Message.new(content: "flexメッセージ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
+      message.save!
+      puts("save success")
+      lineuser.update_lastmessage(message)
+    else
+      p response
+    end
+  end
+
   def self.update_lineuser_profile(bot, uid)
     json_profile = self.client(bot).get_profile(uid).body
     profile = JSON.parse(json_profile)
@@ -241,7 +258,7 @@ class  Manager
   def self.advance_lineuser_phase(lineuser, form)
     if quick_reply = QuickReply.extract_by_phase_of_lineuser(lineuser, form)
       if !quick_reply.is_normal_message || quick_reply.reply_type != 0
-        self.push_quick_reply(lineuser, quick_reply)
+        self.push_flex(lineuser, quick_reply)
       else
         self.push(lineuser, quick_reply.text)
         next_reply_id = QuickReply.find(lineuser.quick_reply_id).next_reply_id
@@ -478,11 +495,7 @@ class  Manager
 
   def self.push_quick_reply_calendar(lineuser, quick_reply)
     bot = lineuser.bot
-    message = {
-      type: 'text',
-      text: quick_reply.text,
-      quickReply: QuickReply.quick_reply_items(quick_reply)
-    }
+    message = Manager::Flex.set_flex(quick_reply.text, QuickReply.quick_reply_items(quick_reply))
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
