@@ -13,7 +13,7 @@ class ChatController < ApplicationController
     @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
     @lineuser = Lineuser.includes(:messages, :response_data).get(params[:lineuser_id])
     @quick_reply_list = @bot.quick_replies.where(is_normal_message: false)
-    #Manager.update_lineuser_profile(@bot, @lineuser.uid)
+    Manager.update_lineuser_profile(@bot, @lineuser.uid)
   end
 
   def create
@@ -30,8 +30,9 @@ class ChatController < ApplicationController
 
   private
     def check_auth
-      if params[:lineuser_id]
-        Lineuser.get(params[:lineuser_id]).bot.user_id != current_user.id ? raise("you don't have auth of the id") : true
+      return if !params[:id]
+      if Lineuser.get(params[:lineuser_id]).bot.user_id != current_user.id
+        render file: Rails.root.join('public/404.html'), status: 404, layout: false, content_type: 'text/html'
       end
     end
 

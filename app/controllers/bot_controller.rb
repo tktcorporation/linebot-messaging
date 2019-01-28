@@ -38,6 +38,9 @@ class BotController < ApplicationController
       params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify)
     end
     def check_auth
-      Bot.get(params[:id]).user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
+      return if !params[:id]
+      if Bot.get(params[:id]).user_id != @current_user.id
+        render file: Rails.root.join('public/404.html'), status: 404, layout: false, content_type: 'text/html'
+      end
     end
 end

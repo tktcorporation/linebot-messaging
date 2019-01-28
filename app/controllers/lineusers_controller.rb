@@ -16,7 +16,10 @@ class LineusersController < ApplicationController
 
   private
     def check_auth
-      Lineuser.get(params[:id]).bot.user_id != @current_user.id ? raise("you don't have auth of the id") : true if params[:id]
+      return if !params[:id]
+      if Lineuser.get(params[:id]).bot.user_id != @current_user.id
+        render file: Rails.root.join('public/404.html'), status: 404, layout: false, content_type: 'text/html'
+      end
     end
     def form_params
       params.require(:lineuser).permit(:name)
