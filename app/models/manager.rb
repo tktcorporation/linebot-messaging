@@ -71,14 +71,22 @@ class  Manager
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       day = Time.parse(data[:text])
-      message = Manager::Flex.set_flex(day.strftime("%m月%d日"), quick_reply.times_param(day))
+      message = {
+        type: 'text',
+        text: day.strftime("%m月%d日"),
+        quickReply: quick_reply.times_param(day)
+      }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 4
       #data[:id]にはquick_reply_idが入っている
       quick_reply = QuickReply.get(data[:id])
       ResponseDatum.save_data(lineuser, quick_reply.id, data[:text])
       #ここに確認処理をはさむ必要があるかもしれない
-      message = Manager::Flex.set_flex("「#{data[:text]}」で決定しますか", quick_reply.check_param)
+      message = {
+        type: 'text',
+        text: "「#{data[:text]}」で決定しますか",
+        quickReply: quick_reply.check_param
+      }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 99
       quick_reply = QuickReply.get(data[:id])
@@ -173,7 +181,11 @@ class  Manager
       }
       QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
-      message = Manager::Flex.set_flex(quick_reply.text, quick_reply.days_param)
+      message = {
+        type: 'text',
+        text: quick_reply.text,
+        quickReply: quick_reply.days_param
+      }
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
@@ -495,7 +507,11 @@ class  Manager
 
   def self.push_quick_reply_calendar(lineuser, quick_reply)
     bot = lineuser.bot
-    message = Manager::Flex.set_flex(quick_reply.text, QuickReply.quick_reply_items(quick_reply))
+    message = {
+        type: 'text',
+        text: quick_reply.text,
+        quickReply: QuickReply.quick_reply_items(quick_reply)
+      }
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
