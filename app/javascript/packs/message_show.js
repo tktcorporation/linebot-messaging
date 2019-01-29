@@ -12,7 +12,7 @@ var app = new Vue({
     }
   },
   created: function() {
-    setInterval(() => { this.time++ }, 10000);
+    setInterval(() => { this.time++ }, 2000);
   },
   watch: {
     time: function(v) {
