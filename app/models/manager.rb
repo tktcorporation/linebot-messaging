@@ -198,12 +198,16 @@ class  Manager
     end
   end
 
-  def self.update_lineuser_profile(bot, uid)
+  def self.update_lineuser_profile(bot, uid, boolean)
     response = self.client(bot).get_profile(uid).body
     p response
     profile = JSON.parse(response)
     lineuser = Lineuser.get_with_uid(uid)
-    lineuser.update(pictureUrl: profile['pictureUrl'])#,name: profile['displayName']
+    if boolean
+      lineuser.update(pictureUrl: profile['pictureUrl'],name: profile['displayName'])
+    else
+      lineuser.update(pictureUrl: profile['pictureUrl'])
+    end
   end
 
   def self.get_last_message(lineuser_id)
@@ -310,7 +314,7 @@ class  Manager
   def self.follow_event(lineuser)
     lineuser.is_unfollowed = false
     lineuser.save
-    self.update_lineuser_profile(lineuser.bot, lineuser.uid)
+    self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
     if form = Form.get_active_with_lineuser(lineuser)
       lineuser.create_session(form)
       lineuser.update_attributes(quick_reply_id: form.first_reply_id)
@@ -531,5 +535,13 @@ class  Manager
     msg = message.content.match(/.+\[id=(?<id>.+)\]/)
     return false if msg.blank?
     self.client(bot).get_message_content(msg[:id])
+  end
+
+  def self.save_or_refresh_name(bot, lineuser, username)
+    if username == ""
+      self.update_lineuser_profile(bot, lineuser.uid, true)
+    else
+      self.push_name(lineuser.id, username)
+    end
   end
 end

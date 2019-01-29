@@ -13,7 +13,18 @@ class ChatController < ApplicationController
     @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
     @lineuser = Lineuser.includes(:messages, :response_data).get(params[:lineuser_id])
     @quick_reply_list = @bot.quick_replies.where(is_normal_message: false)
-    Manager.update_lineuser_profile(@bot, @lineuser.uid)
+    Manager.update_lineuser_profile(@bot, @lineuser.uid, false)
+    @value = {message: params[:redirect_message], name: params[:redirect_name]} #if params[:redirect_message] && params[:redirect_name]
+  end
+
+  def redirect
+    @bot = Bot.includes(:lineusers).includes(:lineusers => :lastmessage).get(params[:bot_id])
+    #:replied に返信済みユーザーが, :not_repliedに未返信ユーザーが配列で入る
+    @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
+    @lineuser = Lineuser.includes(:messages, :response_data).get(params[:lineuser_id])
+    @quick_reply_list = @bot.quick_replies.where(is_normal_message: false)
+    @value = {message: params[:redirect_message], name: params[:redirect_name]}
+    render :show
   end
 
   def create
@@ -23,8 +34,9 @@ class ChatController < ApplicationController
   end
 
   def update_name
-    username = params[:name]
-    Manager.push_name(params[:lineuser_id], username)
+    @bot = Bot.get(params[:bot_id])
+    @lineuser = Lineuser.get(params[:lineuser_id])
+    Manager.save_or_refresh_name(@bot, @lineuser, params[:name])
     redirect_to bot_chat_path(params[:bot_id], params[:lineuser_id])
   end
 
