@@ -25,7 +25,7 @@ var app = new Vue({
   },
   methods: {
     switchTab: function(num) {
-      this.isActive = num
+      this.isActive = num;
     },
     submitAndRedirect: function(){
       this.fetchAndSet();
@@ -38,8 +38,8 @@ var app = new Vue({
       this.name = document.getElementById("name").value;
     },
     setMessageAndName: function() {
-      document.getElementById("redirect_message").value = this.message
-      document.getElementById("redirect_name").value = this.name
+      document.getElementById("redirect_message").value = this.message;
+      document.getElementById("redirect_name").value = this.name;
     },
     fetchAndSet: function() {
       this.fetchMessage();
