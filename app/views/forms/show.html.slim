@@ -40,7 +40,9 @@
                 span スケジュール調整
             .field
               label.mini-label text
-              = simple_format h quick_reply.text
+              = form_with model: quick_reply, url: text_update_quick_reply_path(quick_reply.id), data: { parsley_validate: "" }, html: { class: "form" } do |f|
+                = f.text_area :text, class: "input", required: "", style: "height: 6em;"
+                = f.submit "更新", class: "button is-info is-small"
             .field
               - if quick_reply.reply_type == 1
                 label.mini-label item
