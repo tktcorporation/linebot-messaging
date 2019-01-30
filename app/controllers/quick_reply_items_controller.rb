@@ -17,7 +17,7 @@ class QuickReplyItemsController < ApplicationController
   private
     def check_auth
       return if !params[:id]
-      if QuickReplyItem.get(params[:id]).quick_reply.form.bot.user_id
+      if QuickReplyItem.get(params[:id]).quick_reply.form.bot.user_id != @current_user.id
         render file: Rails.root.join('public/404.html'), status: 404, layout: false, content_type: 'text/html'
       end
     end
