@@ -101,6 +101,7 @@ class Lineuser < ApplicationRecord
     else
       if self.create(uid: uid, bot_id: bot_id)
         p "created new lineuser"
+        lineuser
       end
     end
   end

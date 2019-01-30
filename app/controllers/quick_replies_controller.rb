@@ -43,6 +43,12 @@ class QuickRepliesController < ApplicationController
     redirect_to "/forms/#{quick_reply.form.id}/edit_flow"
   end
 
+  def text_update
+    quick_reply = QuickReply.get(params[:id])
+    quick_reply.update_attributes!(quick_reply_update_params)
+    redirect_to "/forms/#{quick_reply.form.id}"
+  end
+
   private
     def check_auth
       return if !params[:id]
@@ -52,6 +58,9 @@ class QuickRepliesController < ApplicationController
     end
     def quick_reply_params
       params.require(:quick_reply).permit(:name, :text, :reply_type)
+    end
+    def quick_reply_update_params
+      params.require(:quick_reply).permit(:name, :text)
     end
     def quick_reply_schedule_params
       params.require(:quick_reply).permit(:summary, :duration_days, :duration_num, :start_num, :term_num, available_day: %i(0 1 2 3 4 5 6))

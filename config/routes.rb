@@ -33,6 +33,9 @@ Rails.application.routes.draw do
           get :edit_flow
         end
         resources :quick_replies, only: [:create, :destroy, :update], shallow: true do
+          member do
+            patch :text_update
+          end
           resources :quick_reply_items, only: [:create, :destroy], shallow: true
         end
       end
@@ -46,6 +49,7 @@ Rails.application.routes.draw do
       resources :chat, only: [:show, :index], param: :lineuser_id do#, shallow: true
         member do
           post :create
+          post :redirect
           patch :update_name
         end
       end
