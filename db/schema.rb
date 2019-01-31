@@ -12,6 +12,17 @@
 
 ActiveRecord::Schema.define(version: 2018_10_21_142625) do
 
+  create_table "bot_lineuser_statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lineuser_id", null: false
+    t.integer "status_id"
+  end
+
+  create_table "bot_statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "bot_id", null: false
+    t.string "name", limit: 50, default: "", null: false
+    t.boolean "deleted", null: false
+  end
+
   create_table "bots", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "name", limit: 50, default: "", null: false, collation: "utf8mb4_general_ci"
@@ -61,11 +72,6 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.string "email"
     t.string "client_secret"
     t.string "client_id"
-  end
-
-  create_table "lineuser_statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lineuser_id", null: false
-    t.integer "status_id", null: false
   end
 
   create_table "lineusers", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -188,11 +194,6 @@ ActiveRecord::Schema.define(version: 2018_10_21_142625) do
     t.integer "lineuser_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "bot_id"
-    t.string "text", limit: 50
   end
 
   create_table "users", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
