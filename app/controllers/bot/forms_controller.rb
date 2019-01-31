@@ -1,4 +1,4 @@
-class FormsController < ApplicationController
+class Bot::FormsController < ApplicationController
   before_action :check_auth
   layout 'bot_layout'
 

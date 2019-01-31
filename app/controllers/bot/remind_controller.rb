@@ -1,21 +1,20 @@
-class RemindController < ApplicationController
+class Bot::RemindController < ApplicationController
+  before_action :check_auth
   def create
-    p bot_url(params[:bot_id])
     if Manager.create_remind(remind_params, params[:bot_id], params[:remind_user][:lineusers])
       flash[:notice] = "リマインドを作成しました"
     else
       flash[:notice] = "リマインドの作成に失敗しました"
     end
-    p bot_url(params[:bot_id])
     redirect_to bot_url(params[:bot_id])
   end
   def edit
-    @lineusers_list = Lineuser.get_plural_with_remind_id(params[:remind_id])
-    @remind = Remind.get(params[:remind_id])
+    @lineusers_list = Lineuser.get_plural_with_remind_id(params[:id])
+    @remind = Remind.get(params[:id])
     @checked_lineuser_array = @remind.remind_users.map{|remind_user| remind_user.lineuser_id}
   end
   def update
-    Manager.update_remind(params[:remind_id], remind_params, params[:remind_user][:lineusers])
+    Manager.update_remind(params[:id], remind_params, params[:remind_user][:lineusers])
     #ajaxでは通常のflashmessageは機能しない
     flash[:notice] = "リマインドの内容を更新しました"
     #redirect_to "/bot/remind/#{params[:remind_id]}/edit"
@@ -30,6 +29,9 @@ class RemindController < ApplicationController
       params.require(:remind).permit(:name, :text, :ignition_time, :enable)
     end
     def check_auth
-      Remind.get(params[:id]).bot.user_id != current_user.id ? raise("you don't have auth of the id") : true
+      return if !params[:id]
+      if Remind.get(params[:id]).bot.user_id != @current_user.id
+        render file: Rails.root.join('public/404.html'), status: 404, layout: false, content_type: 'text/html'
+      end
     end
 end

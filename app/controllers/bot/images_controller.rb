@@ -1,4 +1,4 @@
-class ImagesController < ApplicationController
+class Bot::ImagesController < ApplicationController
   before_action :check_auth
 
   def show

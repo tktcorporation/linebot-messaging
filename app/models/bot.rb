@@ -4,6 +4,7 @@ class Bot < ApplicationRecord
   has_many :lineusers, ->{ where(deleted: false) }
   has_many :forms, ->{ where(deleted: false) }
   has_many :quick_replies, through: :forms
+  has_many :statuses, ->{ where(deleted: false) }, class_name: "Bot::Status"
   has_one :notify_token, ->{ where(deleted: false) }
   has_one :google_api_set
   belongs_to :user
@@ -19,6 +20,10 @@ class Bot < ApplicationRecord
   def destroy
     self.deleted = true
     save
+  end
+
+  def get_status_array
+    self.statuses.pluck(:name, :id)
   end
 
   def self.get_plural_with_user_id(current_user_id)

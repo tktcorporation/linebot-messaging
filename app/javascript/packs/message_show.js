@@ -45,6 +45,9 @@ var app = new Vue({
       this.fetchMessage();
       this.fetchName();
       this.setMessageAndName();
+    },
+    submitStatus: function(){
+      document.status_form.submit();
     }
   }
 })
