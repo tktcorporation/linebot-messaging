@@ -15,6 +15,7 @@ class Lineuser < ApplicationRecord
   has_one :session_lineuser
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
   has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id
+  has_one :lineuser_status, class_name: "Bot::LineuserStatus"
   has_many :quick_reply_text_flags
   belongs_to :bot
 

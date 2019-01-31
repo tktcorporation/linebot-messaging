@@ -1,4 +1,4 @@
-class QuickRepliesController < ApplicationController
+class Bot::QuickRepliesController < ApplicationController
   before_action :check_auth
   def index
     bot = Bot.get(params[:bot_id])

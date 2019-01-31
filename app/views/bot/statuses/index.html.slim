@@ -1,0 +1,23 @@
+.container
+  .columns.is-centered
+    .column.is-6
+      = form_with model: @bot.statuses.new, url: bot_statuses_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        label.label ステータスを追加
+
+        .columns
+          .column.is-9
+            .field
+              p.control
+                = f.text_field :name, placeholder: "ステータス", class: "input", 'required'=>''
+          .column.is-3
+            p.control
+              = f.submit "追加", class: "button is-info"
+  .columns.is-centered
+    .column.is-6
+      - @statuses.each do |status|
+        .box
+          .columns
+            .column.is-6
+              p = status.name
+            .column.is-6
+              p = link_to "削除", status_path(status.id), method: :delete, class: "button"

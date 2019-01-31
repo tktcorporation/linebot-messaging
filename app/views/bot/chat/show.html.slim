@@ -90,7 +90,7 @@
         = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
           = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input"
           = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-    .column.is-5
+    .column.is-5.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
         = hidden_field_tag :redirect_name, ""
@@ -99,7 +99,7 @@
         .label CV済み
       - else
         .label 未CV
-      table.table.is-fullwidth
+      table.table.is-bordered
         thead
           tr
             - @quick_reply_list.each do |quick_reply|
@@ -113,4 +113,13 @@
                 = @lineuser.response_data[index].response_text
               - else
                 span NULL
+      = form_with model: @lineuser.lineuser_status.present? ? @lineuser.lineuser_status : @lineuser.build_lineuser_status, url: lineuser_lineuser_statuses_path, data: { parsley_validate: "" }, html: { name: "status_form",class: "form" } do |f|
+        label.label ステータス
+        .field
+          p.control
+            .select
+              - @status_array = (@status_array + [["未選択", nil]])
+              = f.select :status_id, @status_array, {:prompt => "未選択"}, {"v-on:change"=>"submitStatus"}
+
+
 = javascript_pack_tag "message_show"

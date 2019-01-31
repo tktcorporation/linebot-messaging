@@ -1,4 +1,4 @@
-class QuickReplyItemsController < ApplicationController
+class Bot::QuickReplyItemsController < ApplicationController
   before_action :check_auth
   def create
     quick_reply = QuickReply.get(params[:quick_reply_id])
