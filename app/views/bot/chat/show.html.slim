@@ -101,7 +101,7 @@
         .label 未CV
       table.table.is-bordered
         thead
-          tr
+          tr style="white-space: nowrap;"
             - @quick_reply_list.each do |quick_reply|
               th
                 = quick_reply.name
