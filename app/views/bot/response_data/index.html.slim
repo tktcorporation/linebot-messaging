@@ -5,7 +5,7 @@
 
     table.table.is-fullwidth
       thead
-        tr
+        tr style="white-space: nowrap;"
           th
             span ユーザー名
           th
@@ -19,11 +19,15 @@
             td
               = link_to lineuser.name, bot_chat_path(params[:bot_id], lineuser.id)
             td
-              = form_with model: lineuser.lineuser_status.present? ? lineuser.lineuser_status : lineuser.build_lineuser_status, url: lineuser_lineuser_statuses_path(lineuser_id: lineuser.id), data: { parsley_validate: "" }, html: { name: "status_form_#{lineuser.id}", class: "form" } do |f|
-                .field
-                  p.control
-                    .select
-                      = f.select :status_id, @status_array, {:prompt => "未選択"}, {"v-on:change"=>"submitStatus(#{lineuser.id})"}
+              - if lineuser.converted_lineuser.present?
+                = form_with model: lineuser.lineuser_status.present? ? lineuser.lineuser_status : lineuser.build_lineuser_status, url: lineuser_lineuser_statuses_path(lineuser_id: lineuser.id), data: { parsley_validate: "" }, html: { name: "status_form_#{lineuser.id}", class: "form" } do |f|
+                  .field
+                    p.control
+                      .select
+                        = f.select :status_id, @status_array, {:prompt => "未選択"}, {"v-on:change"=>"submitStatus(#{lineuser.id})"}
+              - else
+                label.label 未CV
+
             - @quick_reply_list.each do |quick_reply|
               td
                 - if index = lineuser.response_data.pluck(:quick_reply_id).index(quick_reply.id)
@@ -32,4 +36,3 @@
                   span NULL
 
 = javascript_pack_tag 'bot_response_data_index'
-
