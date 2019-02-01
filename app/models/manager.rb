@@ -238,7 +238,10 @@ class  Manager
   end
 
   def self.check_quick_reply_text(lineuser, text)
-    return nil if /回答：.+/ === text
+    if /回答：.+/ === text
+      lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy
+      return nil
+    end
     if lineuser.quick_reply_text_flags.present?
       if lineuser.quick_reply_text_flags.find_by(is_accepting: true).present?
         quick_reply = lineuser.quick_reply_text_flags.find_by(is_accepting: true).quick_reply_text.quick_reply
