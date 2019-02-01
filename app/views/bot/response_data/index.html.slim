@@ -25,6 +25,8 @@
                     p.control
                       .select
                         = f.select :status_id, @status_array, {:prompt => "未選択"}, {"v-on:change"=>"submitStatus(#{lineuser.id})"}
+                - if lineuser.lastmessage&.to_bot == true
+                  .label 未返信
               - else
                 label.label 未CV
 
