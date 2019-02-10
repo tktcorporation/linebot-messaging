@@ -55,10 +55,10 @@ class  Manager
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
     message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
-    if message.save
-      p "save success"
-      lineuser.update_lastmessage(message)
-    end
+    message.save!
+    lineuser.update_lastmessage(message)
+    #自由記入テキストの待機中であればそれを削除
+    lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
