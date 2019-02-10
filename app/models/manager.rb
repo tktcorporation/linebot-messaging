@@ -57,8 +57,6 @@ class  Manager
     message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
     message.save!
     lineuser.update_lastmessage(message)
-    #自由記入テキストの待機中であればそれを削除
-    lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
@@ -107,6 +105,8 @@ class  Manager
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
+      #自由記入テキストの待機中であればそれを削除
+      lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     end
 
   end
