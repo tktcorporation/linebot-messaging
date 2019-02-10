@@ -105,8 +105,6 @@ class  Manager
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
-      #自由記入テキストの待機中であればそれを削除
-      lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     end
 
   end
@@ -273,6 +271,8 @@ class  Manager
   end
 
   def self.advance_lineuser_phase(lineuser, form)
+    #自由記入テキストの待機中であればそれを削除
+    lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     if quick_reply = QuickReply.extract_by_phase_of_lineuser(lineuser, form)
       if !quick_reply.is_normal_message || quick_reply.reply_type != 0
         self.push_flex(lineuser, quick_reply)
