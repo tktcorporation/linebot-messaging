@@ -200,7 +200,7 @@
               - else
                 p.control
                   = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
-          .form-tab v-if="isActive == 1"
+          .form-tab v-if="isActive == 5"
             = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 日付選択
               = f.hidden_field :reply_type, :value => 5
