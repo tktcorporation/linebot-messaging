@@ -58,6 +58,7 @@ Rails.application.routes.draw do
         end
         resources :chat, only: [:show, :index], param: :lineuser_id do#, shallow: true
           member do
+            post :push_flex
             post :create
             post :redirect
             patch :update_name

@@ -89,10 +89,15 @@
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
         .message-form
-          = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), "v-if"="formSwitch", 'data-parsley-validate'=>'', method: :post do
+          = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), "v-if"=>"formSwitch == 0", 'data-parsley-validate'=>'', method: :post do
             = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
             = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-          button v-on:click="formSwich(1)"
+            button.button v-on:click="switchForm(1)" テンプレート送信
+          = form_tag push_flex_bot_chat_path(params[:bot_id], params[:lineuser_id]), "v-if"=>"formSwitch == 1", 'data-parsley-validate'=>'', method: :post do
+            .select
+              = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id)
+            = submit_tag "送信", class: "button is-info inline-block"
+            button.button v-on:click="switchForm(0)" メッセージ送信
     .column.is-5.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
