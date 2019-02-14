@@ -42,6 +42,13 @@ class Bot::ChatController < ApplicationController
     redirect_to bot_chat_path(params[:bot_id], params[:lineuser_id])
   end
 
+  def push_flex
+    lineuser = Lineuser.get(params[:lineuser_id])
+    quick_reply = QuickReply.get(params[:quick_reply][:id])
+    Manager.push_flex(lineuser, quick_reply)
+    redirect_to bot_chat_path(params[:bot_id], params[:lineuser_id])
+  end
+
   private
     def check_auth
       return if !params[:id]

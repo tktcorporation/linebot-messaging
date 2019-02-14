@@ -50,7 +50,7 @@ var app = new Vue({
     submitStatus: function(){
       document.status_form.submit();
     },
-    formSwitch: function(num){
+    switchForm: function(num){
       this.formSwitch = num;
     }
   }

@@ -104,8 +104,8 @@ class  Manager
       self.client(lineuser.bot).push_message(lineuser.uid, message)
     when 5
       quick_reply = QuickReply.get(data[:id])
-      ResponseDatum.save_data(lineuser, quick_reply.id, event['postback']['params']['datetime'])
-      self.push(lineuser, event['postback']['params']['datetime'])
+      ResponseDatum.save_data(lineuser, quick_reply.id, event['postback']['params']['date'])
+      self.push(lineuser, event['postback']['params']['date'])
       self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 99
@@ -217,7 +217,7 @@ class  Manager
         quickReply: quick_reply.days_param
       }
     when 5
-      message = Manager::Flex.datetimepicker(quick_reply.text)
+      message = Manager::Flex.datetimepicker(quick_reply)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK

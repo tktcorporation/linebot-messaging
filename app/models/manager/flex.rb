@@ -17,7 +17,7 @@ class Manager::Flex
       action: {
         type: "datetimepicker",
         label: "選択",
-        data: "[#{quick_reply.type}][#{quick_reply.id}]datetimepicker",
+        data: "[#{quick_reply.reply_type}][#{quick_reply.id}]datetimepicker",
         mode: "date"
       }
     }]
