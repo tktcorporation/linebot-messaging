@@ -120,6 +120,8 @@ class QuickReply < ApplicationRecord
       self.create_text(quick_reply)
     when 3
       self.create_schedule(quick_reply, quick_reply_schedule_params)
+    when 5
+      self.create_date(quick_reply)
     end
     return quick_reply
   end
@@ -128,6 +130,11 @@ class QuickReply < ApplicationRecord
     quick_reply.is_normal_message = false
     quick_reply.save!
     QuickReplySchedule.create_option(quick_reply, quick_reply_schedule_params)
+  end
+
+  def self.create_date(quick_reply)
+    quick_reply.is_normal_message = false
+    quick_reply.save!
   end
 
   def self.create_text(quick_reply)
