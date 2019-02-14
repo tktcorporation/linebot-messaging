@@ -61,9 +61,13 @@
           p 　
           p 　
         .room-bar.is-hidden-mobile
-          label.label.inline-box
+          label.label
             = @lineuser.name
             | とのトークルーム
+          - if @bot && @lineuser
+            = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
+              = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input "
+              = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
         - if @lineuser
           - @lineuser.messages.each do |message|
@@ -84,12 +88,11 @@
                     = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
-        = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
-          = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input", 'required'=>''
-          = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-        = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
-          = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input"
-          = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+        .message-form
+          = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), "v-if"="formSwitch", 'data-parsley-validate'=>'', method: :post do
+            = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
+            = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+          button v-on:click="formSwich(1)"
     .column.is-5.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""

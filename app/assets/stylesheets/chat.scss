@@ -57,11 +57,16 @@
 .room-bar {
     padding: 10px 8px 5px;
     border-bottom: solid 1px #ddd;
+    .name-form {
+        input {
+            width: 80%;
+        }
+    }
 }
 
 #messages-box {
     overflow: auto;
-    height: 85%;
+    height:75%;
 
     .message-box {
         margin: 10px;
@@ -95,16 +100,14 @@
 }
 
 .talk-box {
-    height: 100%;
-
-    form {
+    height: 80%;
+    .message-form {
         display: block;
-        .input {
-            display: inline-block;
-            width: 90%;
-        }
-        .submit-message {
-            width: 6%;
+        width: 100%;
+        bottom: 0px;
+        .message-input {
+            height: 4em;
+            width: 80%;
         }
     }
 }
