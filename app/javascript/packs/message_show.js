@@ -8,7 +8,8 @@ var app = new Vue({
       message: "",
       name: "",
       time: 0,
-      isActive: 1
+      isActive: 1,
+      formSwitch: 0
     }
   },
   created: function() {
@@ -48,6 +49,9 @@ var app = new Vue({
     },
     submitStatus: function(){
       document.status_form.submit();
+    },
+    formSwitch: function(num){
+      this.formSwitch = num;
     }
   }
 })
