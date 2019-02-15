@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     resources :bot, except: [:new, :index] do
       scope module: 'bot' do
         resources :response_data, only: [:index], shallow: true
+        resources :reply_actions, shallow: true
         resources :images, only: [:show], shallow: true
         resources :statuses, only: [:create, :destroy, :index], shallow: true
         resources :forms, shallow: true do

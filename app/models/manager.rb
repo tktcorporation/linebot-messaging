@@ -261,12 +261,19 @@ class  Manager
     uid = event['source']['userId']
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
+    self.check_reply_action(text, lineuser)
     message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot_id, log_text)
     puts("seve message succes")
     self.check_quick_reply_text(lineuser, text)
     return message
+  end
+
+  def self.check_reply_action(lineuser, text)
+    if reply_action = lineuser.bot.reply_actions.find_by(text: text)
+      self.push_flex(lineuser, reply_action.quick_reply)
+    end
   end
 
   def self.check_quick_reply_text(lineuser, text)

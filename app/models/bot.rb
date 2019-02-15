@@ -5,6 +5,7 @@ class Bot < ApplicationRecord
   has_many :forms, ->{ where(deleted: false) }
   has_many :quick_replies, through: :forms
   has_many :statuses, ->{ where(deleted: false) }, class_name: "Bot::Status"
+  has_many :reply_actions
   has_one :notify_token, ->{ where(deleted: false) }
   has_one :google_api_set
   belongs_to :user

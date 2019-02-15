@@ -1,5 +1,6 @@
 class QuickReply < ApplicationRecord
   has_many :quick_reply_items, ->{ where(deleted: false) }
+  has_many :reply_actions
   has_one :response_datum
   has_one :quick_reply_schedule, dependent: :destroy
   has_one :quick_reply_text, dependent: :destroy
