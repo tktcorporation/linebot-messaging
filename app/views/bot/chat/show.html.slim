@@ -46,7 +46,7 @@
                         - if lineuser.lastmessage
                           = lineuser.lastmessage.content
                         - else
-    .column.is-4.talk-box.content-body
+    .column.is-5.talk-box.content-body
       - if @lineuser
         header.navbar.is-white.is-fixed-top.is-hidden-tablet
           .container
@@ -100,7 +100,7 @@
                 = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id)
               = submit_tag "送信", class: "button is-info inline-block"
             button.button v-on:click="switchForm(0)" メッセージ送信
-    .column.is-5.overflow
+    .column.is-4.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
         = hidden_field_tag :redirect_name, ""
