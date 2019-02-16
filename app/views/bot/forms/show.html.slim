@@ -38,6 +38,8 @@
                 span 自由入力
               - when 3
                 span スケジュール調整
+              - when 5
+                span 日付選択
             .field
               label.mini-label text
               = form_with model: quick_reply, url: text_update_quick_reply_path(quick_reply.id), data: { parsley_validate: "" }, html: { class: "form" } do |f|
@@ -83,6 +85,9 @@
             li data-tab="4" v-on:click="switchTab(4)" v-bind:class="{'is-active': isActive == 4}"
               a
                 span Schedule
+            li data-tab="5" v-on:click="switchTab(5)" v-bind:class="{'is-active': isActive == 5}"
+              a
+                span DateTime
         #tab-content
           .form-tab v-if="isActive == 1"
             = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
@@ -195,6 +200,20 @@
               - else
                 p.control
                   = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+          .form-tab v-if="isActive == 5"
+            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+              label.label.is-large 日付選択
+              = f.hidden_field :reply_type, :value => 5
+              label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
+              .field
+                .control
+                  = f.text_field :name, class: "input", required: ""
+              label.label テキスト（質問時、ユーザー側に表示されます）
+              .field
+                .control
+                  = f.text_area :text, class: "input", required: ""
+              p.control
+                = f.submit "追加", class: "button is-info"
 
   button.modal-close.is-large aria-label="close"
 = javascript_pack_tag 'add_flow'

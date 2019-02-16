@@ -10,6 +10,20 @@ class Manager::Flex
     self.flex_frame('vertical', text, flex_contents)
   end
 
+  def self.datetimepicker(quick_reply)
+    content = [{
+      type: 'button',
+      style: 'link',
+      action: {
+        type: "datetimepicker",
+        label: "選択",
+        data: "[#{quick_reply.reply_type}][#{quick_reply.id}]datetimepicker",
+        mode: "date"
+      }
+    }]
+    self.flex_frame('vertical', quick_reply.text, content)
+  end
+
   def self.confirm_flex(text, contents)
     flex_contents = contents[:items].map do |content|
       {
