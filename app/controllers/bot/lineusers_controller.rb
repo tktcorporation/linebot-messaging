@@ -1,4 +1,4 @@
-class LineusersController < ApplicationController
+class Bot::LineusersController < ApplicationController
   before_action :check_auth
   layout 'bot_layout'
 

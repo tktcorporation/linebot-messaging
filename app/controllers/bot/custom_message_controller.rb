@@ -1,4 +1,4 @@
-class CustomMessageController < ApplicationController
+class Bot::CustomMessageController < ApplicationController
   layout 'bot_layout'
   def index
     @bot = Bot.includes(:reminds, :lineusers).get(params[:bot_id])

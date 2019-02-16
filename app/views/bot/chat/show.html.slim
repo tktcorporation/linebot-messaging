@@ -46,7 +46,7 @@
                         - if lineuser.lastmessage
                           = lineuser.lastmessage.content
                         - else
-    .column.is-4.talk-box.content-body
+    .column.is-5.talk-box.content-body
       - if @lineuser
         header.navbar.is-white.is-fixed-top.is-hidden-tablet
           .container
@@ -61,9 +61,13 @@
           p 　
           p 　
         .room-bar.is-hidden-mobile
-          label.label.inline-box
+          label.label
             = @lineuser.name
             | とのトークルーム
+          - if @bot && @lineuser
+            = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
+              = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input "
+              = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
         - if @lineuser
           - @lineuser.messages.each do |message|
@@ -84,13 +88,19 @@
                     = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
-        = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
-          = text_field_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input", 'required'=>''
-          = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-        = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :patch do
-          = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input"
-          = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-    .column.is-5
+        .message-form
+          div v-if="formSwitch == 0"
+            = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
+              = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
+              = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+            button.button v-on:click="switchForm(1)" テンプレート送信
+          div v-if="formSwitch == 1"
+            = form_tag push_flex_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
+              .select
+                = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id)
+              = submit_tag "送信", class: "button is-info inline-block"
+            button.button v-on:click="switchForm(0)" メッセージ送信
+    .column.is-4.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
         = hidden_field_tag :redirect_name, ""
@@ -99,9 +109,9 @@
         .label CV済み
       - else
         .label 未CV
-      table.table.is-fullwidth
+      table.table.is-bordered
         thead
-          tr
+          tr style="white-space: nowrap;"
             - @quick_reply_list.each do |quick_reply|
               th
                 = quick_reply.name
@@ -113,4 +123,13 @@
                 = @lineuser.response_data[index].response_text
               - else
                 span NULL
+      = form_with model: @lineuser.lineuser_status.present? ? @lineuser.lineuser_status : @lineuser.build_lineuser_status, url: lineuser_lineuser_statuses_path, data: { parsley_validate: "" }, html: { name: "status_form",class: "form" } do |f|
+        label.label ステータス
+        .field
+          p.control
+            .select
+              - @status_array = (@status_array + [["未選択", nil]])
+              = f.select :status_id, @status_array, {:prompt => "未選択"}, {"v-on:change"=>"submitStatus"}
+
+
 = javascript_pack_tag "message_show"

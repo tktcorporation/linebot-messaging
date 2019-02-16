@@ -8,7 +8,8 @@ var app = new Vue({
       message: "",
       name: "",
       time: 0,
-      isActive: 1
+      isActive: 1,
+      formSwitch: 0
     }
   },
   created: function() {
@@ -25,7 +26,7 @@ var app = new Vue({
   },
   methods: {
     switchTab: function(num) {
-      this.isActive = num
+      this.isActive = num;
     },
     submitAndRedirect: function(){
       this.fetchAndSet();
@@ -38,13 +39,19 @@ var app = new Vue({
       this.name = document.getElementById("name").value;
     },
     setMessageAndName: function() {
-      document.getElementById("redirect_message").value = this.message
-      document.getElementById("redirect_name").value = this.name
+      document.getElementById("redirect_message").value = this.message;
+      document.getElementById("redirect_name").value = this.name;
     },
     fetchAndSet: function() {
       this.fetchMessage();
       this.fetchName();
       this.setMessageAndName();
+    },
+    submitStatus: function(){
+      document.status_form.submit();
+    },
+    switchForm: function(num){
+      this.formSwitch = num;
     }
   }
 })

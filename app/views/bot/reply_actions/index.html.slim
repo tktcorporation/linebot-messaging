@@ -1,0 +1,49 @@
+.container
+  .columns.is-centered
+    .column.is-7
+      label.label 自動応答メッセージ
+      .box
+        = form_with model: @bot.reply_actions.new, url: bot_reply_actions_path(@bot), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            label.label.is-large テキスト自動応答
+            label.label 名前（管理用）
+            .field
+              .control
+                = f.text_field :name, class: "input", required: ""
+            label.label 反応テキスト
+            .field
+              .control
+                = f.text_field :text, class: "input", required: ""
+            label.label 応答
+            .field
+              .select
+                = f.select :quick_reply_id, @quick_reply_list
+            label.label 有効化
+            .field
+              p.control
+                = f.check_box :is_active
+            p.control
+              = f.submit "追加", class: "button is-info"
+      hr style="margin: 0;"
+      - @reply_actions.each_with_index do |reply_action, index|
+        .column
+          .box.quick-reply-box
+            .field
+              label.label.is-large
+                = reply_action.name
+            .field
+              label.label 反応テキスト
+              p = reply_action.text
+            .field
+              label.label 応答
+              p = reply_action.quick_reply.name
+            .field
+              label.label ステータス
+              - if reply_action.is_active
+                span active
+                span.active-circle
+              - else
+                span not-active
+                span.stand-by-circle
+              //= link_to quick_reply_path(quick_reply.id), method: :delete, data: { confirm: '削除しますか？' } do
+                span.float-right
+                  i.fas.fa-times

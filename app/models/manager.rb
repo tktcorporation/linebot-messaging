@@ -52,13 +52,27 @@ class  Manager
     #return UrlFetchApp.fetch(url, options);
   end
 
+  def self.push_image(lineuser, img_url)
+    bot = lineuser.bot
+    message = {
+      type: 'image',
+      originalContentUrl: img_url,
+      previewImageUrl: img_url
+    }
+
+    if response = self.client(bot).push_message(lineuser.uid, message)
+      p response
+      # lineuser.update_lastmessage(saved_message)
+      # log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
+      # self.push_log(bot.id, log_text)
+    end
+  end
+
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
     message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
-    if message.save
-      p "save success"
-      lineuser.update_lastmessage(message)
-    end
+    message.save!
+    lineuser.update_lastmessage(message)
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
@@ -88,6 +102,12 @@ class  Manager
         quickReply: quick_reply.check_param
       }
       self.client(lineuser.bot).push_message(lineuser.uid, message)
+    when 5
+      quick_reply = QuickReply.get(data[:id])
+      ResponseDatum.save_data(lineuser, quick_reply.id, event['postback']['params']['date'])
+      self.push(lineuser, event['postback']['params']['date'])
+      self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
+      self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 99
       quick_reply = QuickReply.get(data[:id])
       case data[:text]
@@ -108,7 +128,6 @@ class  Manager
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
-
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
@@ -158,8 +177,19 @@ class  Manager
         text: quick_reply.text,
         quickReply: quick_reply.days_param
       }
+    when 5
+      message = {
+         type: "datetimepicker",
+         label: quick_reply.text,
+         data: "[#{quick_reply.reply_type}][#{quick_reply.id}]",
+         mode: "datetime",
+         initial: Time.now,
+         max: Time.now + 60*60*24*30,
+         min: Time.now - 60*60*24*30
+      }
     end
     response = self.client(bot).push_message(lineuser.uid, message)
+    p response.body
     if response.class == Net::HTTPOK
       message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
       if message.save
@@ -186,6 +216,8 @@ class  Manager
         text: quick_reply.text,
         quickReply: quick_reply.days_param
       }
+    when 5
+      message = Manager::Flex.datetimepicker(quick_reply)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
@@ -229,6 +261,7 @@ class  Manager
     uid = event['source']['userId']
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
+    self.check_reply_action(lineuser, text)
     message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot_id, log_text)
@@ -237,8 +270,18 @@ class  Manager
     return message
   end
 
+  def self.check_reply_action(lineuser, text)
+    if reply_action = lineuser.bot.reply_actions.find_by(text: text)
+      self.push_flex(lineuser, reply_action.quick_reply)
+    end
+  end
+
   def self.check_quick_reply_text(lineuser, text)
-    return nil if /回答：.+/ === text
+    #現場postbackではmessageが飛んでこないため不要
+    if /回答：.+/ === text
+      lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy
+      return nil
+    end
     if lineuser.quick_reply_text_flags.present?
       if lineuser.quick_reply_text_flags.find_by(is_accepting: true).present?
         quick_reply = lineuser.quick_reply_text_flags.find_by(is_accepting: true).quick_reply_text.quick_reply
@@ -270,6 +313,8 @@ class  Manager
   end
 
   def self.advance_lineuser_phase(lineuser, form)
+    #自由記入テキストの待機中であればそれを削除
+    lineuser.quick_reply_text_flags&.find_by(is_accepting: true)&.destroy!
     if quick_reply = QuickReply.extract_by_phase_of_lineuser(lineuser, form)
       if !quick_reply.is_normal_message || quick_reply.reply_type != 0
         self.push_flex(lineuser, quick_reply)
