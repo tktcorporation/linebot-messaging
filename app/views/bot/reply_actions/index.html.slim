@@ -30,15 +30,20 @@
             .field
               label.label.is-large
                 = reply_action.name
+            .field
               label.label 反応テキスト
               p = reply_action.text
+            .field
+              label.label 応答
+              p = reply_action.quick_reply.name
+            .field
               label.label ステータス
               - if reply_action.is_active
-                span.active-circle
                 span active
+                span.active-circle
               - else
-                span.stand-by-circle
                 span not-active
+                span.stand-by-circle
               //= link_to quick_reply_path(quick_reply.id), method: :delete, data: { confirm: '削除しますか？' } do
                 span.float-right
                   i.fas.fa-times
