@@ -34,8 +34,6 @@
               i.far.fa-calendar-minus
             span ：
             = remind.ignition_time.strftime("%m-%d %H:%M")
-  .column.is-6
-    = link_to "自動返答", bot_reply_actions_path(@bot), class: "button"
 
 = form_with model: @newremind, url: bot_remind_index_path(params[:bot_id]), data: { parsley_validate: "" }, local: true, html: { class: "form" } do |f|
   .columns
