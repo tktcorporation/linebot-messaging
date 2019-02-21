@@ -1,7 +1,7 @@
+= link_to "自動返答", bot_reply_actions_path(@bot), class: "button float-right"
 - if @active_form.present?
   span.active-circle
   span アクティブ(動作中)
-  = link_to "自動返答", bot_reply_actions_path(@bot), class: "button float-right"
   .columns
     .column.is-one-third
       .card.form-card.is-one-third
@@ -30,8 +30,7 @@
                 - else
                   span -
                 span %
-
-hr.hr style="margin: 0;"
+  hr.hr style="margin: 0;"
 
 span.stand-by-circle
 span 待機中
