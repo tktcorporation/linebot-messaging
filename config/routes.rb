@@ -25,6 +25,9 @@ Rails.application.routes.draw do
 
   constraints(id: /[0-9]+/, bot_id: /[0-9]+/, lineuser_id: /[0-9]+/) do
     resources :bot, except: [:new, :index] do
+      member do
+        patch :set_images
+      end
       scope module: 'bot' do
         resources :response_data, only: [:index], shallow: true
         resources :reply_actions, shallow: true
@@ -63,11 +66,12 @@ Rails.application.routes.draw do
             post :create
             post :redirect
             patch :update_name
+            post :push_image
           end
         end
       end
     end
   end
   root to: 'users#new'
-  match "*path" => "application#render_404", via: :all
+  # match "*path" => "application#render_404", via: :all
 end

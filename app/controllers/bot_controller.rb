@@ -10,7 +10,7 @@ class BotController < ApplicationController
     end
   end
   def edit
-    @bot = Bot.get(params[:id])
+    @bot = @current_user.bots.get(params[:id])
     @domain = ENV.fetch('DOMAIN_NAME')
     if @bot.notify_token
       @access_token = @bot.notify_token.access_token
@@ -19,7 +19,7 @@ class BotController < ApplicationController
     render layout: 'bot_layout'
   end
   def update
-    bot = Bot.get(params[:id])
+    bot = @current_user.bots.get(params[:id])
     if bot.update(bot_params)
       NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token])
       GoogleApiSet.update_or_create(params[:id], params[:bot][:google_api_set][:client_id], params[:bot][:google_api_set][:client_secret])
@@ -28,14 +28,23 @@ class BotController < ApplicationController
     end
   end
 
+  def set_images
+    bot = @current_user.bots.get(params[:id])
+    bot.update(bot_images_params)
+     redirect_back(fallback_location: root_path)
+  end
+
   def show
-    @bot = Bot.includes(:lineusers, :reminds, :logs).includes(:lineusers => :messages).get(params[:id])
+    @bot = @current_user.bots.includes(:lineusers, :reminds, :logs).includes(:lineusers => :messages).get(params[:id])
     render layout: 'bot_layout'
   end
 
   private
     def bot_params
       params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify)
+    end
+    def bot_images_params
+      params.require(:bot).permit(images: [])
     end
     def check_auth
       return if !params[:id]
