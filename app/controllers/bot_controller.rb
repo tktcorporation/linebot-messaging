@@ -30,8 +30,12 @@ class BotController < ApplicationController
 
   def set_images
     bot = @current_user.bots.get(params[:id])
-    bot.update(bot_images_params)
-     redirect_back(fallback_location: root_path)
+    if bot.images.attach(bot_images_params[:images])
+      flash[:notice] = "新しい画像を登録しました"
+    else
+      flash[:alert] = "画像の登録に失敗しました"
+    end
+    redirect_back(fallback_location: root_path)
   end
 
   def show
