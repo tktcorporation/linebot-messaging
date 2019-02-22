@@ -9,7 +9,7 @@ class Bot::ChatController < ApplicationController
 
   def show
     #トーク履歴が多いと重くなりそう
-    @bot = current_user.bots.includes(:lineusers, :statuses).includes(:lineusers => :lastmessage).get(params[:bot_id])
+    @bot = current_user.bots.with_attached_images.includes(:lineusers, :statuses).includes(:lineusers => :lastmessage).get(params[:bot_id])
     #:replied に返信済みユーザーが, :not_repliedに未返信ユーザーが配列で入る
     @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
     @lineuser = @bot.lineusers.includes(:messages, :response_data).get(params[:lineuser_id])
@@ -45,11 +45,19 @@ class Bot::ChatController < ApplicationController
     lineuser = @bot.lineusers.get(params[:lineuser_id])
     quick_reply = @bot.quick_replies.get(params[:quick_reply][:id])
     Manager.push_flex(lineuser, quick_reply)
-    redirect_to bot_chat_path(params[:bot_id], params[:lineuser_id])
+    redirect_to bot_chat_path(@bot.id, lineuser.id)
   end
 
   def push_image
-    p image_param
+    image = @bot.images.find_by(image_param)
+    lineuser = @bot.lineusers.get(params[:lineuser_id])
+    ActiveRecord::Base.transaction do
+      Manager.push_image(lineuser, image, url_for(image))
+    end
+    redirect_to bot_chat_path(@bot.id, lineuser.id)
+  rescue => e
+    Rails.logger.fatal e.message
+    redirect_to bot_chat_path(@bot.id, lineuser.id), alert: "エラーが発生しました"
   end
 
   private
@@ -65,7 +73,7 @@ class Bot::ChatController < ApplicationController
     end
 
     def image_param
-      params.require(:chat).permit(:image)
+      params.require(:image).permit(:id)
     end
 
 end
