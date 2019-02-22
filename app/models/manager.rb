@@ -22,11 +22,14 @@ class  Manager
       text: text
     }
 
-    if response = self.client(bot).push_message(lineuser.uid, message)
-      p response
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
       lineuser.update_lastmessage(saved_message)
       log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
       self.push_log(bot.id, log_text)
+    else
+      p response
+      raise "response.class != Net::HTTPOK"
     end
     #return UrlFetchApp.fetch(url, options);
   end
@@ -47,24 +50,31 @@ class  Manager
         self.push_log(bot.id, log_text)
       end
     else
-      p "response.class != Net::HTTPOK"
+      p response
+      raise "response.class != Net::HTTPOK"
     end
     #return UrlFetchApp.fetch(url, options);
   end
 
-  def self.push_image(lineuser, img_url)
+  def self.push_image(lineuser, image, image_url)
+    saved_message = Message.new(content: "[画像: #{image.id}]", lineuser_id: lineuser.id, to_bot: false)
+    saved_message.save!
     bot = lineuser.bot
     message = {
       type: 'image',
-      originalContentUrl: img_url,
-      previewImageUrl: img_url
+      originalContentUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/240px-LINE_logo.svg.png",
+      #image_url,
+      previewImageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/240px-LINE_logo.svg.png"
+      # image_url
     }
-
-    if response = self.client(bot).push_message(lineuser.uid, message)
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
+      lineuser.update_lastmessage(saved_message)
+      log_text = "画像を送信：" + "to：[" + lineuser.name + "] [画像: #{image.id}]"
+      self.push_log(bot.id, log_text)
+    else
       p response
-      # lineuser.update_lastmessage(saved_message)
-      # log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
-      # self.push_log(bot.id, log_text)
+      raise "response.class != Net::HTTPOK"
     end
   end
 
@@ -342,7 +352,7 @@ class  Manager
       when Line::Bot::Event::Unfollow
         lineuser.quick_reply_id = nil
         lineuser.is_unfollowed = true
-        lineuser.save
+        lineuser.save!
       when Line::Bot::Event::Postback
         ActiveRecord::Base.transaction do
           self.postback_event(event, lineuser)
