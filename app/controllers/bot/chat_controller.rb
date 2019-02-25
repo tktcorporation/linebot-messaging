@@ -1,5 +1,4 @@
 class Bot::ChatController < ApplicationController
-  skip_before_action :require_sign_in!, only: [:callback, :private_callback, :test_push, :top]
   before_action :check_auth, :set_bot
 
   def index
