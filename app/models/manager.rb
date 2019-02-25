@@ -62,10 +62,8 @@ class  Manager
     bot = lineuser.bot
     message = {
       type: 'image',
-      originalContentUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/240px-LINE_logo.svg.png",
-      #image_url,
-      previewImageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/240px-LINE_logo.svg.png"
-      # image_url
+      originalContentUrl: image_url,
+      previewImageUrl: image_url
     }
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
