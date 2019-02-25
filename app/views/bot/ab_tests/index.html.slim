@@ -1,0 +1,36 @@
+#app
+  .container
+    button.button v-on:click="switchModal" 新規作成
+    .columns
+
+
+
+  #new-form-modal.modal
+    .modal-background
+    .modal-content
+      .modal-content-box
+        label.label.is-large 新規ABテスト
+        = form_with model: @ab_test, url: bot_ab_tests_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+          label.label 名前
+          .field
+            .control
+              = f.text_field :name, class: "input", required: ""
+          label.label 対象フォーム
+          .field
+            .columns.is-multiline
+              = f.fields_for :ab_test_forms_attributes do |b|
+                = b.collection_check_boxes :form_ids, @forms, :id, :name, include_hidden: false do |c|
+                  .column.is-half
+                      = c.check_box data: { parsley_mincheck: "2" }, required: ""
+                      span = c.object.name
+          hr
+          .field
+            p.control
+              = f.check_box :is_active
+              span 有効化
+          p.control
+            = f.submit "追加", class: "button is-info"
+    button.modal-close.is-large aria-label="close"
+
+
+= javascript_pack_tag "ab_test_index"

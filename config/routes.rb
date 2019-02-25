@@ -29,6 +29,7 @@ Rails.application.routes.draw do
         patch :set_images
       end
       scope module: 'bot' do
+        resources :ab_tests
         resources :response_data, only: [:index], shallow: true
         resources :reply_actions, shallow: true
         resources :images, only: [:show], shallow: true
