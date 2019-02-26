@@ -1,8 +1,7 @@
 class Bot::QuickRepliesController < ApplicationController
-  before_action :check_auth
+  before_action :check_auth, :set_bot
   def index
-    bot = Bot.get(params[:bot_id])
-    @quick_replies = bot.quick_replies.includes(:quick_reply_items)
+    @quick_replies = @bot.quick_replies.includes(:quick_reply_items)
     @quick_reply = QuickReply.new
   end
 
@@ -18,10 +17,10 @@ class Bot::QuickRepliesController < ApplicationController
     ActiveRecord::Base.transaction do
       QuickReply.optional_create(params[:form_id], quick_reply_params, quick_reply_schedule_params)
     end
-    redirect_to "/forms/#{params[:form_id]}"
+    redirect_to bot_form_url(@bot.id, params[:form_id])
   rescue => e
     flash[:notice] = e.message
-    redirect_to "/forms/#{params[:form_id]}"
+    redirect_to bot_form_url(@bot.id, params[:form_id])
   end
 
   def destroy
@@ -29,7 +28,7 @@ class Bot::QuickRepliesController < ApplicationController
     ActiveRecord::Base.transaction do
       quick_reply.relational_delete
     end
-    redirect_to "/forms/#{quick_reply.form.id}"
+    redirect_to bot_form_url(@bot.id, quick_reply.form.id)
   end
 
   def update
@@ -40,13 +39,13 @@ class Bot::QuickRepliesController < ApplicationController
     end
   rescue => e
     flash[:notice] = e.message
-    redirect_to "/forms/#{quick_reply.form.id}/edit_flow"
+    redirect_to edit_flow_bot_form_url(@bot.id, quick_reply.form.id)
   end
 
   def text_update
     quick_reply = QuickReply.get(params[:id])
     quick_reply.update_attributes!(quick_reply_update_params)
-    redirect_to "/forms/#{quick_reply.form.id}"
+    redirect_to bot_form_url(@bot.id, quick_reply.form.id)
   end
 
   private
@@ -70,5 +69,12 @@ class Bot::QuickRepliesController < ApplicationController
     end
     def items_flow_params
       params.require(:quick_reply).permit(quick_reply_items: :next_reply_id)[:quick_reply_items]
+    end
+    def set_bot
+      if params[:bot_id].present?
+        @bot = current_user.bots.get(params[:bot_id])
+      else
+        @bot = current_user.bots.joins({:forms => :quick_replies}).find_by(quick_replies: {id: params[:id]})
+      end
     end
 end

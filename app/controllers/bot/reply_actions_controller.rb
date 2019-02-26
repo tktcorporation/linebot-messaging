@@ -1,6 +1,6 @@
 class Bot::ReplyActionsController < ApplicationController
   #before_action :check_auth
-  before_action :set_bot, only: [:index, :create]
+  before_action :set_bot
   layout 'bot_layout'
 
   def index
@@ -24,6 +24,7 @@ class Bot::ReplyActionsController < ApplicationController
   def destroy
     reply_action = @bot.reply_actions.get(params[:id])
     reply_action.destroy!
+    redirect_to  bot_reply_actions_url(@bot)
   end
 
   private

@@ -35,7 +35,7 @@ Rails.application.routes.draw do
           end
         end
         resources :response_data, only: [:index], shallow: true
-        resources :reply_actions, shallow: true
+        resources :reply_actions
         resources :images, only: [:show], shallow: true
         resources :statuses, only: [:create, :destroy, :index], shallow: true
         resources :forms do
