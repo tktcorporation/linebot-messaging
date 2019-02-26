@@ -38,6 +38,11 @@ class Form < ApplicationRecord
   end
 
   def self.get_active_with_lineuser(lineuser)
-    lineuser.bot.forms.find_by(is_active: true)
+    ab_test = lineuser.bot.ab_tests&.find_by(is_active: true)
+    if ab_test.present?
+      ab_test.forms.sample
+    else
+      lineuser.bot.forms.find_by(is_active: true)
+    end
   end
 end
