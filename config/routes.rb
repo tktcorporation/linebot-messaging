@@ -29,12 +29,16 @@ Rails.application.routes.draw do
         patch :set_images
       end
       scope module: 'bot' do
-        resources :ab_tests
+        resources :ab_tests do
+          member do
+            patch :switch_active
+          end
+        end
         resources :response_data, only: [:index], shallow: true
         resources :reply_actions, shallow: true
         resources :images, only: [:show], shallow: true
         resources :statuses, only: [:create, :destroy, :index], shallow: true
-        resources :forms, shallow: true do
+        resources :forms do
           member do
             patch :switch_active
             get :edit_flow
