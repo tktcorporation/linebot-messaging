@@ -4,8 +4,8 @@
       .column.is-6
         label.label.is-large フロー管理
       .column.is-6
-        = link_to "フローの追加、削除", form_path(@form.id), class: "button vertical-middle is-info is-outlined float-right"
-    = form_with model: @form, url: form_path(@form.id), data: { parsley_validate: "" }, html: { class: "form"} do |f|
+        = link_to "フローの追加、削除", bot_form_path(@bot.id, @form.id), class: "button vertical-middle is-info is-outlined float-right"
+    = form_with model: @form, url: bot_form_path(@bot.id, @form.id), data: { parsley_validate: "" }, html: { class: "form"} do |f|
       label.label First Reply
       .field.has-addons
         p.control

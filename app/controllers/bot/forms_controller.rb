@@ -1,11 +1,12 @@
 class Bot::FormsController < ApplicationController
-  before_action :check_auth
+  before_action :check_auth, :set_bot
   layout 'bot_layout'
 
   def index
     @bot = current_user.bots.get(params[:bot_id])
     @forms = @bot.forms.includes(:converted_lineusers, :session_lineusers).where(is_active: false)
     @active_form = @bot.forms.includes(:converted_lineusers, :session_lineusers).find_by(is_active: true)
+    @active_ab_test = @bot.ab_tests.find_by(is_active: true)
     @new_form = Form.new
   end
 
@@ -53,5 +54,8 @@ class Bot::FormsController < ApplicationController
     end
     def form_params
       params.require(:form).permit(:name, :describe_text, :first_reply_id)
+    end
+    def set_bot
+      @bot = current_user.bots.get(params[:bot_id])
     end
 end
