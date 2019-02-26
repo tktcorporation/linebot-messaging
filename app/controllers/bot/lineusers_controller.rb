@@ -4,7 +4,7 @@ class Bot::LineusersController < ApplicationController
 
   def index
     @bot = current_user.bots.includes(:lineusers, :reminds).includes(:lineusers => :messages).get(params[:bot_id])
-    @newremind = @bot.reminds.new
+    @newremind = Remind.new
   end
 
   def show

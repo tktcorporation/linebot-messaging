@@ -21,7 +21,7 @@
     .reminds-box.scroll-message
       - @bot.reminds.each do |remind|
         .remind-box
-          = link_to "", edit_bot_remind_path(@bot, remind.id), class: "link"
+          = link_to "", edit_bot_remind_path(@bot.id, remind.id), class: "link"
           .remind
             p = remind.name
             - if remind.enable
