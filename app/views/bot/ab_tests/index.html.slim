@@ -1,8 +1,65 @@
 #app
   .container
+    label.label.is-large ABテスト
     button.button v-on:click="switchModal" 新規作成
-    .columns
-
+    hr
+    p
+      span.active-circle
+      span アクティブ(動作中)
+    .columns.is-centered
+      - if @active_ab_test.present?
+        .column
+          .box
+            = link_to "無効化", switch_active_bot_ab_test_path(@bot.id, @active_ab_test), method: :patch, class: "button float-right"
+            label.label = @active_ab_test.name
+            .columns.is-multiline
+              - @active_ab_test.forms.each do |form|
+                .column.is-one-third
+                  .card.form-card.is-one-third
+                    header.card-header
+                      p.card-header-title = form.name
+                      = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, bot_form_path(@bot.id, form.id), class: "card-header-icon"
+                    .card-content
+                      p = form.describe_text
+                    footer.card-footer
+                      - converted_lineusers_count = form.converted_lineusers.to_a.count
+                      - form_session_count = form.session_lineusers.to_a.count
+                      .card-footer-item
+                        .form-data
+                          p Session
+                          p.is-size-5 = form_session_count
+                      .card-footer-item
+                        .form-data
+                          p Converted
+                          p.is-size-5 = converted_lineusers_count
+                      .card-footer-item
+                        .form-data
+                          p CVR
+                          p.is-size-5
+                            - if form_session_count != 0
+                              = (converted_lineusers_count / form_session_count).to_f * 100
+                            - else
+                              span -
+                            span %
+    hr
+      span.stand-by-circle
+      span 待機中
+      .columns.is-centered
+      - @ab_tests.each do |ab_test|
+        .column
+          .box
+            = link_to "delete", bot_ab_test_path(@bot.id, ab_test), method: :delete, data: { confirm: '削除しますか？' }, class: "button float-right"
+            = link_to "有効化", switch_active_bot_ab_test_path(@bot.id, ab_test), method: :patch, class: "button float-right"
+            label.label = ab_test.name
+            .columns.is-multiline
+              - ab_test.forms.each do |form|
+                .column.is-one-third
+                  .card.form-card.is-one-third
+                    header.card-header
+                      p.card-header-title = form.name
+                      = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, bot_form_path(@bot.id, form.id), class: "card-header-icon"
+                    .card-content
+                      p = form.describe_text
 
 
   #new-form-modal.modal
@@ -23,11 +80,6 @@
                   .column.is-half
                       = c.check_box data: { parsley_mincheck: "2" }, required: ""
                       span = c.object.name
-          hr
-          .field
-            p.control
-              = f.check_box :is_active
-              span 有効化
           p.control
             = f.submit "追加", class: "button is-info"
     button.modal-close.is-large aria-label="close"

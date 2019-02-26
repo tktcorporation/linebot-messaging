@@ -2,6 +2,8 @@ class Form < ApplicationRecord
   has_many :quick_replies, ->{ where(deleted: false) }
   has_many :converted_lineusers
   has_many :session_lineusers
+  has_many :ab_test_forms
+  has_many :ab_tests, through: :ab_test_forms
   belongs_to :bot
 
   scope :undeleted, ->{ where(deleted: false) }
