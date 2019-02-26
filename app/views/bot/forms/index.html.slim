@@ -1,5 +1,7 @@
 = link_to "自動返答", bot_reply_actions_path(@bot), class: "button float-right"
 = link_to "ABテスト", bot_ab_tests_path(@bot), class: "button float-right"
+- if @active_ab_test.present?
+  label.label ABテスト動作中
 - if @active_form.present?
   span.active-circle
   span アクティブ(動作中)
@@ -8,7 +10,7 @@
       .card.form-card.is-one-third
         header.card-header
           p.card-header-title = @active_form.name
-          = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, form_path(@active_form.id), class: "card-header-icon"
+          = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, bot_form_path(bot_id: @bot.id, id: @active_form.id), class: "card-header-icon"
         .card-content
           p = @active_form.describe_text
         footer.card-footer
@@ -42,7 +44,7 @@ span 待機中
         .card.form-card.is-one-third
           header.card-header
             p.card-header-title = form.name
-            = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, form_path(form.id), class: "card-header-icon"
+            = link_to '<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>'.html_safe, bot_form_path(bot_id: @bot.id, id: form.id), class: "card-header-icon"
           .card-content
             p = form.describe_text
           footer.card-footer
