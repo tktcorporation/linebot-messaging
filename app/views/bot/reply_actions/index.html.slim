@@ -28,11 +28,11 @@
       - @reply_actions.each_with_index do |reply_action, index|
         .column
           .box.quick-reply-box
-            = form_with model: reply_action, url: reply_action_path(reply_action), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: reply_action, url: bot_reply_action_path(@bot.id, reply_action), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               .field
                 label.label.is-large
                   = reply_action.name
-              = link_to reply_action_path(reply_action), method: :delete, data: { confirm: '削除しますか？' } do
+              = link_to bot_reply_action_path(@bot.id, reply_action), method: :delete, data: { confirm: '削除しますか？' } do
                   span.float-right
                     i.fas.fa-times
               .field
