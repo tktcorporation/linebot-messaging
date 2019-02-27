@@ -5,7 +5,7 @@
         #app
           label.label.is-large Bot設定
           = render partial: "shared/error_messages", locals: {model: @bot}
-          = form_with model: @bot, url: bot_path, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+          = form_with model: @bot, url: bot_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
             label.label 管理用Bot名 (ここに表示される名前は管理用のものであり、ユーザー側からはLINEDevelopperで設定された名前が表示されます)
             .field
               p.control
@@ -44,6 +44,12 @@
               .field
                 p.control
                   = bf.text_field :client_secret, value: @bot.google_api_set.present?&&@bot.google_api_set.client_secret.present? ? @bot.google_api_set.client_secret : "", class: "input"
+
+            label.label 通知用Slack Webhook URL
+            = f.fields_for :slack_api_set do |af|
+              .field
+                p.control
+                  = af.text_field :webhook_url, value: @bot.slack_api_set&.webhook_url, class: "input"
 
             .field
               .control
