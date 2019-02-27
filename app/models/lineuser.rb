@@ -62,6 +62,7 @@ class Lineuser < ApplicationRecord
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
     converted_lineuser.form_id = form.id
     converted_lineuser.save
+    Manager.push_slack_lineuser_data(self)
   end
 
   def create_session(form)
@@ -76,6 +77,20 @@ class Lineuser < ApplicationRecord
 
   def set_next_reply_id(next_reply_id)
     self.update_attributes!(quick_reply_id: next_reply_id)
+  end
+
+  def get_response_data_message
+    result_text = "プロフィール"
+    result_text += "\nname: #{self.name}"
+    result_text += "\nuser_id: #{self.uid}"
+    result_text += "回答データ"
+    self.response_data.includes(:quick_reply).each do |data|
+      if data.quick_reply.present?
+        text = "\n#{data.quick_reply.name}: #{data.response_text}"
+        result_text += text
+      end
+    end
+    result_text
   end
 
   def self.get_plural_with_bot_id(bot_id)

@@ -81,6 +81,7 @@ class  Manager
     message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
     message.save!
     lineuser.update_lastmessage(message)
+    quick_reply = nil
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
@@ -136,6 +137,7 @@ class  Manager
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
+    self.check_and_push_user_data(quick_reply, lineuser)
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
@@ -366,7 +368,7 @@ class  Manager
 
   def self.follow_event(lineuser)
     lineuser.is_unfollowed = false
-    lineuser.save
+    lineuser.save!
     self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
     if form = Form.get_active_with_lineuser(lineuser)
       lineuser.create_session(form)
@@ -595,6 +597,20 @@ class  Manager
       self.update_lineuser_profile(bot, lineuser.uid, true)
     else
       self.push_name(lineuser.id, username)
+    end
+  end
+
+  def self.push_slack_lineuser_data(lineuser)
+    bot = lineuser.bot
+    webhook_url = bot.slack_api_set.webhook_url
+    message = lineuser.get_response_data_message
+    Manager::SlackApi.push_message(message, webhook_url)
+  end
+
+  def self.check_and_push_user_data(quick_reply, lineuser)
+    ids = lineuser.bot.check_notifications.first.quick_replies.pluck(:id)
+    if ids.include?(quick_reply.id)
+      self.push_slack_lineuser_data(lineuser)
     end
   end
 end

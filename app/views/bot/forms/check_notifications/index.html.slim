@@ -1,0 +1,46 @@
+#app
+  .container
+    label.label.is-large 通知設定
+    - if !@check_notification.present?
+      button.button v-on:click="switchModal" 新規作成
+    hr
+    .columns.is-centered
+      - if @check_notification.present?
+        .column.is-half
+          .box
+            = link_to "delete", bot_form_check_notification_path(@bot, @form, @check_notification), method: :delete, data: { confirm: '削除しますか？' }, class: "button float-right"
+            /= link_to "無効化", switch_active_bot_form_notification_form_path(@bot.id, @active_ab_test), method: :patch, class: "button float-right"
+            label.label.is-large = @check_notification.name
+            label.label 通知箇所
+            ul
+              - @check_notification.quick_replies.each do |quick_reply|
+                li
+                  span ・
+                  span = quick_reply.name
+
+
+  - if !@check_notification.present?
+    #new-form-modal.modal
+      .modal-background
+      .modal-content
+        .modal-content-box
+          label.label.is-large 通知箇所
+          = form_with model: @new_check_notification, url: bot_form_check_notifications_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            label.label 名前
+            .field
+              .control
+                = f.text_field :name, class: "input", required: ""
+            label.label 対象フォーム
+            .field
+              .columns.is-multiline
+                = f.fields_for :check_notification_quick_replies_attributes do |b|
+                  = b.collection_check_boxes :quick_reply_ids, @quick_replies, :id, :name, include_hidden: false do |c|
+                    .column.is-half
+                        = c.check_box required: ""
+                        span = c.object.name
+            p.control
+              = f.submit "追加", class: "button is-info"
+      button.modal-close.is-large aria-label="close"
+
+
+= javascript_pack_tag "ab_test_index"
