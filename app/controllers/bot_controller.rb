@@ -1,5 +1,7 @@
 class BotController < ApplicationController
   before_action :check_auth
+  layout 'bot_layout'
+
   def create
     if Manager.create_new_bot(bot_params, @current_user.id)
       flash[:notice] = "新しいLinebotを登録しました"
@@ -20,12 +22,19 @@ class BotController < ApplicationController
   end
   def update
     bot = @current_user.bots.get(params[:id])
-    if bot.update(bot_params)
-      NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token])
-      GoogleApiSet.update_or_create(params[:id], params[:bot][:google_api_set][:client_id], params[:bot][:google_api_set][:client_secret])
-    else
-      flash[:notice] = "更新に失敗しました"
+    ActiveRecord::Base.transaction do
+      if bot.update(bot_params)
+        NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token])
+        GoogleApiSet.update_or_create(params[:id], params[:bot][:google_api_set][:client_id], params[:bot][:google_api_set][:client_secret])
+        Bot::SlackApiSet.update_or_create(bot, params[:bot][:slack_api_set][:webhook_url])
+        redirect_to edit_bot_path(bot), notice: "更新しました"
+      else
+        redirect_to edit_bot_path(bot), alert: "更新に失敗しました"
+      end
     end
+  rescue => e
+    Rails.logger.fatal e.message
+    redirect_to edit_bot_path(bot), alert: "更新に失敗しました"
   end
 
   def set_images

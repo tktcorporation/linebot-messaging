@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_25_094839) do
+ActiveRecord::Schema.define(version: 2019_02_27_084200) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -48,6 +48,20 @@ ActiveRecord::Schema.define(version: 2019_02_25_094839) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "bot_check_notification_quick_replies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "check_notification_id"
+    t.integer "quick_reply_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "bot_check_notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "bot_id"
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "bot_lineuser_statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lineuser_id", null: false
     t.integer "status_id"
@@ -59,6 +73,13 @@ ActiveRecord::Schema.define(version: 2019_02_25_094839) do
     t.string "name", null: false
     t.string "text", null: false
     t.boolean "is_active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "bot_slack_api_sets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "bot_id"
+    t.string "webhook_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
