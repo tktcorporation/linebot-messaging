@@ -30,6 +30,7 @@ gem 'search_cop'
 
 gem 'webpacker'
 gem 'kaminari'
+gem 'slack-notifier'
 
 #gem 'sqlite3'
 # Use Puma as the app server
