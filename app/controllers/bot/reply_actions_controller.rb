@@ -5,7 +5,7 @@ class Bot::ReplyActionsController < ApplicationController
 
   def index
     @reply_actions = @bot.reply_actions.includes(:quick_reply).where(bot_id: @bot.id)
-    @quick_reply_list = @bot.quick_replies.where(is_normal_message: false).pluck(:name, :id)
+    @quick_reply_list = @bot.quick_replies.pluck(:name, :id)#.where(is_normal_message: false)
   end
 
   def create
