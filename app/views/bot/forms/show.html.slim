@@ -2,7 +2,7 @@
   - if @error_message
     label.label
       = @error_message
-  .column.is-3
+  .column.is-5
     - if @form.is_active
       p
         span.active-circle.vertical-middle
@@ -14,6 +14,7 @@
         span.vertical-middle 待機中
         = link_to "有効化", switch_active_bot_form_path(@bot.id,@form), method: :patch, class: "button vertical-middle is-success is-outlined float-right switch_active_button"
   .column.is-5
+    = link_to "通知設定", bot_form_check_notifications_path(@bot, @form), class: "button float-right"
     = link_to "フロー管理", edit_flow_bot_form_path(@bot.id, @form.id), class: "button vertical-middle is-info is-outlined float-right"
 .columns.is-centered
   .column.is-11
