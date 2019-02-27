@@ -83,7 +83,7 @@ class Lineuser < ApplicationRecord
     result_text = "プロフィール"
     result_text += "\nname: #{self.name}"
     result_text += "\nuser_id: #{self.uid}"
-    result_text += "回答データ"
+    result_text += "\n回答データ"
     self.response_data.includes(:quick_reply).each do |data|
       if data.quick_reply.present?
         text = "\n#{data.quick_reply.name}: #{data.response_text}"
