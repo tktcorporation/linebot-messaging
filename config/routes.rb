@@ -43,6 +43,9 @@ Rails.application.routes.draw do
             patch :switch_active
             get :edit_flow
           end
+          scope module: 'forms' do
+            resources :check_notifications, only: [:create, :destroy, :index]
+          end
           resources :quick_replies, only: [:create, :destroy, :update], shallow: true do
             member do
               patch :text_update
