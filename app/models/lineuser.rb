@@ -126,4 +126,8 @@ class Lineuser < ApplicationRecord
     self.update_attributes!(lastmessage_id: message.id)
   end
 
+  def get_invitation_code
+    Manager.encrypt(self.uid + "invitexxx").slice(0, 7)
+  end
+
 end

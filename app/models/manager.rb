@@ -281,7 +281,11 @@ class  Manager
   end
 
   def self.check_reply_action(lineuser, text)
-    if reply_action = lineuser.bot.reply_actions.find_by(text: text)
+    if text == "招待コード発行"
+      invitation_code = lineuser.get_invitation_code
+      self.push(lineuser, invitation_code)
+      self.push_slack(lineuser.bot, invitation_code)
+    elsif reply_action = lineuser.bot.reply_actions.find_by(text: text)
       self.push_flex(lineuser, reply_action.quick_reply)
     end
   end
@@ -602,9 +606,13 @@ class  Manager
 
   def self.push_slack_lineuser_data(lineuser)
     bot = lineuser.bot
-    webhook_url = bot.slack_api_set.webhook_url
     message = lineuser.get_response_data_message
-    Manager::SlackApi.push_message(message, webhook_url)
+    self.push_slack(bot, message)
+  end
+
+  def self.push_slack(bot, text)
+    webhook_url = bot.slack_api_set.webhook_url
+    Manager::SlackApi.push_message(text, webhook_url)
   end
 
   def self.check_and_push_user_data(quick_reply, lineuser)
