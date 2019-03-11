@@ -10,13 +10,13 @@ class Lineuser < ApplicationRecord
   end
 
   has_many :messages, ->{ where(deleted: false).order(created_at: :asc) }
-  has_many :response_data
-  has_one :converted_lineuser
-  has_one :session_lineuser
+  has_many :response_data, dependent: :destroy
+  has_one :converted_lineuser, dependent: :destroy
+  has_one :session_lineuser, dependent: :destroy
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
-  has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id
-  has_one :lineuser_status, class_name: "Bot::LineuserStatus"
-  has_many :quick_reply_text_flags
+  has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id, dependent: :destroy
+  has_one :lineuser_status, class_name: "Bot::LineuserStatus", dependent: :destroy
+  has_many :quick_reply_text_flags, dependent: :destroy
   belongs_to :bot
 
   validates :uid, presence: true, lt4bytes: true
