@@ -37,7 +37,7 @@ class Bot::FormsController < ApplicationController
   def switch_active
     form = Form.get(params[:id])
     form.switch_active_do(form)
-    redirect_to form_url
+    redirect_to bot_form_url
   end
 
   def update
