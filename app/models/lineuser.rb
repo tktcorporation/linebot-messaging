@@ -127,7 +127,7 @@ class Lineuser < ApplicationRecord
   end
 
   def get_invitation_code
-    Manager.encrypt(self.uid + "invitexxx").slice(0, 7)
+    Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
   end
 
 end

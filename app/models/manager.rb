@@ -284,7 +284,8 @@ class  Manager
     if text == "招待コード発行"
       invitation_code = lineuser.get_invitation_code
       self.push(lineuser, invitation_code)
-      self.push_slack(lineuser.bot, invitation_code)
+      slack_text = "ユーザーID：#{lineuser.uid}\n招待コード：#{invitation_code}"
+      self.push_slack(lineuser.bot, slack_text)
     elsif reply_action = lineuser.bot.reply_actions.find_by(text: text)
       self.push_flex(lineuser, reply_action.quick_reply)
     end
