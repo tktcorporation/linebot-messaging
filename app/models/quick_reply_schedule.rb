@@ -15,7 +15,7 @@ class QuickReplySchedule < ApplicationRecord
     quick_reply_schedule = QuickReplySchedule.find_or_initialize_by(quick_reply_id: quick_reply.id)
     available_day_str = ""
     quick_reply_schedule_params[:available_day].to_h.to_a.each{|day| available_day_str += day[1]}
-    quick_reply_schedule.update_attributes!(duration_days: quick_reply_schedule_params[:duration_days], summary: quick_reply_schedule_params[:summary], available_day: available_day_str, duration_num: quick_reply_schedule_params[:duration_num], start_num: quick_reply_schedule_params[:start_num], term_num: quick_reply_schedule_params[:term_num])
+    quick_reply_schedule.update_attributes!(duration_days: quick_reply_schedule_params[:duration_days], summary: quick_reply_schedule_params[:summary], available_day: available_day_str, duration_num: quick_reply_schedule_params[:duration_num], start_num: quick_reply_schedule_params[:start_num], term_num: quick_reply_schedule_params[:term_num], permission_count: quick_reply_schedule_params[:permission_count])
   end
   private
     def available_day_cannot_in_all_of_off

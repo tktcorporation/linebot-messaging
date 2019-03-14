@@ -188,6 +188,12 @@
                     .control
                       = f.number_field :term_num, in: 1...11, class: "input", required: ""
                       span × 1予定の枠 ÷ 2 (時間)
+                .column.is-6
+                  label.label 予定の重複を何件まで許容するか
+                  .field
+                    .control
+                      = f.number_field :permission_count, class: "input", required: ""
+                      span 件
               - if @bot.google_api_set.present?
                 - if @bot.google_api_set.refresh_token.present?
                   p.control
