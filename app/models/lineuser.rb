@@ -130,7 +130,7 @@ class Lineuser < ApplicationRecord
   def get_invitation_code
     #Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
     code = ""
-    5.times{ a += ("A".."Z").to_a.sample}
+    5.times{ code += ("A".."Z").to_a.sample}
     code
   end
 
