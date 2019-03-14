@@ -16,6 +16,7 @@ class Lineuser < ApplicationRecord
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
   has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id, dependent: :destroy
   has_one :lineuser_status, class_name: "Bot::LineuserStatus", dependent: :destroy
+  has_one :invitation_code, dependent: :destroy
   has_many :quick_reply_text_flags, dependent: :destroy
   belongs_to :bot
 
@@ -129,9 +130,15 @@ class Lineuser < ApplicationRecord
 
   def get_invitation_code
     #Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
-    code = ""
-    5.times{ code += ("A".."Z").to_a.sample}
-    code
+    if code = self.invitation_code&.code
+      return code
+    else
+      code = ""
+      5.times{ code += ("A".."Z").to_a.sample}
+      invitation_code = self.build_invitation_code(code: code)
+      invitation_code.save!
+      return code
+    end
   end
 
 end
