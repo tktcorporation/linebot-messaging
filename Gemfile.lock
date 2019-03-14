@@ -65,6 +65,8 @@ GEM
     capistrano-bundler (1.4.0)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
+    capistrano-npm (1.0.3)
+      capistrano (>= 3.0.0)
     capistrano-rails (1.4.0)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
@@ -329,6 +331,7 @@ DEPENDENCIES
   byebug
   capistrano (~> 3.11.0)
   capistrano-bundler (~> 1.4.0)
+  capistrano-npm
   capistrano-rails (~> 1.4.0)
   capistrano-rbenv (~> 2.1.4)
   capistrano3-puma (~> 3.1.1)
@@ -368,4 +371,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.17.2
+   2.0.1
