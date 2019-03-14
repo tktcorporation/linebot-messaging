@@ -92,6 +92,7 @@ class  Manager
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
+      #日程調整用
       quick_reply = QuickReply.get(data[:id])
       day = Time.parse(data[:text])
       message = {
@@ -182,6 +183,7 @@ class  Manager
       }
       QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
+      #日程調整用、日付を投げる
       message = {
         type: 'text',
         text: quick_reply.text,
@@ -513,11 +515,12 @@ class  Manager
     time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     if calendar_event.start.date.present?
       if Time.parse(calendar_event.start.date) <= time && time < Time.parse(calendar_event.end.date)
-        filled_array = []
-        48.times do |i|
-          filled_array.push(1)
-        end
-        available_array = filled_array
+        # filled_array = []
+        #48.times do |i|
+          # filled_array.push(1)
+        #end
+        available_array.map! { |t| t += 1 }
+        # available_array = filled_array
       end
     else
       48.times do |i|
@@ -525,7 +528,7 @@ class  Manager
         end_period = time + (60*30*(i+1))
         if calendar_event.start.date_time.to_time <= end_period && start_period <= calendar_event.end.date_time.to_time
           p start_period
-          available_array[i] = 1
+          available_array[i] += 1
         end
       end
     end
