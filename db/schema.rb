@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_27_084200) do
+ActiveRecord::Schema.define(version: 2019_03_14_052047) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(version: 2019_02_27_084200) do
     t.integer "duration_num"
     t.integer "start_num"
     t.integer "term_num", comment: "1~12"
+    t.integer "permission_count", default: 1, null: false
   end
 
   create_table "quick_reply_text_flags", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
