@@ -28,7 +28,8 @@
                 - if lineuser.lastmessage&.to_bot == true
                   .label 未返信
               - else
-                label.label 未CV
+                /label.label 未CV
+                p = lineuser.quick_reply&.name
 
             - @quick_reply_list.each do |quick_reply|
               td
