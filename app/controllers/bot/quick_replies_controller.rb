@@ -62,7 +62,7 @@ class Bot::QuickRepliesController < ApplicationController
       params.require(:quick_reply).permit(:name, :text)
     end
     def quick_reply_schedule_params
-      params.require(:quick_reply).permit(:summary, :duration_days, :duration_num, :start_num, :term_num, available_day: %i(0 1 2 3 4 5 6))
+      params.require(:quick_reply).permit(:summary, :duration_days, :duration_num, :start_num, :term_num, :permission_count, available_day: %i(0 1 2 3 4 5 6))
     end
     def quick_reply_flow_params
       params.require(:quick_reply).permit(:next_reply_id)
