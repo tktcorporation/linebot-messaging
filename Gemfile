@@ -56,8 +56,13 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
-# Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
+# 本体
+gem 'capistrano', '~> 3.11.0', require: false
+gem 'capistrano-bundler', '~> 1.4.0', require: false
+gem 'capistrano-rails', '~> 1.4.0', require: false
+gem 'capistrano-rbenv', '~> 2.1.4', require: false
+gem 'sshkit-sudo', '~> 0.1.0', require: false
+gem 'capistrano3-puma', '~> 3.1.1', require: false
 
 #本番環境用
 gem 'unicorn'
