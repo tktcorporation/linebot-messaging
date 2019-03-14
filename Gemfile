@@ -63,6 +63,7 @@ gem 'capistrano-rails', '~> 1.4.0', require: false
 gem 'capistrano-rbenv', '~> 2.1.4', require: false
 gem 'sshkit-sudo', '~> 0.1.0', require: false
 gem 'capistrano3-puma', '~> 3.1.1', require: false
+gem 'capistrano-npm', require: false
 
 #本番環境用
 gem 'unicorn'
