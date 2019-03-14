@@ -83,6 +83,7 @@ class Lineuser < ApplicationRecord
     result_text = "プロフィール"
     result_text += "\nname: #{self.name}"
     result_text += "\nuser_id: #{self.uid}"
+    result_text += "\nフォーム名：#{self.session_lineuser.form.name}"
     result_text += "\n回答データ"
     self.response_data.includes(:quick_reply).each do |data|
       if data.quick_reply.present?
@@ -127,7 +128,10 @@ class Lineuser < ApplicationRecord
   end
 
   def get_invitation_code
-    Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
+    #Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
+    code = ""
+    5.times{ a += ("A".."Z").to_a.sample}
+    code
   end
 
 end
