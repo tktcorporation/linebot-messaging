@@ -21,6 +21,24 @@
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
+# set :branch, 'develop'
+
+# server '13.113.141.0', user: 'centos', roles: %w(app web db)
+
+# set :ssh_options, {
+#   keys: %w(~/.ssh/***REMOVED***),
+#   forward_agent: true,
+#   auth_methods: %w(publickey)
+# }
+
+server '54.249.33.138', user: '***REMOVED***', roles: %w(app web db)
+
+set :ssh_options, {
+  keys: %w(***REMOVED***),
+  forward_agent: true,
+  auth_methods: %w(publickey)
+}
+
 
 
 # Configuration
