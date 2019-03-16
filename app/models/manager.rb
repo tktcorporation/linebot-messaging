@@ -199,6 +199,8 @@ class  Manager
          max: Time.now + 60*60*24*30,
          min: Time.now - 60*60*24*30
       }
+    else
+      self.push(lineuser, quick_reply.text)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     p response.body
@@ -230,6 +232,8 @@ class  Manager
       }
     when 5
       message = Manager::Flex.datetimepicker(quick_reply)
+    else
+      self.push(lineuser, quick_reply.text)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
