@@ -287,15 +287,19 @@ class  Manager
   end
 
   def self.check_reply_action(lineuser, text)
-    if text == "招待コード発行"
-      invitation_code = lineuser.get_invitation_code
-      invitation_text = "お友達の紹介ありがとうございます🤗\n以下の紹介コードをお友達にお送りください♫\n#{invitation_code}\nお友達がイエミーLINE追加時にその紹介コードを入れて頂いて、契約まで行けば\n・お友達\n・紹介して頂いた方\n両方に1万円分のアマゾンギフトカードをLINEにて送らせて頂きます✨\nhttp://iemi.jp/"
-      self.push(lineuser, invitation_text)
-      slack_text = "ユーザーID：#{lineuser.uid}\n招待コード：#{invitation_code}"
-      self.push_slack(lineuser.bot, slack_text)
-    elsif reply_action = lineuser.bot.reply_actions.find_by(text: text)
+    if reply_action = lineuser.bot.reply_actions.find_by(text: text)
       self.push_flex(lineuser, reply_action.quick_reply)
     end
+    if text == "招待コード発行"
+      self.push_invitation(lineuser)
+    end
+  end
+
+  def self.push_invitation(lineuser)
+    invitation_code = lineuser.get_invitation_code
+    self.push(lineuser, invitation_code)
+    slack_text = "ユーザーID：#{lineuser.uid}\n招待コード：#{invitation_code}"
+    self.push_slack(lineuser.bot, slack_text)
   end
 
   def self.check_quick_reply_text(lineuser, text)
