@@ -203,10 +203,10 @@
                     = f.submit "追加", class: "button is-info"
                 - else
                   p.control
-                    = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+                    = link_to "Google認証", "/google_auth/redirect/", class: "button is-info"
               - else
                 p.control
-                  = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+                  = link_to "Google認証", "/google_auth/redirect/", class: "button is-info"
           .form-tab v-if="isActive == 5"
             = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 日付選択
