@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   post   '/callback', to: 'callback#callback'
   post   '/callback/:hash', to: 'callback#callback'
 
+  get '/google_auth/test_create/:bot_id', to: 'google_auth#test_create'
+
+
   resources :google_auth, only: [] do
     collection do
       get :callback

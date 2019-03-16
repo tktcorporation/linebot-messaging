@@ -33,7 +33,7 @@ class GoogleAuthController < ApplicationController
   end
 
   def test_create
-    bot = Bot.get(params[:bot_id])
+    bot = current_user.bots.get(params[:bot_id])
     GoogleCalendar.test_create_event(bot, Time.now, 1)
     redirect_back(fallback_location: root_path)
   end
