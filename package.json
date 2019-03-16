@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
+  },
+  "scripts": {
+    "build:prod": "webpack --mode production --config webpack.config.js",
   }
 }
