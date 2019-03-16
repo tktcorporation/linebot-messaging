@@ -132,13 +132,7 @@ class GoogleCalendar
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
     end
-    client = Signet::OAuth2::Client.new(
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = Signet::OAuth2::Client.new(self.client_options)
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
