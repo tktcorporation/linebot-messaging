@@ -43,8 +43,8 @@ class GoogleCalendar
     #event_id = "CDGN8OBCD5PN8"
     #Base64.strict_encode64(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
-          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339),
+          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339, time_zone: "Asia/Tokyo"),
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339, time_zone: "Asia/Tokyo"),
           summary: quick_reply_schedule.summary.to_s,
           description: "「#{quick_reply_schedule.summary}」, ユーザー：「#{lineuser.name}」"
           #id: event_id
