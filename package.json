@@ -8,10 +8,10 @@
     "vue-loader": "14.2.2",
     "vue-template-compiler": "^2.5.21"
   },
+  "scripts": {
+    "build:prod": "webpack --mode production --config webpack.config.js"
+  },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
-  },
-  "scripts": {
-    "build:prod": "webpack"
   }
 }
