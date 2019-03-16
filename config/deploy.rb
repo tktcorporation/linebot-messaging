@@ -3,7 +3,7 @@ lock '3.11.0'
 set :application, 'linebot-messaging'
 set :repo_url, 'git@github.com:tktcorporation/linebot-messaging.git'
 # set :user, 'centos'
-# set :user, 'ec2-user'
+set :user, 'ec2-user'
 set :use_sudo, false
 set :pty, true
 # set :staging, :production
@@ -47,6 +47,20 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/master.key',
   '.env'
 )
+
+set :npm_flags, '--production'
+
+set :yarn_flags, '--production'
+set :yarn_roles, :all
+
+# namespace :webpack do
+#   after "yarn:install", "webpack:build"
+#   task :build do
+#     on roles(:app) do
+#       execute "cd #{release_path} && #{fetch :yarn_bin} run build:prod"
+#     end
+#   end
+# end
 
 # pumaの追加タスク
 namespace :puma do
@@ -122,7 +136,7 @@ namespace :setup do
   task :nginx do
     on roles(:app) do |host|
       # 後ほど作成するnginxのファイル名を記述してください
-      %w[rails.conf].each do |f|
+      %w[enloop.conf].each do |f|
         upload! "config/#{f}", "#{shared_path}/config/#{f}"
         sudo :cp, "#{shared_path}/config/#{f}", "/etc/nginx/conf.d/#{f}"
         sudo "nginx -s reload"

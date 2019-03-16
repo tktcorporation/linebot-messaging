@@ -31,15 +31,14 @@
 #   auth_methods: %w(publickey)
 # }
 
-server '54.249.33.138', user: 'ec2-user', roles: %w(app web db)
+set :branch, 'develop'
+server '13.113.252.166', user: 'ec2-user', roles: %w(app web db)
 
 set :ssh_options, {
   keys: %w(~/.ssh/id_rsa_enloop_catalist.pem),
   forward_agent: true,
   auth_methods: %w(publickey)
 }
-
-
 
 # Configuration
 # =============
