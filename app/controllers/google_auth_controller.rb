@@ -8,30 +8,33 @@ class GoogleAuthController < ApplicationController
   require 'time'
 
   def redirect
-    bot = Bot.get(params[:bot_id])
-    client = Signet::OAuth2::Client.new(client_options(bot))
+    # bot = Bot.get(params[:bot_id])
+    client = Signet::OAuth2::Client.new(GoogleCalendar.client_options)
     redirect_to client.authorization_uri.to_s
   end
 
   def callback
-    #bot = Bot.get_by_google_auth_hash(params[:hash])
-    #bot = Bot.get_with_callback_hash(params[:hash])
-    bot = current_user.bot
-    GoogleCalendar.callback_process(bot, params[:code])
-    redirect_to bot_url(id: bot.id)
+    # bot = Bot.get_by_google_auth_hash(params[:hash])
+    # bot = Bot.get_with_callback_hash(params[:hash])
+    # bot = current_user.bots
+    # GoogleCalendar.callback_process(bot, params[:code])
+    # redirect_to bot_url(id: bot.id)
+    @bots = current_user.bots
+    @code = params[:code]
+  end
+
+  def set_token
+    bot = current_user.bots.get(set_token_params[:bot_id])
+    if GoogleCalendar.callback_process(bot, set_token_params[:code])
+      redirect_to bot_url(id: bot.id)
+    else
+      redirect_to bot_url(id: bot.id), alert: "calendar設定に失敗しました"
+    end
   end
 
   private
-  def client_options(bot)
-    return client_option = {
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
-      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri: "https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/#{bot.callback_hash}",
-      additional_parameters: {prompt:'consent'},
-    }
+  def set_token_params
+    params.permit(:bot_id, :code)
   end
 
 end
