@@ -289,14 +289,7 @@ class  Manager
   def self.check_reply_action(lineuser, text)
     if text == "招待コード発行"
       invitation_code = lineuser.get_invitation_code
-      invitation_text = "お友達の紹介ありがとうございます🤗\n
-                          以下の紹介コードをお友達にお送りください♫\n
-                          #{invitation_code}\n
-                          お友達がイエミーLINE追加時にその紹介コードを入れて頂いて、契約まで行けば\n
-                          ・お友達\n
-                          ・紹介して頂いた方\n
-                          両方に1万円分のアマゾンギフトカードをLINEにて送らせて頂きます✨\n
-                          http://iemi.jp/"
+      invitation_text = "お友達の紹介ありがとうございます🤗\n以下の紹介コードをお友達にお送りください♫\n#{invitation_code}\nお友達がイエミーLINE追加時にその紹介コードを入れて頂いて、契約まで行けば\n・お友達\n・紹介して頂いた方\n両方に1万円分のアマゾンギフトカードをLINEにて送らせて頂きます✨\nhttp://iemi.jp/"
       self.push(lineuser, invitation_text)
       slack_text = "ユーザーID：#{lineuser.uid}\n招待コード：#{invitation_code}"
       self.push_slack(lineuser.bot, slack_text)
