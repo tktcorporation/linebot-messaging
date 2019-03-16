@@ -25,7 +25,6 @@ class BotController < ApplicationController
     ActiveRecord::Base.transaction do
       if bot.update(bot_params)
         NotifyToken.update_or_create(params[:id], params[:bot][:notify_token][:access_token])
-        GoogleApiSet.update_or_create(params[:id], params[:bot][:google_api_set][:client_id], params[:bot][:google_api_set][:client_secret])
         Bot::SlackApiSet.update_or_create(bot, params[:bot][:slack_api_set][:webhook_url])
         redirect_to edit_bot_path(bot), notice: "更新しました"
       else
