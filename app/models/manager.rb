@@ -620,7 +620,7 @@ class  Manager
   end
 
   def self.check_and_push_user_data(quick_reply, lineuser)
-    ids = lineuser.bot.check_notifications.first.quick_replies.pluck(:id)
+    ids = lineuser.bot.check_notifications&.first&.quick_replies&.pluck(:id)
     if ids.include?(quick_reply.id)
       self.push_slack_lineuser_data(lineuser)
     end
