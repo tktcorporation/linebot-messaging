@@ -537,7 +537,7 @@ class  Manager
       48.times do |i|
         start_period = time + (60*30*i)
         end_period = time + (60*30*(i+1))
-        if calendar_event.start.date_time.to_time <= end_period && start_period <= calendar_event.end.date_time.to_time
+        if (calendar_event.start.date_time.to_time + 60) <= end_period && start_period <= (calendar_event.end.date_time.to_time - 60)
           p start_period
           available_array[i] += 1
         end
