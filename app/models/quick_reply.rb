@@ -92,7 +92,7 @@ class QuickReply < ApplicationRecord
     # end
     item_num = quick_reply_schedule.term_num*duration_num
     item_dur = 60*30
-    if !item_num <= 12
+    if item_num > 12
       item_num = item_num/2
       item_dur = 60*60
     end
