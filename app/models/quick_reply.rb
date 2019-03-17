@@ -91,14 +91,14 @@ class QuickReply < ApplicationRecord
     #   end
     # end
     item_num = quick_reply_schedule.term_num*duration_num
-    item_dur = 60*30
+    item_dur = 1
     if item_num > 12
       item_num = item_num/2
-      item_dur = 60*60
+      item_dur = 2
     end
     item_num.times do |i|
-      day += item_dur if i != 0
-      if available_day_array[count+i+duration_num-1] && available_day_array[(count+i)..(count+i+duration_num-1)].all?{|n| n < events_permission_count }
+      day += 60*30*item_dur if i != 0
+      if available_day_array[count+i*item_dur+duration_num-1] && available_day_array[(count+i*item_dur)..(count+i*item_dur+duration_num-1)].all?{|n| n < events_permission_count }
         data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
         items_array.push(item)
