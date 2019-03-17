@@ -90,7 +90,7 @@ class QuickReply < ApplicationRecord
     #     items_array.push(item)
     #   end
     # end
-    item_num = quick_reply_schedule.term_num*duration_num
+    item_num = quick_reply_schedule.term_num
     item_dur = 1
     if item_num > 12
       item_num = item_num/2
