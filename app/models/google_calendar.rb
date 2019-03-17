@@ -30,13 +30,7 @@ class GoogleCalendar
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
     end
-    client = Signet::OAuth2::Client.new(
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
@@ -72,13 +66,7 @@ class GoogleCalendar
 
   def self.get_events(bot)
     retry_counter = 0
-    client = Signet::OAuth2::Client.new(
-      client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
-      client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
 
     service = Google::Apis::CalendarV3::CalendarService.new
@@ -132,13 +120,7 @@ class GoogleCalendar
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
     end
-    client = Signet::OAuth2::Client.new(
-      client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
-      client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
@@ -169,6 +151,16 @@ class GoogleCalendar
       redirect_uri: "https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/",
       additional_parameters: {prompt:'consent'},
     }
+  end
+
+  def self.client(bot)
+    Signet::OAuth2::Client.new(
+      client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
+      client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
+      access_token: bot.google_api_set.access_token,
+      refresh_token: bot.google_api_set.refresh_token,
+      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
+    )
   end
 
 end
