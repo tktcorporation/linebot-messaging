@@ -81,10 +81,24 @@ class QuickReply < ApplicationRecord
     duration_num = quick_reply_schedule.duration_num
     day += 60*60*(quick_reply_schedule.start_num)
     count = quick_reply_schedule.start_num * 2
-    quick_reply_schedule.term_num.times do |i|
-      day += 60*duration_num * 30 if i != 0
-      events_permission_count = quick_reply_schedule.permission_count
-      if available_day_array[(count+i*duration_num)..(count+i*duration_num+duration_num-1)].all?{|n| n < events_permission_count }
+    events_permission_count = quick_reply_schedule.permission_count
+    # quick_reply_schedule.term_num.times do |i|
+    #   day += 60*duration_num * 30 if i != 0
+    #   if available_day_array[(count+i*duration_num)..(count+i*duration_num+duration_num-1)].all?{|n| n < events_permission_count }
+    #     data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
+    #     item = QuickReply.create_item(data, day.strftime("%H:%M"))
+    #     items_array.push(item)
+    #   end
+    # end
+    item_num = quick_reply_schedule.term_num*duration_num
+    item_dur = 60*30
+    if !item_num <= 12
+      item_num = item_num/2
+      item_dur = 60*60
+    end
+    item_num.times do |i|
+      day += item_dur if i != 0
+      if available_day_array[count+i+duration_num-1] && available_day_array[(count+i)..(count+i+duration_num-1)].all?{|n| n < events_permission_count }
         data = "[4][#{self.id}]" + day.strftime("%Y-%m-%d %H:%M")
         item = QuickReply.create_item(data, day.strftime("%H:%M"))
         items_array.push(item)
