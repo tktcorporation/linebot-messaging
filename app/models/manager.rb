@@ -234,6 +234,8 @@ class  Manager
       message = Manager::Flex.datetimepicker(quick_reply)
     else
       self.push(lineuser, quick_reply.text)
+      lineuser.quick_reply_id = quick_reply.next_reply_id
+      self.advance_lineuser_phase(lineuser, quick_reply.form)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
