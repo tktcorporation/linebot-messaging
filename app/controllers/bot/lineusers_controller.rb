@@ -3,7 +3,7 @@ class Bot::LineusersController < ApplicationController
   layout 'bot_layout'
 
   def index
-    @bot = Bot.includes(:lineusers, :reminds).includes(:lineusers => :messages).get(params[:bot_id])
+    @bot = current_user.bots.includes(:lineusers, :reminds).includes(:lineusers => :messages).get(params[:bot_id])
     @newremind = Remind.new
   end
 

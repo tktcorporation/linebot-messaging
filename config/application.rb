@@ -12,7 +12,6 @@ module LinebotMessagingApp
     config.load_defaults 5.2
     config.autoload_paths += Dir["#{config.root}/lib/**/*"]
     config.i18n.default_locale = :ja
-
     config.time_zone = 'Asia/Tokyo'
 
     # Settings in config/environments/* take precedence over those specified here.

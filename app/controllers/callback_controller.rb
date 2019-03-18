@@ -11,9 +11,13 @@ class CallbackController < ApplicationController
       error 400 do 'Bad Request' end
     end
     events = client(bot).parse_events_from(body)
-    events.each { |event|
-      Manager.start_event(event, bot.id)
-    }
+    events.each do |event|
+      ActiveRecord::Base.transaction do
+        Manager.start_event(event, bot.id)
+      end
+      rescue => e
+        Rails.logger.fatal e.message
+    end
     head :ok
   end
 

@@ -18,7 +18,9 @@ var app = new Vue({
   watch: {
     time: function(v) {
       if (v % 10 == 0) {
-        this.submitAndRedirect();
+        if (document.getElementById("message")) {
+          this.submitAndRedirect();
+        }
       }
     }
   },

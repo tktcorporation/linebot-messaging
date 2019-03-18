@@ -2,6 +2,8 @@ class Form < ApplicationRecord
   has_many :quick_replies, ->{ where(deleted: false) }
   has_many :converted_lineusers
   has_many :session_lineusers
+  has_many :ab_test_forms
+  has_many :ab_tests, through: :ab_test_forms
   belongs_to :bot
 
   scope :undeleted, ->{ where(deleted: false) }
@@ -36,6 +38,11 @@ class Form < ApplicationRecord
   end
 
   def self.get_active_with_lineuser(lineuser)
-    lineuser.bot.forms.find_by(is_active: true)
+    ab_test = lineuser.bot.ab_tests&.find_by(is_active: true)
+    if ab_test.present?
+      ab_test.forms.sample
+    else
+      lineuser.bot.forms.find_by(is_active: true)
+    end
   end
 end

@@ -9,4 +9,8 @@ class Bot::ReplyAction < ApplicationRecord
   validates :text, presence: true, lt4bytes: true
   validates :is_active, presence: true
 
+  def self.get(id)
+    self.find(id)
+  end
+
 end

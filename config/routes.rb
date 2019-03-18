@@ -6,11 +6,16 @@ Rails.application.routes.draw do
   post   '/callback', to: 'callback#callback'
   post   '/callback/:hash', to: 'callback#callback'
 
-  get '/google_auth/redirect/:bot_id', to: 'google_auth#redirect'
-  get '/google_auth/callback/:hash', to: 'google_auth#callback'
   get '/google_auth/test_create/:bot_id', to: 'google_auth#test_create'
-  get '/google_auth/create_event'
-  get '/google_auth/get_events'
+
+
+  resources :google_auth, only: [] do
+    collection do
+      get :callback
+      get :redirect
+      post :set_token
+    end
+  end
 
   namespace :api, format: 'json' do
     resources :bot, except: [:new, :index] do
@@ -25,15 +30,26 @@ Rails.application.routes.draw do
 
   constraints(id: /[0-9]+/, bot_id: /[0-9]+/, lineuser_id: /[0-9]+/) do
     resources :bot, except: [:new, :index] do
+      member do
+        patch :set_images
+      end
       scope module: 'bot' do
+        resources :ab_tests do
+          member do
+            patch :switch_active
+          end
+        end
         resources :response_data, only: [:index], shallow: true
-        resources :reply_actions, shallow: true
+        resources :reply_actions
         resources :images, only: [:show], shallow: true
         resources :statuses, only: [:create, :destroy, :index], shallow: true
-        resources :forms, shallow: true do
+        resources :forms do
           member do
             patch :switch_active
             get :edit_flow
+          end
+          scope module: 'forms' do
+            resources :check_notifications, only: [:create, :destroy, :index]
           end
           resources :quick_replies, only: [:create, :destroy, :update], shallow: true do
             member do
@@ -63,11 +79,12 @@ Rails.application.routes.draw do
             post :create
             post :redirect
             patch :update_name
+            post :push_image
           end
         end
       end
     end
   end
   root to: 'users#new'
-  match "*path" => "application#render_404", via: :all
+  # match "*path" => "application#render_404", via: :all
 end

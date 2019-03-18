@@ -88,18 +88,54 @@
                     = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
-        .message-form
+        .message-form.overflow
           div v-if="formSwitch == 0"
             = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
               = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
-              = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
-            button.button v-on:click="switchForm(1)" テンプレート送信
+              .inline-block
+                div
+                  = button_tag '<i class="far fa-paper-plane"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
+                div
+                  button.button type="button" v-on:click="switchForm(1)"
+                    i.fas.fa-plus
           div v-if="formSwitch == 1"
+            .columns.is-multiline.is-mobile
+              .column.is-one-quarter
+                button.button.is-size-4 v-on:click="switchForm(0)"
+                  i.far.fa-comment
+              .column.is-one-quarter
+                button.button.is-size-4 v-on:click="switchForm(2)"
+                  i.far.fa-envelope
+              .column.is-one-quarter
+                button.button.is-size-4 v-on:click="switchForm(3)"
+                  i.far.fa-image
+              .column.is-one-quarter
+                button.button.is-size-4 v-on:click="switchForm(4)"
+                  i.fas.fa-upload
+
+          div v-if="formSwitch == 2"
+            button.button.float-right v-on:click="switchForm(0)"
+              i.far.fa-comment
             = form_tag push_flex_bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
               .select
                 = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id)
               = submit_tag "送信", class: "button is-info inline-block"
-            button.button v-on:click="switchForm(0)" メッセージ送信
+          div v-if="formSwitch == 3"
+            button.button.float-right v-on:click="switchForm(0)"
+              i.far.fa-comment
+            .columns.is-multiline.is-mobile
+              - @bot.images&.each do |image|
+                .column.is-one-quarter
+                  = link_to push_image_bot_chat_path(params[:bot_id], params[:lineuser_id], params: { image: { id: image.id } }), data: { confirm: '画像を送信します' }, method: :post do
+                    = image_tag image, size: '120x120'
+          div v-if="formSwitch == 4"
+            button.button.float-right v-on:click="switchForm(0)"
+              i.far.fa-comment
+            = form_with(model: @bot, url: set_images_bot_path(id: @bot.id), local: true, data: { parsley_validate: "" }) do |f|
+              = f.file_field :images, multiple: true, required: ""
+              = f.submit "画像を追加", class: "button is-info"
+
+
     .column.is-4.overflow
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""

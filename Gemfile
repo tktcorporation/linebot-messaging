@@ -30,6 +30,7 @@ gem 'search_cop'
 
 gem 'webpacker'
 gem 'kaminari'
+gem 'slack-notifier'
 
 #gem 'sqlite3'
 # Use Puma as the app server
@@ -55,12 +56,19 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
-# Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
+# 本体
+gem 'capistrano', '~> 3.11.0', require: false
+gem 'capistrano-bundler', '~> 1.4.0', require: false
+gem 'capistrano-rails', '~> 1.4.0', require: false
+gem 'capistrano-rbenv', '~> 2.1.4', require: false
+gem 'sshkit-sudo', '~> 0.1.0', require: false
+gem 'capistrano3-puma', '~> 3.1.1', require: false
+gem 'capistrano-npm', require: false
+gem 'capistrano-yarn', require: false
 
 #本番環境用
 gem 'unicorn'
-gem "capistrano3-unicorn"
+gem "capistrano3-unicorn", require: false
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -88,4 +96,4 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data'#, platforms: [:mingw, :mswin, :x64_mingw, :jruby]

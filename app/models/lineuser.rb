@@ -10,13 +10,14 @@ class Lineuser < ApplicationRecord
   end
 
   has_many :messages, ->{ where(deleted: false).order(created_at: :asc) }
-  has_many :response_data
-  has_one :converted_lineuser
-  has_one :session_lineuser
+  has_many :response_data, dependent: :destroy
+  has_one :converted_lineuser, dependent: :destroy
+  has_one :session_lineuser, dependent: :destroy
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
-  has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id
-  has_one :lineuser_status, class_name: "Bot::LineuserStatus"
-  has_many :quick_reply_text_flags
+  has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id, dependent: :destroy
+  has_one :lineuser_status, class_name: "Bot::LineuserStatus", dependent: :destroy
+  has_one :invitation_code, dependent: :destroy
+  has_many :quick_reply_text_flags, dependent: :destroy
   belongs_to :bot
 
   validates :uid, presence: true, lt4bytes: true
@@ -62,6 +63,7 @@ class Lineuser < ApplicationRecord
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
     converted_lineuser.form_id = form.id
     converted_lineuser.save
+    Manager.push_slack_lineuser_data(self)
   end
 
   def create_session(form)
@@ -76,6 +78,21 @@ class Lineuser < ApplicationRecord
 
   def set_next_reply_id(next_reply_id)
     self.update_attributes!(quick_reply_id: next_reply_id)
+  end
+
+  def get_response_data_message
+    result_text = "プロフィール"
+    result_text += "\nname: #{self.name}"
+    result_text += "\nuser_id: #{self.uid}"
+    result_text += "\nフォーム名：#{self.session_lineuser.form.name}"
+    result_text += "\n回答データ"
+    self.response_data.includes(:quick_reply).each do |data|
+      if data.quick_reply.present?
+        text = "\n#{data.quick_reply.name}: #{data.response_text}"
+        result_text += text
+      end
+    end
+    result_text
   end
 
   def self.get_plural_with_bot_id(bot_id)
@@ -109,6 +126,19 @@ class Lineuser < ApplicationRecord
 
   def update_lastmessage(message)
     self.update_attributes!(lastmessage_id: message.id)
+  end
+
+  def get_invitation_code
+    #Manager.encrypt(self.uid + "invitexxx").slice(0, 8)
+    if code = self.invitation_code&.code
+      return code
+    else
+      code = ""
+      5.times{ code += ("A".."Z").to_a.sample}
+      invitation_code = self.build_invitation_code(code: code)
+      invitation_code.save!
+      return code
+    end
   end
 
 end
