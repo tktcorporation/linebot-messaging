@@ -32,6 +32,8 @@ gem 'webpacker'
 gem 'kaminari'
 gem 'slack-notifier'
 
+gem 'aws-sdk-s3'
+
 #gem 'sqlite3'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
