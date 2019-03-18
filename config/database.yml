@@ -28,6 +28,9 @@ test:
   <<: *default
   database: linebot
 
+staging:
+  <<: *default
+  database: linebot_stg
 
 production:
   <<: *default

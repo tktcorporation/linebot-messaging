@@ -21,6 +21,17 @@
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
+set :branch, 'develop'
+server '13.113.141.0', user: 'centos', roles: %w(app web db)
+# server '13.113.192.215', user: 'ec2-user', roles: %w(app web db)
+
+set :ssh_options, {
+  keys: %w(~/.ssh/hassyadai_with_tkt),
+  # keys: %w(~/.ssh/id_rsa_enloop_catalist.pem),
+  forward_agent: true,
+  auth_methods: %w(publickey)
+}
+
 
 
 # Configuration
