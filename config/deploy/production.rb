@@ -31,7 +31,7 @@
 #   auth_methods: %w(publickey)
 # }
 
-set :branch, 'develop'
+set :branch, 'master'
 server '13.113.252.166', user: '***REMOVED***', roles: %w(app web db)
 
 set :ssh_options, {
