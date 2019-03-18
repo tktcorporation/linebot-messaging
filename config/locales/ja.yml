@@ -2,6 +2,11 @@
 ja:
   activerecord:
     errors:
+      models:
+        bot/ab_test:
+          attributes:
+            ab_test_forms:
+              too_long: 'は%{count}個までしか登録できません'
       messages:
         record_invalid: "登録に失敗しました: %{errors}"
         unavailable: 'に使用できない文字(%{chars})が含まれています。'

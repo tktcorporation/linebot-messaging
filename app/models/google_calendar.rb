@@ -8,7 +8,7 @@ class GoogleCalendar
   require 'base64'
 
   def self.callback_process(bot, code)
-    client = Signet::OAuth2::Client.new(self.client_options(bot))
+    client = Signet::OAuth2::Client.new(self.client_options)
     client.code = code
     response = client.fetch_access_token!
     google_api_token = GoogleApiSet.find_or_initialize_by(bot_id: bot.id)
@@ -18,6 +18,8 @@ class GoogleCalendar
     google_api_token.refresh_token = response['refresh_token']
     google_api_token.token_type = response['token_type']
     google_api_token.save!
+  rescue Signet::AuthorizationError
+    return false
   end
 
   def self.create_event(quick_reply, start_time, lineuser)
@@ -28,13 +30,7 @@ class GoogleCalendar
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
     end
-    client = Signet::OAuth2::Client.new(
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
@@ -43,8 +39,8 @@ class GoogleCalendar
     #event_id = "CDGN8OBCD5PN8"
     #Base64.strict_encode64(unique_id).gsub("=","")
     event = Google::Apis::CalendarV3::Event.new({
-          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339),
-          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339),
+          start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339, time_zone: "Asia/Tokyo"),
+          end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339, time_zone: "Asia/Tokyo"),
           summary: quick_reply_schedule.summary.to_s,
           description: "「#{quick_reply_schedule.summary}」, ユーザー：「#{lineuser.name}」"
           #id: event_id
@@ -70,13 +66,7 @@ class GoogleCalendar
 
   def self.get_events(bot)
     retry_counter = 0
-    client = Signet::OAuth2::Client.new(
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
 
     service = Google::Apis::CalendarV3::CalendarService.new
@@ -130,13 +120,7 @@ class GoogleCalendar
       Manager.push_log(bot.id, "「GoogleApi」の設定がされていないため、カレンダーイベントの作成が行われませんでした。")
       return nil
     end
-    client = Signet::OAuth2::Client.new(
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      access_token: bot.google_api_set.access_token,
-      refresh_token: bot.google_api_set.refresh_token,
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
-    )
+    client = self.client(bot)
     client.refresh!
     service = Google::Apis::CalendarV3::CalendarService.new
     service.authorization = client
@@ -153,25 +137,30 @@ class GoogleCalendar
     Manager.push_log(bot.id, "カレンダーイベントの作成に失敗しました。「GoogleApi」の設定を確認してください。")
   end
 
-  private
-  def self.client_options(bot)
-    return client_option = {
-      client_id: bot.google_api_set.client_id,
-      client_secret: bot.google_api_set.client_secret,
-      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
-      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
-      redirect_uri:"https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/#{bot.callback_hash}",
-      additional_parameters: {prompt:'consent'},
-    }
-  end
-
   def self.ids
     service.list_calendar_lists.items.map(&id)
   end
 
-  def self.client
+  def self.client_options
+    return client_option = {
+      client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
+      client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
+      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+      token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
+      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
+      redirect_uri: "https://#{ENV.fetch('DOMAIN_NAME')}/google_auth/callback/",
+      additional_parameters: {prompt:'consent'},
+    }
+  end
 
+  def self.client(bot)
+    Signet::OAuth2::Client.new(
+      client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
+      client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
+      access_token: bot.google_api_set.access_token,
+      refresh_token: bot.google_api_set.refresh_token,
+      token_credential_uri: 'https://accounts.google.com/o/oauth2/token'
+    )
   end
 
 end

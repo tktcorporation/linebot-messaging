@@ -22,13 +22,20 @@
     right: 50px;
     display: inline-block;
     z-index: 100;
-    background-color: #F0A32F;
     border-radius: 10px;
     padding: 10px 20px;
     color: white;
 }
 
-.inline-box {
+.notice {
+    background-color: #F0A32F;
+}
+.alert {
+    background-color: #FF3838;
+}
+
+
+.inline-block {
     display: inline-block;
 }
 

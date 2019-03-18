@@ -5,13 +5,13 @@ class Bot::QuickReplyItemsController < ApplicationController
     quick_reply.switch_quick_reply
     quick_reply_item = quick_reply.quick_reply_items.new(quick_reply_item_params)
     quick_reply_item.save!
-    redirect_to form_url(quick_reply.form_id)
+    redirect_to bot_form_url(quick_reply_item.quick_reply.form.bot_id, quick_reply.form_id)
   end
 
   def destroy
     quick_reply_item = QuickReplyItem.get(params[:id])
     quick_reply_item.destroy
-    redirect_to form_url(quick_reply_item.quick_reply.form_id)
+    redirect_to bot_form_url(quick_reply_item.quick_reply.form.bot_id, quick_reply_item.quick_reply.form_id)
   end
 
   private

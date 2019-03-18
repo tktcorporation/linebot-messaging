@@ -1,0 +1,20 @@
+.container
+  .columns.is-centered
+    .column.is-7
+      label.label.is-large セットするBOT
+      = form_with url: set_token_google_auth_index_path, local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+        = f.hidden_field :code, value: @code
+        = f.submit "SELECT", class: "button prime"
+        - @bots.each do |bot|
+          .column
+            .box.quick-reply-box
+              .columns
+                .column.is-8
+                  .field
+                    label.label
+                      = bot.name
+                .column.is-4
+                  .field
+                    label.label
+                      = f.radio_button :bot_id, bot.id, checked: "checked"
+

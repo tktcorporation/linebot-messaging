@@ -2,19 +2,20 @@
   - if @error_message
     label.label
       = @error_message
-  .column.is-3
+  .column.is-5
     - if @form.is_active
       p
         span.active-circle.vertical-middle
         span.vertical-middle アクティブ(動作中)
-        = link_to "無効化", switch_active_form_path(@form), method: :patch, class: "button vertical-middle is-danger is-outlined float-right switch_active_button"
+        = link_to "無効化", switch_active_bot_form_path(@bot.id, @form), method: :patch, class: "button vertical-middle is-danger is-outlined float-right switch_active_button"
     - else
       p
         span.stand-by-circle.vertical-middle
         span.vertical-middle 待機中
-        = link_to "有効化", switch_active_form_path(@form), method: :patch, class: "button vertical-middle is-success is-outlined float-right switch_active_button"
+        = link_to "有効化", switch_active_bot_form_path(@bot.id,@form), method: :patch, class: "button vertical-middle is-success is-outlined float-right switch_active_button"
   .column.is-5
-    = link_to "フロー管理", edit_flow_form_path(@form.id), class: "button vertical-middle is-info is-outlined float-right"
+    = link_to "通知設定", bot_form_check_notifications_path(@bot, @form), class: "button float-right"
+    = link_to "フロー管理", edit_flow_bot_form_path(@bot.id, @form.id), class: "button vertical-middle is-info is-outlined float-right"
 .columns.is-centered
   .column.is-11
     .columns.is-multiline
@@ -90,7 +91,7 @@
                 span DateTime
         #tab-content
           .form-tab v-if="isActive == 1"
-            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 通常メッセージ
               = f.hidden_field :reply_type, :value => 0
               label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
@@ -104,7 +105,7 @@
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 2"
-            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 複数選択肢
               = f.hidden_field :reply_type, :value => 1
               label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
@@ -118,7 +119,7 @@
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 3"
-            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 自由入力
               = f.hidden_field :reply_type, :value => 2
               label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
@@ -132,7 +133,7 @@
               p.control
                 = f.submit "追加", class: "button is-info"
           .form-tab v-if="isActive == 4"
-            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large スケジュール調整
               = f.hidden_field :reply_type, :value => 3
               label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）
@@ -185,8 +186,14 @@
                   label.label 予定調整を行う時間
                   .field
                     .control
-                      = f.number_field :term_num, in: 1...11, class: "input", required: ""
-                      span × 1予定の枠 ÷ 2 (時間)
+                      = f.number_field :term_num, in: 1...12, class: "input", required: ""
+                      span 時間
+                .column.is-6
+                  label.label 予定の重複を何件まで許容するか
+                  .field
+                    .control
+                      = f.number_field :permission_count, class: "input", required: ""
+                      span 件
               - if @bot.google_api_set.present?
                 - if @bot.google_api_set.refresh_token.present?
                   p.control
@@ -196,12 +203,12 @@
                     = f.submit "追加", class: "button is-info"
                 - else
                   p.control
-                    = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+                    = link_to "Google認証", "/google_auth/redirect/", class: "button is-info"
               - else
                 p.control
-                  = link_to "Google認証", "/google_auth/redirect/#{@bot.id}", class: "button is-info"
+                  = link_to "Google認証", "/google_auth/redirect/", class: "button is-info"
           .form-tab v-if="isActive == 5"
-            = form_with model: @quick_reply, url: form_quick_replies_path(@quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
+            = form_with model: @quick_reply, url: bot_form_quick_replies_path(@bot.id, @quick_reply.form_id), local: true, data: { parsley_validate: "" }, html: { class: "form" } do |f|
               label.label.is-large 日付選択
               = f.hidden_field :reply_type, :value => 5
               label.label 名前（管理用、ユーザーの回答(選択肢)と関連づけられ、カラムの役割を持ちます）

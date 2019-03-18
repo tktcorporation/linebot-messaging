@@ -22,11 +22,14 @@ class  Manager
       text: text
     }
 
-    if response = self.client(bot).push_message(lineuser.uid, message)
-      p response
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
       lineuser.update_lastmessage(saved_message)
       log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
       self.push_log(bot.id, log_text)
+    else
+      p response
+      raise "response.class != Net::HTTPOK"
     end
     #return UrlFetchApp.fetch(url, options);
   end
@@ -47,24 +50,29 @@ class  Manager
         self.push_log(bot.id, log_text)
       end
     else
-      p "response.class != Net::HTTPOK"
+      p response
+      raise "response.class != Net::HTTPOK"
     end
     #return UrlFetchApp.fetch(url, options);
   end
 
-  def self.push_image(lineuser, img_url)
+  def self.push_image(lineuser, image, image_url)
+    saved_message = Message.new(content: "[画像: #{image.id}]", lineuser_id: lineuser.id, to_bot: false)
+    saved_message.save!
     bot = lineuser.bot
     message = {
       type: 'image',
-      originalContentUrl: img_url,
-      previewImageUrl: img_url
+      originalContentUrl: image_url,
+      previewImageUrl: image_url
     }
-
-    if response = self.client(bot).push_message(lineuser.uid, message)
+    response = self.client(bot).push_message(lineuser.uid, message)
+    if response.class == Net::HTTPOK
+      lineuser.update_lastmessage(saved_message)
+      log_text = "画像を送信：" + "to：[" + lineuser.name + "] [画像: #{image.id}]"
+      self.push_log(bot.id, log_text)
+    else
       p response
-      # lineuser.update_lastmessage(saved_message)
-      # log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
-      # self.push_log(bot.id, log_text)
+      raise "response.class != Net::HTTPOK"
     end
   end
 
@@ -73,6 +81,7 @@ class  Manager
     message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
     message.save!
     lineuser.update_lastmessage(message)
+    quick_reply = nil
     case data[:reply_type].to_i
     when 1
       #data[:id]にはquick_reply_item_idが入っている
@@ -83,6 +92,7 @@ class  Manager
       self.advance_lineuser_phase(lineuser, quick_reply.form)
     when 3
       #data[:id]にはquick_reply_idが入っている
+      #日程調整用
       quick_reply = QuickReply.get(data[:id])
       day = Time.parse(data[:text])
       message = {
@@ -114,7 +124,7 @@ class  Manager
       when "決定"
         case quick_reply.reply_type.to_i
         when 3
-          response_text = quick_reply.response_datum.response_text
+          response_text = quick_reply.response_data.find_by(lineuser_id: lineuser.id).response_text
           day = Time.parse(response_text)
           GoogleCalendar.create_event(quick_reply, day, lineuser)
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
@@ -128,6 +138,7 @@ class  Manager
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
+    self.check_and_push_user_data(quick_reply, lineuser)
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
@@ -172,6 +183,7 @@ class  Manager
       }
       QuickReplyTextFlag.initialize_accepting(quick_reply, lineuser)
     when 3
+      #日程調整用、日付を投げる
       message = {
         type: 'text',
         text: quick_reply.text,
@@ -187,6 +199,8 @@ class  Manager
          max: Time.now + 60*60*24*30,
          min: Time.now - 60*60*24*30
       }
+    else
+      self.push(lineuser, quick_reply.text)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     p response.body
@@ -218,6 +232,10 @@ class  Manager
       }
     when 5
       message = Manager::Flex.datetimepicker(quick_reply)
+    else
+      self.push(lineuser, quick_reply.text)
+      lineuser.quick_reply_id = quick_reply.next_reply_id
+      self.advance_lineuser_phase(lineuser, quick_reply.form)
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
@@ -261,11 +279,10 @@ class  Manager
     uid = event['source']['userId']
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
-    self.check_reply_action(lineuser, text)
     message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot_id, log_text)
-    puts("seve message succes")
+    self.check_reply_action(lineuser, text)
     self.check_quick_reply_text(lineuser, text)
     return message
   end
@@ -274,6 +291,16 @@ class  Manager
     if reply_action = lineuser.bot.reply_actions.find_by(text: text)
       self.push_flex(lineuser, reply_action.quick_reply)
     end
+    if text == "招待コード発行"
+      self.push_invitation(lineuser)
+    end
+  end
+
+  def self.push_invitation(lineuser)
+    invitation_code = lineuser.get_invitation_code
+    self.push(lineuser, invitation_code)
+    slack_text = "ユーザーID：#{lineuser.uid}\n招待コード：#{invitation_code}"
+    self.push_slack(lineuser.bot, slack_text)
   end
 
   def self.check_quick_reply_text(lineuser, text)
@@ -342,7 +369,7 @@ class  Manager
       when Line::Bot::Event::Unfollow
         lineuser.quick_reply_id = nil
         lineuser.is_unfollowed = true
-        lineuser.save
+        lineuser.save!
       when Line::Bot::Event::Postback
         ActiveRecord::Base.transaction do
           self.postback_event(event, lineuser)
@@ -358,7 +385,7 @@ class  Manager
 
   def self.follow_event(lineuser)
     lineuser.is_unfollowed = false
-    lineuser.save
+    lineuser.save!
     self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
     if form = Form.get_active_with_lineuser(lineuser)
       lineuser.create_session(form)
@@ -497,20 +524,22 @@ class  Manager
   def self.available_time(calendar_event, day, available_array)
     time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
     if calendar_event.start.date.present?
-      if Time.parse(calendar_event.start.date) <= time && time < Time.parse(calendar_event.end.date)
-        filled_array = []
-        48.times do |i|
-          filled_array.push(1)
-        end
-        available_array = filled_array
-      end
+      # 全日予定はカウントしない
+      # if Time.parse(calendar_event.start.date) <= time && time < Time.parse(calendar_event.end.date)
+      #   # filled_array = []
+      #   #48.times do |i|
+      #     # filled_array.push(1)
+      #   #end
+      #   available_array.map! { |t| t += 1 }
+      #   # available_array = filled_array
+      # end
     else
       48.times do |i|
         start_period = time + (60*30*i)
         end_period = time + (60*30*(i+1))
-        if calendar_event.start.date_time.to_time <= end_period && start_period <= calendar_event.end.date_time.to_time
+        if (calendar_event.start.date_time.to_time + 60) <= end_period && start_period <= (calendar_event.end.date_time.to_time - 60)
           p start_period
-          available_array[i] = 1
+          available_array[i] += 1
         end
       end
     end
@@ -587,6 +616,24 @@ class  Manager
       self.update_lineuser_profile(bot, lineuser.uid, true)
     else
       self.push_name(lineuser.id, username)
+    end
+  end
+
+  def self.push_slack_lineuser_data(lineuser)
+    bot = lineuser.bot
+    message = lineuser.get_response_data_message
+    self.push_slack(bot, message)
+  end
+
+  def self.push_slack(bot, text)
+    webhook_url = bot.slack_api_set.webhook_url
+    Manager::SlackApi.push_message(text, webhook_url)
+  end
+
+  def self.check_and_push_user_data(quick_reply, lineuser)
+    ids = lineuser.bot.check_notifications&.first&.quick_replies&.pluck(:id)
+    if ids.include?(quick_reply.id)
+      self.push_slack_lineuser_data(lineuser)
     end
   end
 end
