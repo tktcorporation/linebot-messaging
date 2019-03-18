@@ -8,7 +8,7 @@ class Bot::ChatController < ApplicationController
 
   def show
     #トーク履歴が多いと重くなりそう
-    @bot = current_user.bots.with_attached_images.includes(:lineusers, :statuses, :images).includes(:lineusers => :lastmessage).get(params[:bot_id])
+    @bot = current_user.bots.includes(:lineusers, :statuses, :images).includes(:lineusers => :lastmessage).get(params[:bot_id])
     #:replied に返信済みユーザーが, :not_repliedに未返信ユーザーが配列で入る
     @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
     @lineuser = @bot.lineusers.includes(:messages, :response_data).get(params[:lineuser_id])
