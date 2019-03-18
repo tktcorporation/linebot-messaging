@@ -32,7 +32,10 @@ gem 'webpacker'
 gem 'kaminari'
 gem 'slack-notifier'
 
-gem 'aws-sdk-s3'
+# 画像アップロード用
+gem 'carrierwave'
+gem 'fog-aws'
+gem 'rmagick'
 
 #gem 'sqlite3'
 # Use Puma as the app server

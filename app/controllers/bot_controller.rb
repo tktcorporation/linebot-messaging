@@ -38,7 +38,7 @@ class BotController < ApplicationController
 
   def set_images
     bot = @current_user.bots.get(params[:id])
-    if bot.images.attach(bot_images_params[:images])
+    if bot.stock_images.create(bot_images_params)#attach(bot_images_params[:image])
       flash[:notice] = "新しい画像を登録しました"
     else
       flash[:alert] = "画像の登録に失敗しました"
@@ -56,7 +56,7 @@ class BotController < ApplicationController
       params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify)
     end
     def bot_images_params
-      params.require(:bot).permit(images: [])
+      params.require(:bot).permit(:image)
     end
     def check_auth
       return if !params[:id]
