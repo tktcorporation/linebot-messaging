@@ -69,5 +69,6 @@ production:
   cache_manifest: true
 
 staging:
+  <<: *default
   compile: false
   cache_manifest: true
