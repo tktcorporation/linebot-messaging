@@ -84,20 +84,20 @@ class GoogleCalendar
       end
     end
 
-    p "===========イベント一覧==========="
-    calendar_items.each do |event|
-      if event.start.date.present?
-        p "start_date:" + event.start.date
-        p "end_date:" + event.end.date
-      else
-        p "start_date-time:" + event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
-        p "end_date-time:" + event.end.date_time.strftime("%Y-%m-%d %H:%M:%S")
-      end
-      p "summary:" + event.summary
-      p "description:" + event.description if event.description.present?
-      p "id:" + event.id
-      p "=============================="
-    end
+    # p "===========イベント一覧==========="
+    # calendar_items.each do |event|
+    #   if event.start.date.present?
+    #     p "start_date:" + event.start.date
+    #     p "end_date:" + event.end.date
+    #   else
+    #     p "start_date-time:" + event.start.date_time.strftime("%Y-%m-%d %H:%M:%S")
+    #     p "end_date-time:" + event.end.date_time.strftime("%Y-%m-%d %H:%M:%S")
+    #   end
+    #   p "summary:" + event.summary
+    #   p "description:" + event.description if event.description.present?
+    #   p "id:" + event.id
+    #   p "=============================="
+    # end
     return calendar_items
   rescue Google::Apis::AuthorizationError
     response = client.refresh!
