@@ -1,17 +1,8 @@
 {
-  "name": "linebot-messaging-app",
-  "private": true,
   "dependencies": {
-    "@rails/webpacker": "3.5",
-    "axios": "^0.18.0",
-    "vue": "^2.5.21",
-    "vue-loader": "14.2.2",
-    "vue-template-compiler": "^2.5.21"
-  },
-  "scripts": {
-    "build:prod": "webpack"
+    "@rails/webpacker": "^4.0.2"
   },
   "devDependencies": {
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "^3.2.1"
   }
 }
