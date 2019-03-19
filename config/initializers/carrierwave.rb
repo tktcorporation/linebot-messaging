@@ -7,15 +7,15 @@ CarrierWave.configure do |config|
     config.storage :fog
     config.fog_provider = 'fog/aws'
     config.fog_directory  = 'catalist-s3-001'
-    config.asset_host = 'https://s3.amazonaws.com/catalist-s3-001'
+    config.asset_host = 'https://s3-ap-northeast-1.amazonaws.com/catalist-s3-001'
     config.fog_public = false
     config.fog_credentials = {
       provider: 'AWS',
       aws_access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
       aws_secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
       region: "ap-northeast-1",
-      path_style: true,
-      endpoint: Rails.application.credentials.dig(:aws, :endpoint)
+      path_style: true
+      #endpoint: Rails.application.credentials.dig(:aws, :endpoint)
     }
   else
     config.storage :file
