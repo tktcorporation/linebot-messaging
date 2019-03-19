@@ -132,7 +132,7 @@
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
             = form_with(model: @bot, url: set_images_bot_path(id: @bot.id), local: true, data: { parsley_validate: "" }) do |f|
-              = f.file_field :images, multiple: true, required: ""
+              = f.file_field :image, required: ""
               = f.submit "画像を追加", class: "button is-info"
 
 
