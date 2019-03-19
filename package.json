@@ -1,5 +1,6 @@
 {
   "name": "linebot-messaging-app",
+  "license": "UNLICENSED",
   "private": true,
   "dependencies": {
     "@rails/webpacker": "^4.0.2",
