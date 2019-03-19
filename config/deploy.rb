@@ -48,11 +48,11 @@ set :linked_files, fetch(:linked_files, []).push(
   '.env'
 )
 
-set :npm_flags, "--prefer-offline --production --no-progress"
-set :npm_roles, :app
+#set :npm_flags, "--prefer-offline --production --no-progress"
+#set :npm_roles, :app
 
-set :yarn_flags, "--prefer-offline --production --no-progress"
-set :yarn_roles, :app
+#set :yarn_flags, "--prefer-offline --production --no-progress"
+#set :yarn_roles, :app
 
 # pumaの追加タスク
 namespace :puma do
@@ -65,6 +65,16 @@ namespace :puma do
   end
   before :start, :make_dirs
 end
+
+# namespace :webpack do
+#   # after "yarn:install", "webpack:build"
+#   after  "deploy:finishing", "webpack:build"
+#   task :build do
+#     on roles(:app) do
+#       execute "cd #{release_path} && #{fetch :yarn_bin} run build"
+#     end
+#   end
+# end
 
 # デプロイ用の追加タスク
 namespace :deploy do
@@ -109,10 +119,10 @@ namespace :deploy do
   # end
 
   before :starting,     :check_revision
-  before :check,        'setup:config'
-  after  :finishing,    :compile_assets
+  # before :check,        'setup:config'
+  after  :finishing,    "assets:precompile"
   # after :cleanup,       :webpack
-  after  :finishing,    :cleanup
+  # after  :finishing,    :cleanup
   after  :migrate,      :seed
 end
 
