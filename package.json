@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@rails/webpacker": "^4.0.2",
+    "axios": "^0.18.0",
+    "postcss-cssnext": "^3.1.0",
     "vue": "^2.6.9",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "^2.6.9"
