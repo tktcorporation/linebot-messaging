@@ -72,7 +72,7 @@ class Bot::ChatController < ApplicationController
     end
 
     def image_param
-      params.require(:image).permit(:id)
+      params.require(:stock_image).permit(:id)
     end
 
 end
