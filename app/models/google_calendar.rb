@@ -41,8 +41,8 @@ class GoogleCalendar
     event = Google::Apis::CalendarV3::Event.new({
           start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339, time_zone: "Asia/Tokyo"),
           end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339, time_zone: "Asia/Tokyo"),
-          summary: quick_reply_schedule.summary.to_s,
-          description: "「#{quick_reply_schedule.summary}」, ユーザー：「#{lineuser.name}」"
+          summary: "【#{lineuser.name}】 + #{quick_reply_schedule.summary.to_s}",
+          description: "「#{quick_reply_schedule.summary}」, ユーザーID：「#{lineuser.uid}」"
           #id: event_id
         })
     service.insert_event(calendar_id, event)
@@ -64,7 +64,7 @@ class GoogleCalendar
     end
   end
 
-  def self.get_events(bot)
+  def self.get_events(bot, get_max_num=7)
     retry_counter = 0
     client = self.client(bot)
     client.refresh!
@@ -77,7 +77,7 @@ class GoogleCalendar
     ids.each do |calendar_id|
       response = service.list_events(calendar_id,
         time_min: Time.now.iso8601,
-        time_max: (Time.now + 7.days).iso8601
+        time_max: (Time.now + get_max_num.days).iso8601
         )
       response.items.each do |calendar_item|
         calendar_items.push(calendar_item)
