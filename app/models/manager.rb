@@ -56,14 +56,14 @@ class  Manager
     #return UrlFetchApp.fetch(url, options);
   end
 
-  def self.push_image(lineuser, image, image_url)
+  def self.push_image(lineuser, stock_image)
     saved_message = Message.new(content: "[画像: #{image.id}]", lineuser_id: lineuser.id, to_bot: false)
     saved_message.save!
     bot = lineuser.bot
     message = {
       type: 'image',
-      originalContentUrl: image_url,
-      previewImageUrl: image_url
+      originalContentUrl: stock_image.image.url,
+      previewImageUrl: stock_image.image.thumb.url
     }
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
@@ -631,7 +631,11 @@ class  Manager
   end
 
   def self.check_and_push_user_data(quick_reply, lineuser)
-    ids = lineuser.bot.check_notifications&.first&.quick_replies&.pluck(:id)
+    # ids = lineuser.bot.check_notifications&.first&.quick_replies&.pluck(:id)
+    ids = []
+    lineuser.bot.check_notifications.where(is_active: true).each do |notif|
+      ids += notif.quick_replies.pluck(:id)
+    end
     if ids.include?(quick_reply.id)
       self.push_slack_lineuser_data(lineuser)
     end
