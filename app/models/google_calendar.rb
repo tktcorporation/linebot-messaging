@@ -77,7 +77,7 @@ class GoogleCalendar
     ids.each do |calendar_id|
       response = service.list_events(calendar_id,
         time_min: Time.now.iso8601,
-        time_max: (Time.now + get_max_num.days).iso8601
+        time_max: (Time.now + (get_max_num+1).days).iso8601
         )
       response.items.each do |calendar_item|
         calendar_items.push(calendar_item)
