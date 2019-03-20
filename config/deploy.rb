@@ -66,16 +66,6 @@ namespace :puma do
   before :start, :make_dirs
 end
 
-# namespace :webpack do
-#   # after "yarn:install", "webpack:build"
-#   after  "deploy:finishing", "webpack:build"
-#   task :build do
-#     on roles(:app) do
-#       execute "cd #{release_path} && #{fetch :yarn_bin} run build"
-#     end
-#   end
-# end
-
 # デプロイ用の追加タスク
 namespace :deploy do
   desc 'Make sure local git is in sync with remote.'
@@ -112,18 +102,12 @@ namespace :deploy do
     end
   end
 
-  # task :webpack do
-  #   on roles(:app) do
-  #     execute "#{current_path}/bin/webpack"
-  #   end
-  # end
-
   before :starting,     :check_revision
-  # before :check,        'setup:config'
-  after  :finishing,    "assets:precompile"
-  # after :cleanup,       :webpack
-  # after  :finishing,    :cleanup
+  before :check,        'setup:config'
+  after  :finishing,    :compile_assets
+  after  :finishing,    :cleanup
   after  :migrate,      :seed
+
 end
 
 namespace :setup do
