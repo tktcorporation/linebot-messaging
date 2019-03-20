@@ -126,7 +126,7 @@
             .columns.is-multiline.is-mobile
               - @bot.stock_images&.each do |stock_image|
                 .column.is-one-quarter
-                  = link_to push_image_bot_chat_path(params[:bot_id], params[:lineuser_id], params: { image: { id: stock_image.id } }), data: { confirm: '画像を送信します' }, method: :post do
+                  = link_to push_image_bot_chat_path(params[:bot_id], params[:lineuser_id], params: { stock_image: { id: stock_image.id } }), data: { confirm: '画像を送信します' }, method: :post do
                     = image_tag stock_image.image.thumb.url, size: '120x120'
           div v-if="formSwitch == 4"
             button.button.float-right v-on:click="switchForm(0)"
