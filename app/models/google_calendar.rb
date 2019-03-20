@@ -41,7 +41,7 @@ class GoogleCalendar
     event = Google::Apis::CalendarV3::Event.new({
           start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time.rfc3339, time_zone: "Asia/Tokyo"),
           end: Google::Apis::CalendarV3::EventDateTime.new(date_time: (start_time + 60*30*(quick_reply_schedule.duration_num)).rfc3339, time_zone: "Asia/Tokyo"),
-          summary: "【#{lineuser.name}】 + #{quick_reply_schedule.summary.to_s}",
+          summary: "【#{lineuser.name}】#{quick_reply_schedule.summary.to_s}",
           description: "「#{quick_reply_schedule.summary}」, ユーザーID：「#{lineuser.uid}」"
           #id: event_id
         })
