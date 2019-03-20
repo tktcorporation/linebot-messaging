@@ -57,7 +57,7 @@ class  Manager
   end
 
   def self.push_image(lineuser, stock_image)
-    saved_message = Message.new(content: "[画像: #{image.id}]", lineuser_id: lineuser.id, to_bot: false)
+    saved_message = Message.new(content: "[画像: #{stock_image.id}]", lineuser_id: lineuser.id, to_bot: false)
     saved_message.save!
     bot = lineuser.bot
     message = {
@@ -68,7 +68,7 @@ class  Manager
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
       lineuser.update_lastmessage(saved_message)
-      log_text = "画像を送信：" + "to：[" + lineuser.name + "] [画像: #{image.id}]"
+      log_text = "画像を送信：" + "to：[" + lineuser.name + "] [画像: #{stock_image.id}]"
       self.push_log(bot.id, log_text)
     else
       p response
