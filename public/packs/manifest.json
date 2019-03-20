@@ -1,22 +1,94 @@
 {
-  "ab_test_index.js": "/packs/ab_test_index-1b71a620cf6e7f613af2.js",
-  "ab_test_index.js.map": "/packs/ab_test_index-1b71a620cf6e7f613af2.js.map",
-  "add_flow.js": "/packs/add_flow-59d7f6a8d383bf6c4bab.js",
-  "add_flow.js.map": "/packs/add_flow-59d7f6a8d383bf6c4bab.js.map",
-  "application.js": "/packs/application-541954d253b5c1509669.js",
-  "application.js.map": "/packs/application-541954d253b5c1509669.js.map",
-  "bot_response_data_index.js": "/packs/bot_response_data_index-953246539b2ece4bbe13.js",
-  "bot_response_data_index.js.map": "/packs/bot_response_data_index-953246539b2ece4bbe13.js.map",
-  "bot_setting.js": "/packs/bot_setting-af746f0d2d07d7d76bff.js",
-  "bot_setting.js.map": "/packs/bot_setting-af746f0d2d07d7d76bff.js.map",
-  "components/add_flow.js": "/packs/components/add_flow-00747896ab8cb58bff1b.js",
-  "components/add_flow.js.map": "/packs/components/add_flow-00747896ab8cb58bff1b.js.map",
-  "hello_vue.css": "/packs/hello_vue-9cb5a7334a6577c3422968b9b9970b2f.css",
-  "hello_vue.css.map": "/packs/hello_vue-9cb5a7334a6577c3422968b9b9970b2f.css.map",
-  "hello_vue.js": "/packs/hello_vue-35f712dc363c074d7cb7.js",
-  "hello_vue.js.map": "/packs/hello_vue-35f712dc363c074d7cb7.js.map",
-  "message_show.js": "/packs/message_show-cf70a76d1e55ce0cbc1c.js",
-  "message_show.js.map": "/packs/message_show-cf70a76d1e55ce0cbc1c.js.map",
-  "message_show2.js": "/packs/message_show2-956f94d78d16f1eb3fef.js",
-  "message_show2.js.map": "/packs/message_show2-956f94d78d16f1eb3fef.js.map"
+  "ab_test_index.js": "/packs/js/ab_test_index-9147161ec386a912783a.js",
+  "ab_test_index.js.map": "/packs/js/ab_test_index-9147161ec386a912783a.js.map",
+  "add_flow.js": "/packs/js/add_flow-3c21de0a2db01fc2dd14.js",
+  "add_flow.js.map": "/packs/js/add_flow-3c21de0a2db01fc2dd14.js.map",
+  "application.js": "/packs/js/application-15fef685fcf44694946a.js",
+  "application.js.map": "/packs/js/application-15fef685fcf44694946a.js.map",
+  "bot_response_data_index.js": "/packs/js/bot_response_data_index-06da68005a15af6dbdc2.js",
+  "bot_response_data_index.js.map": "/packs/js/bot_response_data_index-06da68005a15af6dbdc2.js.map",
+  "bot_setting.js": "/packs/js/bot_setting-e82c4e9a1d426aa32301.js",
+  "bot_setting.js.map": "/packs/js/bot_setting-e82c4e9a1d426aa32301.js.map",
+  "components/add_flow.js": "/packs/js/components/add_flow-d9d3b448c46782ece011.js",
+  "components/add_flow.js.map": "/packs/js/components/add_flow-d9d3b448c46782ece011.js.map",
+  "entrypoints": {
+    "ab_test_index": {
+      "js": [
+        "/packs/js/ab_test_index-9147161ec386a912783a.js"
+      ],
+      "js.map": [
+        "/packs/js/ab_test_index-9147161ec386a912783a.js.map"
+      ]
+    },
+    "add_flow": {
+      "js": [
+        "/packs/js/add_flow-3c21de0a2db01fc2dd14.js"
+      ],
+      "js.map": [
+        "/packs/js/add_flow-3c21de0a2db01fc2dd14.js.map"
+      ]
+    },
+    "application": {
+      "js": [
+        "/packs/js/application-15fef685fcf44694946a.js"
+      ],
+      "js.map": [
+        "/packs/js/application-15fef685fcf44694946a.js.map"
+      ]
+    },
+    "bot_response_data_index": {
+      "js": [
+        "/packs/js/bot_response_data_index-06da68005a15af6dbdc2.js"
+      ],
+      "js.map": [
+        "/packs/js/bot_response_data_index-06da68005a15af6dbdc2.js.map"
+      ]
+    },
+    "bot_setting": {
+      "js": [
+        "/packs/js/bot_setting-e82c4e9a1d426aa32301.js"
+      ],
+      "js.map": [
+        "/packs/js/bot_setting-e82c4e9a1d426aa32301.js.map"
+      ]
+    },
+    "components/add_flow": {
+      "js": [
+        "/packs/js/components/add_flow-d9d3b448c46782ece011.js"
+      ],
+      "js.map": [
+        "/packs/js/components/add_flow-d9d3b448c46782ece011.js.map"
+      ]
+    },
+    "hello_vue": {
+      "js": [
+        "/packs/js/hello_vue-d72b0630fdf61f214d10.js"
+      ],
+      "js.map": [
+        "/packs/js/hello_vue-d72b0630fdf61f214d10.js.map"
+      ]
+    },
+    "message_show": {
+      "js": [
+        "/packs/js/message_show-64bd20aa8362fa18aa8a.js"
+      ],
+      "js.map": [
+        "/packs/js/message_show-64bd20aa8362fa18aa8a.js.map"
+      ]
+    },
+    "message_show2": {
+      "js": [
+        "/packs/js/message_show2-60b6662ac8588c38686b.js"
+      ],
+      "js.map": [
+        "/packs/js/message_show2-60b6662ac8588c38686b.js.map"
+      ]
+    }
+  },
+  "hello_vue.js": "/packs/js/hello_vue-d72b0630fdf61f214d10.js",
+  "hello_vue.js.map": "/packs/js/hello_vue-d72b0630fdf61f214d10.js.map",
+  "message_show.js": "/packs/js/message_show-64bd20aa8362fa18aa8a.js",
+  "message_show.js.map": "/packs/js/message_show-64bd20aa8362fa18aa8a.js.map",
+  "message_show2.js": "/packs/js/message_show2-60b6662ac8588c38686b.js",
+  "message_show2.js.map": "/packs/js/message_show2-60b6662ac8588c38686b.js.map"
 }

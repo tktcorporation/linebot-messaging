@@ -8,7 +8,8 @@ class Bot < ApplicationRecord
   has_many :reply_actions
   has_many :ab_tests
   has_many :check_notifications
-  has_many_attached :images
+  has_many :stock_images
+  # has_many_attached :images
   has_one :notify_token, ->{ where(deleted: false) }
   has_one :google_api_set
   has_one :slack_api_set

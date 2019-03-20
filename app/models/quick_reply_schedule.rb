@@ -2,7 +2,7 @@ class QuickReplySchedule < ApplicationRecord
   belongs_to :quick_reply
 
   validates :quick_reply_id, :duration_days, :summary, :available_day, :duration_num, :start_num, :term_num, presence: true
-  validates :duration_days, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 7 }
+  validates :duration_days, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 10 }
   validates :duration_num, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 48 }
   validates :start_num, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 23 }
   validates :term_num, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 12 }

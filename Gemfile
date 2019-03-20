@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 5.2.2.1'
 # Use sqlite3 as the database for Active Record
 
 gem 'google-api-client', require: 'google/apis/calendar_v3'
@@ -31,6 +31,11 @@ gem 'search_cop'
 gem 'webpacker'
 gem 'kaminari'
 gem 'slack-notifier'
+
+# 画像アップロード用
+gem 'carrierwave'
+gem 'fog-aws'
+gem 'rmagick'
 
 #gem 'sqlite3'
 # Use Puma as the app server

@@ -8,7 +8,7 @@ class Bot::ChatController < ApplicationController
 
   def show
     #トーク履歴が多いと重くなりそう
-    @bot = current_user.bots.with_attached_images.includes(:lineusers, :statuses).includes(:lineusers => :lastmessage).get(params[:bot_id])
+    @bot = current_user.bots.includes(:lineusers, :statuses, :stock_images).includes(:lineusers => :lastmessage).get(params[:bot_id])
     #:replied に返信済みユーザーが, :not_repliedに未返信ユーザーが配列で入る
     @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
     @lineuser = @bot.lineusers.includes(:messages, :response_data).get(params[:lineuser_id])
@@ -48,10 +48,10 @@ class Bot::ChatController < ApplicationController
   end
 
   def push_image
-    image = @bot.images.find_by(image_param)
+    stock_image = @bot.stock_images.find_by(image_param)
     lineuser = @bot.lineusers.get(params[:lineuser_id])
     ActiveRecord::Base.transaction do
-      Manager.push_image(lineuser, image, url_for(image))
+      Manager.push_image(lineuser, stock_image)
     end
     redirect_to bot_chat_path(@bot.id, lineuser.id)
   rescue => e
