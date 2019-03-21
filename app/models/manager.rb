@@ -134,11 +134,14 @@ class  Manager
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
           self.advance_lineuser_phase(lineuser, quick_reply.form)
         end
+        self.check_and_push_user_data(quick_reply, lineuser)
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
+      when "日付選択"
+        self.push_flex(lineuser, quick_reply)
       end
     end
-    self.check_and_push_user_data(quick_reply, lineuser)
+    self.check_and_push_user_data(quick_reply, lineuser) if data[:reply_type].to_i != 99
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
@@ -367,9 +370,9 @@ class  Manager
           self.follow_event(lineuser)
         end
       when Line::Bot::Event::Unfollow
-        lineuser.quick_reply_id = nil
-        lineuser.is_unfollowed = true
-        lineuser.save!
+        ActiveRecord::Base.transaction do
+          self.unfollow_event(lineuser)
+        end
       when Line::Bot::Event::Postback
         ActiveRecord::Base.transaction do
           self.postback_event(event, lineuser)
@@ -387,11 +390,19 @@ class  Manager
     lineuser.is_unfollowed = false
     lineuser.save!
     self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
+    self.push_slack(lineuser.bot, lineuser.follow_status_text)
     if form = Form.get_active_with_lineuser(lineuser)
       lineuser.create_session(form)
       lineuser.update_attributes(quick_reply_id: form.first_reply_id)
       self.advance_lineuser_phase(lineuser, form)
     end
+  end
+
+  def self.unfollow_event(lineuser)
+    lineuser.quick_reply_id = nil
+    lineuser.is_unfollowed = true
+    lineuser.save!
+    self.push_slack(lineuser.bot, lineuser.follow_status_text)
   end
 
   def self.message_event(event, lineuser)
@@ -626,8 +637,10 @@ class  Manager
   end
 
   def self.push_slack(bot, text)
-    webhook_url = bot.slack_api_set.webhook_url
-    Manager::SlackApi.push_message(text, webhook_url)
+    if bot.slack_api_set
+      webhook_url = bot.slack_api_set.webhook_url
+      Manager::SlackApi.push_message(text, webhook_url)
+    end
   end
 
   def self.check_and_push_user_data(quick_reply, lineuser)
