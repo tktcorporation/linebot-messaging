@@ -112,3 +112,9 @@ body {
 .overflow {
     overflow: auto;
 }
+
+.link-text {
+    color: #209cee;
+    cursor: pointer;
+    text-decoration: none;
+}
