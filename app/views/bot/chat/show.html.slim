@@ -78,7 +78,8 @@
                       = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
                     .message
                       - if message.msg_type == 1
-                        = link_to "コンテンツを表示", image_path(message.id), { :target => "_blank" }
+                        = link_to image_path(message.id), { :target => "_blank" } do
+                          i.far.fa-image.is-size-1.link-text
                       - else
                         = simple_format h message.content
                     span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
@@ -86,7 +87,8 @@
                 .bot-side
                   .message.float-right
                     - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
-                      = link_to "画像", image_data[:url]
+                      = link_to image_data[:url], { :target => "_blank" } do
+                        i.far.fa-image.is-size-1.link-text
                     - else
                       = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
