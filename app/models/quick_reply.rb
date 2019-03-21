@@ -53,7 +53,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
-    QuickReply.add_back_item(items_array)
+    QuickReply.add_back_item(items_array, self)
     return {:items => items_array}
   end
 
@@ -105,7 +105,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
-    QuickReply.add_back_item(items_array)
+    QuickReply.add_back_item(items_array, self)
     return {:items => items_array}
   end
 
@@ -200,8 +200,8 @@ class QuickReply < ApplicationRecord
                 }
   end
 
-  def self.add_back_item(items_array)
-    data = "[#{99}]" + "[#{id}]" + "戻る"
+  def self.add_back_item(items_array, quick_reply)
+    data = "[#{99}]" + "[#{quick_reply.id}]" + "戻る"
     item = QuickReply.create_item(data, "戻る")
     items_array.push(item)
   end
