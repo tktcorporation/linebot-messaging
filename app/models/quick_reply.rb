@@ -53,6 +53,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
+    self.add_back_item(items_array)
     return {:items => items_array}
   end
 
@@ -104,9 +105,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
-    data = "[#{99}]" + "[#{id}]" + "戻る"
-    item = QuickReply.create_item(data, "戻る")
-    items_array.push(item)
+    self.add_back_item(items_array)
     return {:items => items_array}
   end
 
@@ -199,5 +198,11 @@ class QuickReply < ApplicationRecord
                             :displayText => ("回答：" + label)
                             }
                 }
+  end
+
+  def self.add_back_item(items_array)
+    data = "[#{99}]" + "[#{id}]" + "戻る"
+    item = QuickReply.create_item(data, "戻る")
+    items_array.push(item)
   end
 end
