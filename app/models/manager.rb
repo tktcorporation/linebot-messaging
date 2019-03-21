@@ -137,6 +137,8 @@ class  Manager
         self.check_and_push_user_data(quick_reply, lineuser)
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
+      when "日付選択"
+        self.push_flex(lineuser, quick_reply)
       end
     end
     self.check_and_push_user_data(quick_reply, lineuser) if data[:reply_type].to_i != 99
