@@ -38,12 +38,19 @@ class BotController < ApplicationController
 
   def set_images
     bot = @current_user.bots.get(params[:id])
-    if bot.stock_images.create(bot_images_params)#attach(bot_images_params[:image])
-      flash[:notice] = "新しい画像を登録しました"
+    stock_image = bot.stock_images.new(bot_images_params)#attach(bot_images_params[:image])
+    if stock_image.save
+      ActiveRecord::Base.transaction do
+        Manager.push_image(lineuser, stock_image)
+      end
+      flash[:notice] = "新しい画像を登録、送信しました"
     else
       flash[:alert] = "画像の登録に失敗しました"
     end
     redirect_back(fallback_location: root_path)
+  rescue => e
+    Rails.logger.fatal e.message
+    redirect_back(fallback_location: root_path, alert: "エラーが発生しました")
   end
 
   def show
