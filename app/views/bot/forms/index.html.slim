@@ -6,7 +6,7 @@
   span.active-circle
   span アクティブ(動作中)
   .columns.is-multiline
-    .column.is-one-third
+    .column.is-half
       .card.form-card.is-one-third
         header.card-header
           p.card-header-title = @active_form.name
@@ -29,7 +29,7 @@
               p CVR
               p.is-size-5
                 - if active_form_session_count != 0
-                  = (active_converted_lineusers_count.to_f / active_form_session_count.to_f) * 100
+                  = ((active_converted_lineusers_count.to_f / active_form_session_count.to_f) * 100).round(2)
                 - else
                   span -
                 span %
@@ -63,7 +63,7 @@ span 待機中
                 p CVR
                 p.is-size-5
                   - if form_session_count != 0
-                    = (converted_lineusers_count / form_session_count).to_f * 100
+                    = ((converted_lineusers_count / form_session_count).to_f * 100).round(2)
                   - else
                     span -
                   span %
