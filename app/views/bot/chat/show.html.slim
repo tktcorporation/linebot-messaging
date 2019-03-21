@@ -85,7 +85,10 @@
               - else
                 .bot-side
                   .message.float-right
-                    = simple_format h message.content
+                    - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
+                      = link_to "画像", image_data[:url]
+                    - else
+                      = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
         .message-form.overflow
