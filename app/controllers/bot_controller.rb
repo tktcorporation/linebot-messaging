@@ -40,6 +40,7 @@ class BotController < ApplicationController
     bot = @current_user.bots.get(params[:id])
     stock_image = bot.stock_images.new(bot_images_params)#attach(bot_images_params[:image])
     if stock_image.save
+      lineuser = bot.lineusers.find_by(lineuser_param)
       ActiveRecord::Base.transaction do
         Manager.push_image(lineuser, stock_image)
       end
@@ -61,6 +62,9 @@ class BotController < ApplicationController
   private
     def bot_params
       params.require(:bot).permit(:name, :channel_token, :channel_secret, :description, :notify)
+    end
+    def lineuser_param
+      params.require(:lineuser).permit(:id)
     end
     def bot_images_params
       params.require(:bot).permit(:image)
