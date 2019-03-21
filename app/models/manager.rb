@@ -134,11 +134,12 @@ class  Manager
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
           self.advance_lineuser_phase(lineuser, quick_reply.form)
         end
+        self.check_and_push_user_data(quick_reply, lineuser)
       when "戻る"
         self.advance_lineuser_phase(lineuser, quick_reply.form)
       end
     end
-    self.check_and_push_user_data(quick_reply, lineuser)
+    self.check_and_push_user_data(quick_reply, lineuser) if data[:reply_type].to_i != 99
   end
 
   def self.set_lineuser_to_next_reply_id(lineuser, quick_reply_or_item)
