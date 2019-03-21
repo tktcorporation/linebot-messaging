@@ -62,7 +62,7 @@ class Lineuser < ApplicationRecord
   def convert(form)
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
     converted_lineuser.form_id = form.id
-    converted_lineuser.save
+    converted_lineuser.save!
     Manager.push_slack_lineuser_data(self)
   end
 
@@ -139,6 +139,10 @@ class Lineuser < ApplicationRecord
       invitation_code.save!
       return code
     end
+  end
+
+  def follow_status_text
+    "ユーザー名：#{self.name}\nユーザーID：#{self.uid}\nステータス：#{self.is_unfollowed ? "ブロック" : "フォロー"}"
   end
 
 end
