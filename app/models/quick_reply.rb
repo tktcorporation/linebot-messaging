@@ -53,7 +53,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
-    self.add_back_item(items_array)
+    QuickReply.add_back_item(items_array)
     return {:items => items_array}
   end
 
@@ -105,7 +105,7 @@ class QuickReply < ApplicationRecord
         items_array.push(item)
       end
     end
-    self.add_back_item(items_array)
+    QuickReply.add_back_item(items_array)
     return {:items => items_array}
   end
 
