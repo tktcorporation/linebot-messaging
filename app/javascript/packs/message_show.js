@@ -9,7 +9,8 @@ var app = new Vue({
       name: "",
       time: 0,
       isActive: 1,
-      formSwitch: 0
+      formSwitch: 0,
+      filename: "image_file"
     }
   },
   created: function() {
@@ -54,6 +55,12 @@ var app = new Vue({
     },
     switchForm: function(num){
       this.formSwitch = num;
+    },
+    changeFileName: function(){
+      var file = document.getElementById("file");
+      if(file.files.length > 0){
+        this.filename = file.files[0].name;
+      }
     }
   }
 })

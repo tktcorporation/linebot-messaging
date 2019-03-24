@@ -61,6 +61,7 @@ class Lineuser < ApplicationRecord
 
   def convert(form)
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
+    #sessionとconvertを一致させるか悩み中
     converted_lineuser.form_id = form.id
     converted_lineuser.save!
     Manager.push_slack_lineuser_data(self)
@@ -84,7 +85,7 @@ class Lineuser < ApplicationRecord
     result_text = "プロフィール"
     result_text += "\nname: #{self.name}"
     result_text += "\nuser_id: #{self.uid}"
-    result_text += "\nフォーム名：#{self.session_lineuser.form.name}"
+    result_text += "\nフォーム名：#{self.session_lineuser&.form&.name}"
     result_text += "\n回答データ"
     self.response_data.includes(:quick_reply).each do |data|
       if data.quick_reply.present?

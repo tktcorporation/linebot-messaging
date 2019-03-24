@@ -78,14 +78,19 @@
                       = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
                     .message
                       - if message.msg_type == 1
-                        = link_to "コンテンツを表示", image_path(message.id), { :target => "_blank" }
+                        = link_to image_path(message.id), { :target => "_blank" } do
+                          i.far.fa-image.is-size-1.link-text
                       - else
                         = simple_format h message.content
                     span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
               - else
                 .bot-side
                   .message.float-right
-                    = simple_format h message.content
+                    - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
+                      = link_to image_data[:url], { :target => "_blank" } do
+                        i.far.fa-image.is-size-1.link-text
+                    - else
+                      = simple_format h message.content
                   span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
       - if @bot && @lineuser
         .message-form.overflow
@@ -132,7 +137,15 @@
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
             = form_with(model: @bot, url: set_images_bot_path(id: @bot.id, params: { lineuser: { id: @lineuser.id } }), local: true, data: { parsley_validate: "" }) do |f|
-              = f.file_field :image, required: ""
+              .file.has-name
+                label.file-label
+                  = f.file_field :image, required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
+                  span.file-cta
+                    span.file-icon
+                      i.fas.fa-upload
+                    span.file-label Choose a file…
+                  span.file-name#filename = "{{filename}}"
+
               = f.submit "画像を送信", class: "button is-info"
 
 
