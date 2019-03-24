@@ -70,10 +70,10 @@
     },
     "message_show": {
       "js": [
-        "/packs/js/message_show-64bd20aa8362fa18aa8a.js"
+        "/packs/js/message_show-71c1cd2a96394688a787.js"
       ],
       "js.map": [
-        "/packs/js/message_show-64bd20aa8362fa18aa8a.js.map"
+        "/packs/js/message_show-71c1cd2a96394688a787.js.map"
       ]
     },
     "message_show2": {
@@ -87,8 +87,8 @@
   },
   "hello_vue.js": "/packs/js/hello_vue-d72b0630fdf61f214d10.js",
   "hello_vue.js.map": "/packs/js/hello_vue-d72b0630fdf61f214d10.js.map",
-  "message_show.js": "/packs/js/message_show-64bd20aa8362fa18aa8a.js",
-  "message_show.js.map": "/packs/js/message_show-64bd20aa8362fa18aa8a.js.map",
+  "message_show.js": "/packs/js/message_show-71c1cd2a96394688a787.js",
+  "message_show.js.map": "/packs/js/message_show-71c1cd2a96394688a787.js.map",
   "message_show2.js": "/packs/js/message_show2-60b6662ac8588c38686b.js",
   "message_show2.js.map": "/packs/js/message_show2-60b6662ac8588c38686b.js.map"
 }
