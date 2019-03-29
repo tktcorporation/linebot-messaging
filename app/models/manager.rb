@@ -126,7 +126,8 @@ class  Manager
         when 3
           response_text = quick_reply.response_data.find_by(lineuser_id: lineuser.id).response_text
           day = Time.parse(response_text)
-          GoogleCalendar.create_event(quick_reply, day, lineuser)
+          # カレンダーへの自動登録
+          # GoogleCalendar.create_event(quick_reply, day, lineuser)
           self.set_lineuser_to_next_reply_id(lineuser, quick_reply)
           self.advance_lineuser_phase(lineuser, quick_reply.form)
          when 2
