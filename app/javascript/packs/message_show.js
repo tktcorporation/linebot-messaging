@@ -7,14 +7,14 @@ var app = new Vue({
     return {
       message: "",
       name: "",
-      time: 0,
+      time: 1,
       isActive: 1,
       formSwitch: 0,
       filename: "image_file"
     }
   },
   created: function() {
-    setInterval(() => { this.time++ }, 2000);
+    setInterval(() => { this.time++ }, 30000);
   },
   watch: {
     time: function(v) {
