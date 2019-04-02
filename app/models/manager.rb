@@ -243,7 +243,7 @@ class  Manager
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
-      message = Message.new(content: "flexメッセージ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
+      message = Message.new(content: "flexメッセージ：#{quick_reply.name}\n「#{quick_reply.text}」", lineuser_id: lineuser.id, to_bot: false)
       message.save!
       puts("save success")
       lineuser.update_lastmessage(message)
