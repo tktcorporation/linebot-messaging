@@ -55,7 +55,8 @@ class BotController < ApplicationController
   end
 
   def show
-    @bot = @current_user.bots.includes(:lineusers, :reminds, :logs).includes(:lineusers => :messages).get(params[:id])
+    @bot = @current_user.bots.includes(:lineusers, :reminds).get(params[:id])
+    @logs = @bot.logs.last(200)
     render layout: 'bot_layout'
   end
 
