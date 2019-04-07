@@ -79,6 +79,8 @@
         }
 
         .message {
+            max-width: 100%;
+            word-break: break-word;
             vertical-align: middle;
             padding: 5px;
             border-radius: 5px;
@@ -87,6 +89,7 @@
         }
 
         .bot-side {
+            max-width: 100%;
             float: right;
             vertical-align: middle;
             .message {
