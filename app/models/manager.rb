@@ -443,9 +443,9 @@ class  Manager
     Rails.logger.debug "更新前"
     Rails.logger.debug lastmessage_id
     Rails.logger.debug "更新後"
-    Rails.logger.debug lineuser.lastmessage_id
+    Rails.logger.debug Lineuser.get(lineuser.id).lastmessage_id
     Rails.logger.debug "======================"
-    if message && lastmessage_id == lineuser.lastmessage_id
+    if message && lastmessage_id == Lineuser.get(lineuser.id).lastmessage_id
       lineuser.update_lastmessage(message)
     end
   end
