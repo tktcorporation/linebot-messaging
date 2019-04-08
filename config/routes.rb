@@ -25,6 +25,7 @@ Rails.application.routes.draw do
           patch :update_name
         end
       end
+      resources :lineusers, only: [:show, :index]
     end
   end
 
