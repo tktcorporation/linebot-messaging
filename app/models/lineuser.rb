@@ -25,7 +25,7 @@ class Lineuser < ApplicationRecord
   validates :pictureUrl, lt4bytes: true
 
 
-  scope :unfollowed, ->{ where(is_unfollwed: false) }
+  scope :followed, ->{ where(is_unfollowed: false) }
 
   def self.custom_search(lineusers, search_params)
     if !search_params[:name].blank?
@@ -114,6 +114,10 @@ class Lineuser < ApplicationRecord
 
   def self.get(lineuser_id)
     self.find(lineuser_id)
+  end
+
+  def self.filter_status(status_id)
+    self.joins(:lineuser_status).where("bot_lineuser_statuses.status_id = #{status_id}")
   end
 
   def self.find_or_create(uid, bot_id)
