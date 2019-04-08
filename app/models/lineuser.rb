@@ -61,8 +61,10 @@ class Lineuser < ApplicationRecord
 
   def convert(form)
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
-    #sessionとconvertを一致させるか悩み中
-    converted_lineuser.form_id = form.id
+    # 最後に投げられたformのidでコンバート
+    # converted_lineuser.form_id = form.id
+    # sessionとconvertを一致させる
+    converted_lineuser.form_id = session_lineuser.form_id
     converted_lineuser.save!
     Manager.push_slack_lineuser_data(self)
   end
