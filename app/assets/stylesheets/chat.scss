@@ -18,8 +18,9 @@
     height: 100%;
 
     .users-list {
-        overflow: auto;
-
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 70vh;
         .user-box {
             position: relative;
 
