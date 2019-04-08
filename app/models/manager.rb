@@ -439,12 +439,12 @@ class  Manager
     if text.present?
       message = self.save_message(event, type, text)
     end
-    p "======================"
-    p "更新前"
-    p lastmessage_id
-    p "更新後"
-    p lineuser.lastmessage_id
-    p "======================"
+    logger.debug "======================"
+    logger.debug "更新前"
+    logger.debug lastmessage_id
+    logger.debug "更新後"
+    logger.debug lineuser.lastmessage_id
+    logger.debug "======================"
     if message && lastmessage_id == lineuser.lastmessage_id
       lineuser.update_lastmessage(message)
     end
