@@ -439,12 +439,6 @@ class  Manager
     if text.present?
       message = self.save_message(event, type, text)
     end
-    Rails.logger.debug "======================"
-    Rails.logger.debug "更新前"
-    Rails.logger.debug lastmessage_id
-    Rails.logger.debug "更新後"
-    Rails.logger.debug Lineuser.get(lineuser.id).lastmessage_id
-    Rails.logger.debug "======================"
     if message && lastmessage_id == Lineuser.get(lineuser.id).lastmessage_id
       lineuser.update_lastmessage(message)
     end
