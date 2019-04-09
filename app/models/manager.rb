@@ -57,7 +57,7 @@ class  Manager
   end
 
   def self.push_image(lineuser, stock_image)
-    saved_message = Message.new(content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", lineuser_id: lineuser.id, to_bot: false)
+    saved_message = Message.new(content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", lineuser_id: lineuser.id, to_bot: false, msg_type: 1)
     saved_message.save!
     bot = lineuser.bot
     message = {
