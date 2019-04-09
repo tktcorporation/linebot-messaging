@@ -45,7 +45,7 @@
                     p = "{{lineuser.name}}"
                     p.about
                       = "{{lineuser.lastmessage.content | truncate(50) }}"
-    .column.is-5.talk-box.content-body
+    .column.is-auto.talk-box.content-body
       - if @lineuser
         header.navbar.is-white.is-fixed-top.is-hidden-tablet
           .container
@@ -63,6 +63,8 @@
           label.label
             = "{{lineuser.name}}"
             | とのトークルーム
+            button.button.float-right v-on:click="detailToggle()"
+              i.fas.fa-info-circle
           - if @bot && @lineuser
             = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
               = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input "
@@ -71,6 +73,7 @@
         - if @lineuser
           .message-box v-for="message in lineuser.messages"
             div v-bind:class="message.to_bot ? 'user-side' : 'bot-side'"
+              img.lineuser-icon v-bind:src="lineuser.pictureUrl" v-if="message.to_bot"
               .message v-bind:class="message.to_bot ? '' : 'float-right'" v-html="$options.filters.contentFilter(message)"
               span.is-size-7 v-bind:class="message.to_bot ? '' : 'float-right bot-message-time'"
                 = "{{message.created_at | timeFormatter()}}"
@@ -154,7 +157,7 @@
               = f.submit "画像を送信", class: "button is-info"
 
 
-    .column.is-4.overflow
+    .column.is-4.overflow v-show="detailShow"
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
         = hidden_field_tag :redirect_name, ""

@@ -15,7 +15,8 @@ var app = new Vue({
       lineuser_id: null,
       lineusers: [],
       status_select: 0,
-      lineuser: []
+      lineuser: [],
+      detailShow: false
     }
   },
   created: function() {
@@ -59,10 +60,10 @@ var app = new Vue({
           return value.content
         case 1:
           if (value.to_bot == true) {
-            return `<a src=/images/${value.id} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
+            return `<a href=/images/${value.id} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
           }else{
             var result = /\[画像: (.+)::(.+)\]/.exec(value.content);
-            return `<a src=${result[2]} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
+            return `<a href=${result[2]} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
           }
       }
     }
@@ -135,11 +136,12 @@ var app = new Vue({
         });
       },
       scrollMessageBox: function() {
-        console.log("scrollMessageBox");
         if (document.getElementsByClassName("scroll-message")[0]) {
           document.getElementsByClassName("scroll-message")[0].scrollTop = document.getElementsByClassName("scroll-message")[0].scrollHeight;
-          console.log("scrollMessageBox after");
         };
+      },
+      detailToggle: function() {
+        this.detailShow = !this.detailShow
       }
   }
 })
