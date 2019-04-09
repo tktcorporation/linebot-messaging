@@ -18,8 +18,9 @@
     height: 100%;
 
     .users-list {
-        overflow: auto;
-
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 70vh;
         .user-box {
             position: relative;
 
@@ -79,6 +80,8 @@
         }
 
         .message {
+            max-width: 100%;
+            word-break: break-word;
             vertical-align: middle;
             padding: 5px;
             border-radius: 5px;
@@ -87,6 +90,7 @@
         }
 
         .bot-side {
+            max-width: 100%;
             float: right;
             vertical-align: middle;
             .message {
@@ -106,6 +110,8 @@
         width: 100%;
         bottom: 0px;
         max-height: 20%;
+        overflow-y: scroll;
+        overflow-x: hidden;
         .message-input {
             height: 6em;
             width: 80%;

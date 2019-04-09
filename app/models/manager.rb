@@ -57,7 +57,7 @@ class  Manager
   end
 
   def self.push_image(lineuser, stock_image)
-    saved_message = Message.new(content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", lineuser_id: lineuser.id, to_bot: false)
+    saved_message = Message.new(content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", lineuser_id: lineuser.id, to_bot: false, msg_type: 1)
     saved_message.save!
     bot = lineuser.bot
     message = {
@@ -379,8 +379,7 @@ class  Manager
           self.postback_event(event, lineuser)
         end
       when Line::Bot::Event::Message
-        message = self.message_event(event, lineuser)
-        lineuser.update_lastmessage(message)
+        self.message_event(event, lineuser)
       end
     end
   rescue => e
@@ -407,6 +406,7 @@ class  Manager
   end
 
   def self.message_event(event, lineuser)
+    lastmessage_id = lineuser.lastmessage_id
     id = "id=" + event.message['id']
     case event.type
     when Line::Bot::Event::MessageType::Text
@@ -439,8 +439,8 @@ class  Manager
     if text.present?
       message = self.save_message(event, type, text)
     end
-    if message
-      return message
+    if message && lastmessage_id == Lineuser.get(lineuser.id).lastmessage_id
+      lineuser.update_lastmessage(message)
     end
   end
 
