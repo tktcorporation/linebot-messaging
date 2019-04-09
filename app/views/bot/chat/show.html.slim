@@ -101,7 +101,7 @@
           /         span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
 
       - if @bot && @lineuser
-        .message-form.overflow
+        .message-form
           div v-if="formSwitch == 0"
             = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
               = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
