@@ -20,14 +20,15 @@ var app = new Vue({
     }
   },
   created: function() {
-    setInterval(() => { this.time++ }, 30000);
+    setInterval(() => { this.time++ }, 3000);
   },
   watch: {
     time: function(v) {
       if (v % 10 == 0) {
-        if (document.getElementById("message")) {
-          this.submitAndRedirect();
-        }
+        this.fetchLineuser();
+        // if (document.getElementById("message")) {
+        //   this.submitAndRedirect();
+        // }
       }
     }
   },
