@@ -25,7 +25,7 @@ class Lineuser < ApplicationRecord
   validates :pictureUrl, lt4bytes: true
 
 
-  scope :unfollowed, ->{ where(is_unfollwed: false) }
+  scope :followed, ->{ where(is_unfollowed: false) }
 
   def self.custom_search(lineusers, search_params)
     if !search_params[:name].blank?
@@ -61,8 +61,10 @@ class Lineuser < ApplicationRecord
 
   def convert(form)
     converted_lineuser = ConvertedLineuser.find_or_initialize_by(lineuser_id: self.id)
-    #sessionとconvertを一致させるか悩み中
-    converted_lineuser.form_id = form.id
+    # 最後に投げられたformのidでコンバート
+    # converted_lineuser.form_id = form.id
+    # sessionとconvertを一致させる
+    converted_lineuser.form_id = session_lineuser.form_id
     converted_lineuser.save!
     Manager.push_slack_lineuser_data(self)
   end
@@ -112,6 +114,10 @@ class Lineuser < ApplicationRecord
 
   def self.get(lineuser_id)
     self.find(lineuser_id)
+  end
+
+  def self.filter_status(status_id)
+    self.joins(:lineuser_status).where("bot_lineuser_statuses.status_id = #{status_id}")
   end
 
   def self.find_or_create(uid, bot_id)

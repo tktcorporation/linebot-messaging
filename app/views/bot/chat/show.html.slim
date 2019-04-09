@@ -5,6 +5,12 @@
       = link_to '<i class="far fa-arrow-alt-circle-left"></i>'.html_safe, bot_lineusers_path(@bot), class: "is-size-2"
       label.label.is-large
         = @bot.name
+      .field
+        p.control
+          .select
+            / = select_tag @status_array, {:prompt => "未選択"}, {"v-model"=>"status_select"}
+            = select :status, :name, ([["ステータスを選択", 0]] + @status_array), {}, {"v-model"=>"status_select", "v-on:change"=>"fetchLineusers()"}
+            / = select_tag 'status[id]', options_from_collection_for_select(@status_array, :id, :name)
       .tabs.is-centered.is-boxed#tabs
         ul
           li data-tab="1" v-on:click="switchTab(1)" v-bind:class="{'is-active': isActive == 1}"
@@ -13,40 +19,33 @@
           li data-tab="2" v-on:click="switchTab(2)" v-bind:class="{'is-active': isActive == 2}"
             a
               span 返信済み
-      #tab-content
-        .form-tab v-if="isActive == 1"
+      #tab-content.overflow
+        .form-tab v-show="isActive == 1"
           .users-list
             .users-box
-              - @lineusers[:not_replied].each do |lineuser|
-                .user-box
-                  - if lineuser.is_unfollowed == true
-                    .unfollowed-cover
-                  = link_to "", bot_chat_path(params[:bot_id], lineuser.id), class: "link"
-                  .user.columns
-                    .column.is-3.side-icon
-                      - if lineuser.pictureUrl
-                        = image_tag lineuser.pictureUrl, class: "post-icon"
-                    .column.is-9
-                      p= lineuser.name
-                      p.about
-                        = lineuser.lastmessage.content
-        .form-tab v-if="isActive == 2"
+              .user-box v-for="lineuser in lineusers" v-if="lineuser.lastmessage.to_bot == true"
+                a.link :href="`/bot/${bot_id}/chat/${lineuser.id}`"
+                .user.columns
+                  .column.is-3.side-icon
+                    img :src="lineuser.pictureUrl" class="post-icon"
+                  .column.is-9
+                    p = "{{lineuser.name}}"
+                    p.about
+                      = "{{lineuser.lastmessage.content | truncate(50) }}"
+
+        .form-tab v-show="isActive == 2"
           .users-list
             .users-box
-              - @lineusers[:replied].each do |lineuser|
-                .user-box
-                  = link_to "", bot_chat_path(params[:bot_id], lineuser.id), class: "link"
-                  .user.columns
-                    .column.is-3.side-icon
-                      - if lineuser.pictureUrl
-                        = image_tag lineuser.pictureUrl, class: "post-icon"
-                    .column.is-9
-                      p= lineuser.name
-                      p.about
-                        - if lineuser.lastmessage
-                          = lineuser.lastmessage.content
-                        - else
-    .column.is-5.talk-box.content-body
+              .user-box v-for="lineuser in lineusers" v-if="lineuser.lastmessage.to_bot == false"
+                a.link :href="`/bot/${bot_id}/chat/${lineuser.id}`"
+                .user.columns
+                  .column.is-3.side-icon
+                    img :src="lineuser.pictureUrl" class="post-icon"
+                  .column.is-9
+                    p = "{{lineuser.name}}"
+                    p.about
+                      = "{{lineuser.lastmessage.content | truncate(50) }}"
+    .column.is-auto.talk-box.content-body
       - if @lineuser
         header.navbar.is-white.is-fixed-top.is-hidden-tablet
           .container
@@ -62,38 +61,47 @@
           p 　
         .room-bar.is-hidden-mobile
           label.label
-            = @lineuser.name
+            = "{{lineuser.name}}"
             | とのトークルーム
+            button.button.float-right v-on:click="detailToggle()"
+              i.fas.fa-info-circle
           - if @bot && @lineuser
             = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
               = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input "
               = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
         - if @lineuser
-          - @lineuser.messages.each do |message|
-            .message-box
-              - if message.to_bot
-                .user-side
-                    - if @lineuser.pictureUrl
-                      = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
-                    .message
-                      - if message.msg_type == 1
-                        = link_to image_path(message.id), { :target => "_blank" } do
-                          i.far.fa-image.is-size-1.link-text
-                      - else
-                        = simple_format h message.content
-                    span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
-              - else
-                .bot-side
-                  .message.float-right
-                    - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
-                      = link_to image_data[:url], { :target => "_blank" } do
-                        i.far.fa-image.is-size-1.link-text
-                    - else
-                      = simple_format h message.content
-                  span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
+          .message-box v-for="message in lineuser.messages"
+            div v-bind:class="message.to_bot ? 'user-side' : 'bot-side'"
+              img.lineuser-icon v-bind:src="lineuser.pictureUrl" v-if="message.to_bot"
+              .message v-bind:class="message.to_bot ? '' : 'float-right'" v-html="$options.filters.contentFilter(message)"
+              span.is-size-7 v-bind:class="message.to_bot ? '' : 'float-right bot-message-time'"
+                = "{{message.created_at | timeFormatter()}}"
+          / - @lineuser.messages.each do |message|
+          /   .message-box
+          /     - if message.to_bot
+          /       .user-side
+          /           - if @lineuser.pictureUrl
+          /             = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
+          /           .message
+          /             - if message.msg_type == 1
+          /               = link_to image_path(message.id), { :target => "_blank" } do
+          /                 i.far.fa-image.is-size-1.link-text
+          /             - else
+          /               = simple_format h message.content
+          /           span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
+          /     - else
+          /       .bot-side
+          /         .message.float-right
+          /           - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
+          /             = link_to image_data[:url], { :target => "_blank" } do
+          /               i.far.fa-image.is-size-1.link-text
+          /           - else
+          /             = simple_format h message.content
+          /         span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
+
       - if @bot && @lineuser
-        .message-form.overflow
+        .message-form
           div v-if="formSwitch == 0"
             = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), 'data-parsley-validate'=>'', method: :post do
               = text_area_tag :message, @value.present? ? @value[:message] : "", placeholder: "メッセージ", class: "input message-input", 'required'=>''
@@ -149,7 +157,7 @@
               = f.submit "画像を送信", class: "button is-info"
 
 
-    .column.is-4.overflow
+    .column.is-4.overflow v-show="detailShow"
       = form_tag bot_chat_path(params[:bot_id], params[:lineuser_id]), method: :get , name: "redirect_form" do
         = hidden_field_tag :redirect_message, ""
         = hidden_field_tag :redirect_name, ""
