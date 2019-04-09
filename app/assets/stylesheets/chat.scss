@@ -82,6 +82,7 @@
         .message {
             max-width: 100%;
             word-break: break-word;
+            white-space: pre-wrap;
             vertical-align: middle;
             padding: 5px;
             border-radius: 5px;
