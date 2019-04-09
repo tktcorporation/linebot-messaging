@@ -14,7 +14,8 @@ var app = new Vue({
       bot_id: null,
       lineuser_id: null,
       lineusers: [],
-      status_select: 0
+      status_select: 0,
+      lineuser: []
     }
   },
   created: function() {
@@ -29,9 +30,13 @@ var app = new Vue({
       }
     }
   },
-  mounted: function () {
+  created: function () {
     this.setParam();
     this.fetchLineusers();
+    this.fetchLineuser();
+  },
+  updated: function() {
+    this.scrollMessageBox();
   },
   filters: {
     truncate: function(value, length) {
@@ -42,6 +47,23 @@ var app = new Vue({
       }
       else {
         return value.substring(0, length) + "...";
+      }
+    },
+    timeFormatter: function(value) {
+      var result = /(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2})/.exec(value);
+      return `${result[2]}-${result[3]} ${result[4]}`
+    },
+    contentFilter: function(value) {
+      switch (value.msg_type) {
+        case 0:
+          return value.content
+        case 1:
+          if (value.to_bot == true) {
+            return `<a src=/images/${value.id} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
+          }else{
+            var result = /\[画像: (.+)::(.+)\]/.exec(value.content);
+            return `<a src=${result[2]} target=_blank><i class="far fa-image is-size-1 link-text"></i></a>`
+          }
       }
     }
   },
@@ -104,6 +126,20 @@ var app = new Vue({
       },
       debug: function() {
         console.log(this.status_select);
+      },
+      fetchLineuser: function () {
+        axios.get(`/api/bot/${this.bot_id}/lineusers/${this.lineuser_id}`).then((response) => {
+          this.lineuser = response.data.lineuser;
+        }, (error) => {
+          console.log(error);
+        });
+      },
+      scrollMessageBox: function() {
+        console.log("scrollMessageBox");
+        if (document.getElementsByClassName("scroll-message")[0]) {
+          document.getElementsByClassName("scroll-message")[0].scrollTop = document.getElementsByClassName("scroll-message")[0].scrollHeight;
+          console.log("scrollMessageBox after");
+        };
       }
   }
 })

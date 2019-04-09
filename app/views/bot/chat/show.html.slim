@@ -61,7 +61,7 @@
           p 　
         .room-bar.is-hidden-mobile
           label.label
-            = @lineuser.name
+            = "{{lineuser.name}}"
             | とのトークルーム
           - if @bot && @lineuser
             = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
@@ -69,28 +69,34 @@
               = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
         - if @lineuser
-          - @lineuser.messages.each do |message|
-            .message-box
-              - if message.to_bot
-                .user-side
-                    - if @lineuser.pictureUrl
-                      = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
-                    .message
-                      - if message.msg_type == 1
-                        = link_to image_path(message.id), { :target => "_blank" } do
-                          i.far.fa-image.is-size-1.link-text
-                      - else
-                        = simple_format h message.content
-                    span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
-              - else
-                .bot-side
-                  .message.float-right
-                    - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
-                      = link_to image_data[:url], { :target => "_blank" } do
-                        i.far.fa-image.is-size-1.link-text
-                    - else
-                      = simple_format h message.content
-                  span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
+          .message-box v-for="message in lineuser.messages"
+            div v-bind:class="message.to_bot ? 'user-side' : 'bot-side'"
+              .message v-bind:class="message.to_bot ? '' : 'float-right'" v-html="$options.filters.contentFilter(message)"
+              span.is-size-7 v-bind:class="message.to_bot ? '' : 'float-right bot-message-time'"
+                = "{{message.created_at | timeFormatter()}}"
+          / - @lineuser.messages.each do |message|
+          /   .message-box
+          /     - if message.to_bot
+          /       .user-side
+          /           - if @lineuser.pictureUrl
+          /             = image_tag @lineuser.pictureUrl, class: "lineuser-icon"
+          /           .message
+          /             - if message.msg_type == 1
+          /               = link_to image_path(message.id), { :target => "_blank" } do
+          /                 i.far.fa-image.is-size-1.link-text
+          /             - else
+          /               = simple_format h message.content
+          /           span.is-size-7= message.created_at.strftime("%m-%d %H:%M")
+          /     - else
+          /       .bot-side
+          /         .message.float-right
+          /           - if image_data = message.content.match(/\[画像: (?<id>.+)::(?<url>.+)\]/)
+          /             = link_to image_data[:url], { :target => "_blank" } do
+          /               i.far.fa-image.is-size-1.link-text
+          /           - else
+          /             = simple_format h message.content
+          /         span.is-size-7.float-right.bot-message-time = message.created_at.strftime("%m-%d %H:%M")
+
       - if @bot && @lineuser
         .message-form.overflow
           div v-if="formSwitch == 0"
