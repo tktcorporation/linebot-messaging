@@ -8,7 +8,7 @@ class Api::LineusersController < ApplicationController
     else
       @lineusers = bot.lineusers.includes(:lastmessage)
     end
-    @lineusers = @lineusers.followed.includes(:lastmessage).order("messages.created_at desc")
+    @lineusers = @lineusers.followed.includes(:lastmessage).order("messages.created_at desc").limit(1000)
   end
 
   def show
