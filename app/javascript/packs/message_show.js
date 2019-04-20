@@ -25,6 +25,7 @@ var app = new Vue({
   watch: {
     time: function(v) {
       if (v % 10 == 0) {
+        console.log("lineuser fetch");
         this.fetchLineuser();
         // if (document.getElementById("message")) {
         //   this.submitAndRedirect();
