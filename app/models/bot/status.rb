@@ -1,6 +1,7 @@
 class Bot::Status < ApplicationRecord
   belongs_to :bot
   has_many :lineuser_statuses
+  has_many :lineuser, through: :lineuser_statuses
   validates :bot_id, numericality: true
   validates :name, presence: true, lt4bytes: true
 
