@@ -1,8 +1,34 @@
 .container
-  .columnis-6
+  .column
     label.label.is-large 作業ログ
     .logs-box.box.scroll-message
       - @logs.each do |log|
         .log-box
           = log.text
+    .columns
+      .column.is-6
+        label.label.is-large 最新CVユーザー
+        table.table.is-fullwidth
+          thead
+            tr style="white-space: nowrap;"
+              th
+                span ユーザー名
+              th
+                span ステータス
+          tbody
+            - @latest_cv_lineusers.each do |lineuser|
+              tr
+                td
+                  = link_to lineuser.name, bot_chat_path(params[:id], lineuser.id)
+                td
+                  - if lineuser.converted_lineuser.present?
+                    - if lineuser.status.present?
+                      = lineuser.status&.name
+                    - else
+                        span CV
+                    - if lineuser.lastmessage&.to_bot == true
+                      .label 未返信
+                  - else
+                    /label.label 未CV
+                    p = lineuser.quick_reply&.name
 

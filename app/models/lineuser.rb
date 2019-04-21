@@ -16,6 +16,7 @@ class Lineuser < ApplicationRecord
   has_one :quick_reply, class_name: 'QuickReply', primary_key: :quick_reply_id, foreign_key: :id
   has_one :lastmessage, class_name: 'Message', primary_key: :lastmessage_id, foreign_key: :id, dependent: :destroy
   has_one :lineuser_status, class_name: "Bot::LineuserStatus", dependent: :destroy
+  has_one :status, class_name: "Bot::Status", through: :lineuser_status
   has_one :invitation_code, dependent: :destroy
   has_many :quick_reply_text_flags, dependent: :destroy
   belongs_to :bot
