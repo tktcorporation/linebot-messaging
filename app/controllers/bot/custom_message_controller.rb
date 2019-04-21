@@ -1,8 +1,8 @@
 class Bot::CustomMessageController < ApplicationController
   layout 'bot_layout'
   def index
-    @bot = Bot.includes(:reminds, :lineusers).get(params[:bot_id])
-    @lineusers = @bot.lineusers
+    @bot = current_user.bots.includes(:reminds, :lineusers).get(params[:bot_id])
+    @lineusers = @bot.lineusers.order("messages.created_at desc").limit(100)
     @search = LineuserSearch.new
     @newremind = Remind.new
     #render json: @users.select("id").map { |e| e.id  }.to_json unless params[:q].blank?

@@ -19,7 +19,7 @@ var app = new Vue({
       detailShow: false
     }
   },
-  created: function() {
+  mounted: function() {
     setInterval(() => { this.time++ }, 3000);
   },
   watch: {
