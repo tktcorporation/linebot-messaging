@@ -154,6 +154,9 @@ var app = new Vue({
             console.log(error);
           });
         }
+      },
+      reloadLineuser: function() {
+        setTimeout(this.fetchLineuser, 2000);
       }
   }
 })

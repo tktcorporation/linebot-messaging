@@ -109,10 +109,10 @@
           div v-if="formSwitch == 2"
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
-            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/push_flex`"
+            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/push_flex`" @submit="reloadLineuser"
               input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
               .select
-                = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id), {}, {"v-model"=>"lineuser.status_id"}
+                = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id), {}
               = submit_tag "送信", class: "button is-info inline-block"
           / div v-if="formSwitch == 3"
             button.button.float-right v-on:click="switchForm(0)"
@@ -125,7 +125,7 @@
           div v-if="formSwitch == 4"
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
-            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/set_images`"
+            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
               input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
               input type="hidden" name="lineuser[id]" v-bind:value="lineuser.id"
               .file.has-name
