@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     resources :bot, except: [:new, :index] do
       member do
         patch :set_images
+        post :set_images
       end
       scope module: 'bot' do
         resources :ab_tests do
