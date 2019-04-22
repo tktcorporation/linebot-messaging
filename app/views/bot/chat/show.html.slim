@@ -125,12 +125,15 @@
           div v-if="formSwitch == 4"
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
-            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
+            form data-parsley-validate="" method="post" data-remote="true" enctype="multipart/form-data" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
+              / = form_with(model: @bot, url: set_images_bot_path(id: @bot.id, params: { lineuser: { id: @lineuser.id } }), local: true, data: { parsley_validate: "" }) do |f|
               input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
               input type="hidden" name="lineuser[id]" v-bind:value="lineuser.id"
               .file.has-name
                 label.file-label
                   = file_field_tag "bot[image]", required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
+                  / = f.file_field :image, required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
+
                   span.file-cta
                     span.file-icon
                       i.fas.fa-upload
