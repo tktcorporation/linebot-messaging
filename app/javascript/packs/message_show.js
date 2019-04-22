@@ -28,6 +28,9 @@ var app = new Vue({
       if (v % 10 == 0) {
         this.fetchLineuser();
       }
+      if (v % 30 == 0) {
+        this.fetchLineusers();
+      }
     }
   },
   created: function () {
