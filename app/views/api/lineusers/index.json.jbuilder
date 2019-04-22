@@ -1,3 +1,9 @@
+json.statuses do
+  json.array! @status_array do |status|
+    json.name status[0]
+    json.id status[1]
+  end
+end
 json.lineusers do
   json.array! @lineusers do |lineuser|
     json.extract! lineuser, :id, :pictureUrl, :name

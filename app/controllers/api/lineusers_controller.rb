@@ -9,11 +9,12 @@ class Api::LineusersController < ApplicationController
       @lineusers = bot.lineusers.includes(:lastmessage)
     end
     @lineusers = @lineusers.followed.includes(:lastmessage).order("messages.created_at desc").limit(1000)
+    @status_array = bot.get_status_array
   end
 
   def show
     bot = current_user.bots.get(params[:bot_id])
-    @lineuser = bot.lineusers.includes(:messages).get(params[:id])
+    @lineuser = bot.lineusers.includes(:messages, :converted_lineuser, :status, :response_data).includes(response_data: :quick_reply).get(params[:id])
   end
 
   private
