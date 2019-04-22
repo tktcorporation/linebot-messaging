@@ -28,6 +28,7 @@ vendor/bundle
 
 /public/assets
 /public/packs
+/public/uploads
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
