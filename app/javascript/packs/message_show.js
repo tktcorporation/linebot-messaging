@@ -15,8 +15,9 @@ var app = new Vue({
       lineuser_id: null,
       lineusers: [],
       status_select: 0,
+      statuses: [],
       lineuser: [],
-      detailShow: false
+      detailShow: false,
     }
   },
   mounted: function() {
@@ -26,9 +27,6 @@ var app = new Vue({
     time: function(v) {
       if (v % 10 == 0) {
         this.fetchLineuser();
-        // if (document.getElementById("message")) {
-        //   this.submitAndRedirect();
-        // }
       }
     }
   },
@@ -77,15 +75,8 @@ var app = new Vue({
       this.fetchAndSet();
       document.redirect_form.submit();
     },
-    fetchMessage: function() {
-      this.message = document.getElementById("message").value;
-    },
     fetchName: function(){
       this.name = document.getElementById("name").value;
-    },
-    setMessageAndName: function() {
-      document.getElementById("redirect_message").value = this.message;
-      document.getElementById("redirect_name").value = this.name;
     },
     fetchAndSet: function() {
       this.fetchMessage();
@@ -109,12 +100,14 @@ var app = new Vue({
         if (this.status_select) {
           axios.get('/api/bot/' + this.bot_id + '/lineusers?status_id=' + this.status_select).then((response) => {
             this.lineusers = response.data.lineusers;
+            this.statuses = response.data.statuses;
           }, (error) => {
             console.log(error);
           });
         } else {
           axios.get('/api/bot/' + this.bot_id + '/lineusers/').then((response) => {
             this.lineusers = response.data.lineusers;
+            this.statuses = response.data.statuses;
           }, (error) => {
             console.log(error);
           });
@@ -142,7 +135,25 @@ var app = new Vue({
         };
       },
       detailToggle: function() {
-        this.detailShow = !this.detailShow
+        this.detailShow = !this.detailShow;
+      },
+      setLineuser: function(id) {
+        this.lineuser_id = id;
+        this.fetchLineuser();
+      },
+      sendMessage: function() {
+        if (this.message) {
+          axios.defaults.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name=csrf-token]').content;
+          axios.post(`/bot/${this.bot_id}/chat/${this.lineuser.id}`, {
+            message: this.message
+          }).then((response) => {
+            console.log(response);
+            this.message = "";
+            this.fetchLineuser();
+          }, (error) => {
+            console.log(error);
+          });
+        }
       }
   }
 })
