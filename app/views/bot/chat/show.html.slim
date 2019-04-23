@@ -68,8 +68,11 @@
             button.button.float-right v-on:click="detailToggle()"
               i.fas.fa-info-circle
           - if @bot && @lineuser
-            = form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
-              = text_field_tag :name, @value.present? ? @value[:name] : "", placeholder: "名前の更新", class: "input "
+            /= form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
+            form.name-form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/update_name`" @submit="reloadLineuser"
+              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
+              input type="hidden" _method="patch"
+              = text_field_tag "name", "", {class: "input", placeholder: "名前の変更"}
               = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
         - if @lineuser
@@ -110,7 +113,7 @@
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
             form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/push_flex`" @submit="reloadLineuser"
-              input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
+              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
               .select
                 = select :quick_reply, :id, @quick_reply_list.pluck(:name, :id), {}
               = submit_tag "送信", class: "button is-info inline-block"
@@ -126,22 +129,17 @@
             button.button.float-right v-on:click="switchForm(0)"
               i.far.fa-comment
             form data-parsley-validate="" method="post" data-remote="true" enctype="multipart/form-data" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
-              / = form_with(model: @bot, url: set_images_bot_path(id: @bot.id, params: { lineuser: { id: @lineuser.id } }), local: true, data: { parsley_validate: "" }) do |f|
-              input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
+              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
               input type="hidden" name="lineuser[id]" v-bind:value="lineuser.id"
               .file.has-name
                 label.file-label
                   = file_field_tag "bot[image]", required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
-                  / = f.file_field :image, required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
-
                   span.file-cta
                     span.file-icon
                       i.fas.fa-upload
                     span.file-label Choose a file…
                   span.file-name#filename = "{{filename}}"
-
               = submit_tag "画像を送信", class: "button is-info"
-
 
     .column.is-4.overflow v-show="detailShow"
       .label ="{{lineuser.converted ? 'CV済み' : '未CV'}}"
@@ -155,7 +153,7 @@
             td v-for="data in lineuser.response_data"
               = "{{data.response_text}}"
       form.form data-parsley-validate="" method="post" name="status_form" data-remote="true" v-bind:action="`/lineusers/${lineuser.id}/lineuser_statuses`"
-        input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"
+        input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
         label.label ステータス
         .field
           p.control
