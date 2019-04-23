@@ -3,8 +3,10 @@
   .columns.max-height
     .column.is-3.side-menu.is-hidden-mobile
       = link_to '<i class="far fa-arrow-alt-circle-left"></i>'.html_safe, bot_lineusers_path(@bot), class: "is-size-2"
-      label.label.is-large
-        = @bot.name
+      = @bot.name
+      form.name-form data-parsley-validate="" method="get" data-remote="true" style="margin: 0.5em 0;" v-bind:action="`/bot/${bot_id}/lineusers`" @submit.prevent="fetchLineusers"
+        input.input id="search_name" name="name" type="search" v-model="searchName" placeholder="名前" style="width: initial;"
+        button.button.is-info.submit-message type="submit" 検索
       .field
         p.control
           .select

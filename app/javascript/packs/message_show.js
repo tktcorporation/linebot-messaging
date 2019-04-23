@@ -18,6 +18,7 @@ var app = new Vue({
       statuses: [],
       lineuser: [],
       detailShow: false,
+      searchName: ""
     }
   },
   mounted: function() {
@@ -101,14 +102,16 @@ var app = new Vue({
     fetchLineusers: function () {
         //axios.defaults.headers['X-CSRF-TOKEN'] = $('meta[name=csrf-token]').attr('content')
         if (this.status_select) {
-          axios.get('/api/bot/' + this.bot_id + '/lineusers?status_id=' + this.status_select).then((response) => {
+          var search = this.searchName ? `&name=${this.searchName}` : ""
+          axios.get('/api/bot/' + this.bot_id + '/lineusers?status_id=' + this.status_select + search).then((response) => {
             this.lineusers = response.data.lineusers;
             this.statuses = response.data.statuses;
           }, (error) => {
             console.log(error);
           });
         } else {
-          axios.get('/api/bot/' + this.bot_id + '/lineusers/').then((response) => {
+          var search = this.searchName ? `?name=${this.searchName}` : ""
+          axios.get('/api/bot/' + this.bot_id + '/lineusers' + search).then((response) => {
             this.lineusers = response.data.lineusers;
             this.statuses = response.data.statuses;
           }, (error) => {
