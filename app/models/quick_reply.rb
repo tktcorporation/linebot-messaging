@@ -80,8 +80,8 @@ class QuickReply < ApplicationRecord
     available_day_array = Manager.available_array_day(calendar_events, day, available_array)
     items_array = []
     duration_num = quick_reply_schedule.duration_num
-    day += 60*60*(quick_reply_schedule.start_num)
-    count = quick_reply_schedule.start_num * 2
+    day += 60*30*(quick_reply_schedule.start_num)
+    count = quick_reply_schedule.start_num
     events_permission_count = quick_reply_schedule.permission_count
     # quick_reply_schedule.term_num.times do |i|
     #   day += 60*duration_num * 30 if i != 0
