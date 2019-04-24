@@ -1,41 +1,53 @@
 .columns
-  .column.is-6
+  .column.is-12
     .box.search-box
       = form_for @search, url: search_bot_custom_message_index_path(params[:bot_id]), method: :get, class: "form" do |f|
-        .label 名前
-        = f.search_field :name, :placeholder => "名前"
-        .label convert_time
-        = f.search_field :convert_time_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :convert_time_to, :placeholder => "0000-00-00"
-        .label session_time
-        = f.search_field :session_time_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :session_time_to, :placeholder => "0000-00-00"
-        .label last message
-        = f.search_field :messages_created_at_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :messages_created_at_to, :placeholder => "0000-00-00"
-        .label 最高取得件数
-        = f.number_field :limit
+        .columns
+          .column.is-6
+            .label 名前
+            .field
+              p.control
+                = f.search_field :name, :placeholder => "名前", class: "input"
+          .column.is-6
+            .label ステータス
+            .field
+              p.control
+                .select
+                  = f.select :status_id, ([["ステータスを選択", 0]] + @status_array), {}
 
-        = submit_tag "検索"
-  .column.is-6.custom-reminds
-    label.label.is-large リマインドリスト
-    .reminds-box.scroll-message
-      - @bot.reminds.each do |remind|
-        .remind-box
-          = link_to "", edit_bot_remind_path(@bot, remind.id), class: "link"
-          .remind
-            p = remind.name
-            - if remind.enable
-              i.far.fa-calendar-alt
-            - else
-              i.far.fa-calendar-minus
-            span ：
-            = remind.ignition_time.strftime("%m-%d %H:%M")
+        .columns
+          .column.is-6
+            .label CV日時
+            .field
+              p.control
+                = f.search_field :convert_time_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :convert_time_to, :placeholder => "0000-00-00", class: "input"
+          .column.is-6
+            .label Session日時
+            .field
+              p.control
+                = f.search_field :session_time_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :session_time_to, :placeholder => "0000-00-00", class: "input"
 
-= form_with model: @newremind, url: bot_remind_index_path(params[:bot_id]), data: { parsley_validate: "" }, local: true, html: { class: "form" } do |f|
+        .columns
+          .column.is-6
+            .label 最終メッセージ日時
+            .field
+              p.control
+                = f.search_field :messages_created_at_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :messages_created_at_to, :placeholder => "0000-00-00", class: "input"
+          .column.is-6
+            .label 最高取得件数
+            .field
+              p.control
+                = f.number_field :limit, class: "input", value: params.try(:[], :lineuser_search).try(:[], :limit) ? params[:lineuser_search][:limit] : 100
+        p.controll
+          = submit_tag "検索", class: "button"
+
+= form_with url: broadcast_bot_custom_message_index_path(params[:bot_id]), data: { parsley_validate: "" }, local: true, html: { class: "form" } do |f|
   .columns
     .column.is-6
         table.table.is-fullwidth
@@ -49,7 +61,7 @@
                     input#checkall type="checkbox"
                       span check all
             tbody#user_check
-              = collection_check_boxes :remind_user, :lineusers, @lineusers, :id, :name, include_hidden: false do |b|
+              = collection_check_boxes :broadcast, :lineusers, @lineusers, :id, :name, include_hidden: false do |b|
                 tr
                   td = link_to b.text, bot_chat_path(params[:bot_id], b.object.id)
                   td
@@ -57,24 +69,12 @@
           - else
             .label 該当なし
     .column.is-6
-      label.label.is-large リマインド登録
-      label.label リマインド名
-      .field
-        p.control
-          = f.text_field :name, placeholder: "名前", class: "input", required: ""
+      label.label.is-large 一斉送信
+
       label.label 送信内容
       .field
         p.control
-          = f.text_field :text, placeholder: "送信内容", class: "input", required: ""
-      label.label 送信日時
-      .field
-        p.control
-          = f.datetime_select :ignition_time, :use_month_numbers => true, :start_year => Time.now.year, :end_year => Time.now.year + 1, :minute_step => 60
+          = f.text_area "broadcast[text]", placeholder: "送信内容", class: "input", required: "", style: "height: 7em;"
 
-      label.label 有効化
-      .field
-        p.control
-          = f.check_box :enable
       p.control
-        = f.submit "追加", class: "button is-info"
-
+        = f.submit "送信", class: "button is-info"

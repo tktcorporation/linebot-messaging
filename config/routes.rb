@@ -67,6 +67,7 @@ Rails.application.routes.draw do
         resources :custom_message, only: [:index], shallow: true do
           collection do
             get :search
+            post :broadcast
           end
         end
         resources :remind, except: [:new, :show, :index]#, shallow: true

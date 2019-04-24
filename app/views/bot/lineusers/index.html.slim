@@ -1,28 +1,55 @@
 #app
   - @status_array = (@status_array + [["未選択", nil]])
   .container
-    = link_to "ステータス管理", bot_statuses_path, class: "button"
-    button.button v-on:click="toggleSearch" 検索
+    .field
+      = link_to "ステータス管理", bot_statuses_path, class: "button"
+      button.button v-on:click="toggleSearch" 検索
     .box.search-box v-show="search_show"
       = form_for LineuserSearch.new(), url: search_bot_custom_message_index_path(params[:bot_id]), method: :get, class: "form" do |f|
-        .label 名前
-        = f.search_field :name, :placeholder => "名前"
-        .label convert_time
-        = f.search_field :convert_time_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :convert_time_to, :placeholder => "0000-00-00"
-        .label session_time
-        = f.search_field :session_time_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :session_time_to, :placeholder => "0000-00-00"
-        .label last message
-        = f.search_field :messages_created_at_from, :placeholder => "0000-00-00"
-        span 〜
-        = f.search_field :messages_created_at_to, :placeholder => "0000-00-00"
-        .label 最高取得件数
-        = f.number_field :limit
+        .columns
+          .column.is-6
+            .label 名前
+            .field
+              p.control
+                = f.search_field :name, :placeholder => "名前", class: "input"
+          .column.is-6
+            .label ステータス
+            .field
+              p.control
+                .select
+                  = f.select :status_id, ([["ステータスを選択", 0]] + @status_array), {}
 
-        = submit_tag "検索"
+        .columns
+          .column.is-6
+            .label CV日時
+            .field
+              p.control
+                = f.search_field :convert_time_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :convert_time_to, :placeholder => "0000-00-00", class: "input"
+          .column.is-6
+            .label Session日時
+            .field
+              p.control
+                = f.search_field :session_time_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :session_time_to, :placeholder => "0000-00-00", class: "input"
+
+        .columns
+          .column.is-6
+            .label 最終メッセージ日時
+            .field
+              p.control
+                = f.search_field :messages_created_at_from, :placeholder => "0000-00-00", class: "input"
+                span 〜
+                = f.search_field :messages_created_at_to, :placeholder => "0000-00-00", class: "input"
+          .column.is-6
+            .label 最高取得件数
+            .field
+              p.control
+                = f.number_field :limit, class: "input", value: params.try(:[], :lineuser_search).try(:[], :limit) ? params[:lineuser_search][:limit] : 100
+        p.controll
+          = submit_tag "検索", class: "button"
 
     table.table.is-fullwidth
       thead
