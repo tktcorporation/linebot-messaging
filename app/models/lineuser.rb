@@ -51,7 +51,7 @@ class Lineuser < ApplicationRecord
     if !search_params[:messages_created_at_to].blank?
       lineusers = lineusers.search("lastmessage_created_at < #{search_params[:messages_created_at_to]}")
     end
-    if !search_params[:status_id].blank? && !search_params[:status_id] == 0
+    if !search_params[:status_id].blank? && search_params[:status_id] != 0
       lineusers = lineusers.search("status_id: #{search_params[:status_id]}")
     end
     if !search_params[:limit].blank?
