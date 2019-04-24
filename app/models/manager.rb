@@ -42,13 +42,17 @@ class  Manager
     bot = lineusers[0].bot
     response = self.client(bot).multicast(lineusers.map{|user| user.uid}, message)
     if response.class == Net::HTTPOK
+      lineusers_messages = []
+      logs = []
       lineusers.each do |lineuser|
         saved_message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: false)
         saved_message.save!
-        lineuser.update_lastmessage(saved_message)
+        lineusers_messages.push([lineuser, saved_message])
         log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
-        self.push_log(bot.id, log_text)
+        logs.push(log_text)
       end
+      Lineuser.update_lastmessage_bulk(lineusers_messages)
+      Log.push_bulk(bot.id, logs)
     else
       p response
       raise "response.class != Net::HTTPOK"
