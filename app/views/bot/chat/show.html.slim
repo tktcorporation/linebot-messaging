@@ -70,8 +70,7 @@
             button.button.float-right v-on:click="detailToggle()"
               i.fas.fa-info-circle
           - if @bot && @lineuser
-            /= form_tag update_name_bot_chat_path(params[:bot_id], params[:lineuser_id]), class: "name-form", 'data-parsley-validate'=>'', method: :patch do
-            form.name-form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/update_name`" @submit="reloadLineuser"
+            /form.name-form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/update_name`" @submit="reloadLineuser"
               input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
               input type="hidden" _method="patch"
               = text_field_tag "name", "", {class: "input", placeholder: "名前の変更"}
