@@ -3,6 +3,9 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 .search-box {
     margin-bottom: 2em;
+    .input {
+      width: initial;
+    }
 }
 
 .custom-reminds {
