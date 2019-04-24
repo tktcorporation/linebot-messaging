@@ -3,6 +3,7 @@ class Lineuser < ApplicationRecord
 
   search_scope :search do
     attributes :name
+    attributes status_id: "status.id"
     attributes session_time: "session_lineuser.created_at"
     attributes convert_time: "converted_lineuser.created_at"
     #attributes message: "messages.content"
@@ -49,6 +50,9 @@ class Lineuser < ApplicationRecord
     end
     if !search_params[:messages_created_at_to].blank?
       lineusers = lineusers.search("lastmessage_created_at < #{search_params[:messages_created_at_to]}")
+    end
+    if !search_params[:status_id].blank? && search_params[:status_id].to_i != 0
+      lineusers = lineusers.search("status_id: #{search_params[:status_id]}")
     end
     if !search_params[:limit].blank?
       lineusers = lineusers.limit(search_params[:limit].to_i)
