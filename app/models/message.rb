@@ -14,4 +14,17 @@ class Message < ApplicationRecord
   def self.get(id)
     self.find(id)
   end
+
+  # def self.bulk_insert(lineusers, text, to_bot)
+  #   # new_models は配列となります
+  #   message_models = []
+  #   lineusers.each {|lineuser|
+  #       message_models << self.new(
+  #           content: text,
+  #           lineuser_id: lineuser.id,
+  #           to_bot: false
+  #       )
+  #   }
+  #   self.import message_models
+  # end
 end
