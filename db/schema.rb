@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_18_211852) do
+ActiveRecord::Schema.define(version: 2019_04_24_143115) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -85,6 +85,14 @@ ActiveRecord::Schema.define(version: 2019_03_18_211852) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "bot_staff_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "bot_id", null: false
+    t.string "user_id", null: false
+    t.string "password", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "bot_statuses", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "bot_id", null: false
     t.string "name", limit: 50, default: "", null: false
@@ -133,6 +141,7 @@ ActiveRecord::Schema.define(version: 2019_03_18_211852) do
     t.boolean "deleted", default: false, null: false
     t.boolean "is_active", default: false, null: false
     t.integer "first_reply_id"
+    t.boolean "is_template", default: false, null: false
   end
 
   create_table "google_api_sets", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
