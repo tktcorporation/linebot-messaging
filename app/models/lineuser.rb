@@ -136,6 +136,17 @@ class Lineuser < ApplicationRecord
     end
   end
 
+  def self.update_lastmessage_bulk(lineusers_messages)
+      lineuser_models = []
+      lineusers_messages.each {|lineuser_message|
+        lineuser = lineuser_message[0]
+        message = lineuser_message[1]
+        lineuser.lastmessage_id = message.id
+        lineuser_models << lineuser
+      }
+      self.import lineuser_models, on_duplicate_key_update: [:lastmessage_id]
+  end
+
   def update_lastmessage(message)
     self.update_attributes!(lastmessage_id: message.id)
   end

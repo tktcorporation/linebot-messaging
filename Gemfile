@@ -37,6 +37,9 @@ gem 'carrierwave'
 gem 'fog-aws'
 gem 'rmagick'
 
+# ActiveRecord用
+gem 'activerecord-import'
+
 #gem 'sqlite3'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
