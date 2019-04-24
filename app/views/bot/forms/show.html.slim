@@ -177,11 +177,11 @@
                       = f.number_field :duration_num, in: 1...49, class: "input", required: ""
                       span ×30分
                 .column.is-6
-                  label.label 何時から予定調整を行うか(24時間制)
+                  label.label 何時から予定調整を行うか
                   .field
                     .control
-                      = f.number_field :start_num, in: 0...24, class: "input", required: ""
-                      span 時~
+                      = f.number_field :start_num, in: 0...48, class: "input", required: ""
+                      span ÷2時~
                 .column.is-6
                   label.label 予定調整を行う時間
                   .field

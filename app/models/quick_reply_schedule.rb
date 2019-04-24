@@ -27,7 +27,7 @@ class QuickReplySchedule < ApplicationRecord
       if duration_num.present? && start_num.present? && term_num.present?
         time = Time.local(2018, 12, 19, 0, 0, 0, 0)
         tommorow = time + 60 * 60 * 24
-        start_time = time + 60 * 60 * start_num
+        start_time = time + 60 * 30 * start_num
         end_time = start_time + 60 * 60 * term_num
         if end_time > tommorow
           errors.add(:term_num, "は翌日にならないように設定してください")
