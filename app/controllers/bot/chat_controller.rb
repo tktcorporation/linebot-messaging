@@ -8,13 +8,11 @@ class Bot::ChatController < ApplicationController
 
   def show
     #トーク履歴が多いと重くなりそう
-    @bot = current_user.bots.includes(:lineusers, :statuses, :stock_images).includes(:lineusers => :lastmessage).get(params[:bot_id])
-    #:replied に返信済みユーザーが, :not_repliedに未返信ユーザーが配列で入る
-    @lineusers = Manager.sort_by_is_replied(@bot.lineusers)
-    @lineuser = @bot.lineusers.includes(:messages, :response_data).get(params[:lineuser_id])
-    @quick_reply_list = @bot.quick_replies.where(is_normal_message: false)
+    @bot = current_user.bots.get(params[:bot_id])
+    @lineuser = @bot.lineusers.get(params[:lineuser_id])
+    template_list = @bot.quick_replies.includes(:form).where("forms.is_template = true").pluck(:name, :id)
+    @quick_reply_list = @bot.forms.active.quick_replies.pluck(:name, :id) + template_list
     Manager.update_lineuser_profile(@bot, @lineuser.uid, false)
-    @value = {message: params[:redirect_message], name: params[:redirect_name]} #if params[:redirect_message] && params[:redirect_name]
     @status_array = @bot.get_status_array
   end
 

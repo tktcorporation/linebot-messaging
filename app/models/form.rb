@@ -37,6 +37,10 @@ class Form < ApplicationRecord
     self.undeleted.find(id)
   end
 
+  def self.active
+    self.find_by(is_active: true)
+  end
+
   def self.get_active_with_lineuser(lineuser)
     ab_test = lineuser.bot.ab_tests&.find_by(is_active: true)
     if ab_test.present?
