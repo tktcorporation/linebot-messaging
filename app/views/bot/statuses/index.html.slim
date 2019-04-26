@@ -15,9 +15,13 @@
   .columns.is-centered
     .column.is-6
       - @statuses.each do |status|
-        .box
-          .columns
-            .column.is-6
-              p = status.name
-            .column.is-6
-              p = link_to "削除", status_path(status.id), method: :delete, class: "button"
+        .field
+          .box
+            .columns
+              .column.is-3
+                span style="vertical-align: -webkit-baseline-middle;" = status.name
+              .column.is-6
+                span style="vertical-align: -webkit-baseline-middle; margin-right: 0.3em;" CV時切り替え
+                = link_to status.is_cv_status ? "ON" : "OFF", switch_active_status_path(status.id), method: :patch, class: "button"
+              .column.is-3
+                p = link_to "削除", status_path(status.id), method: :delete, class: "button"
