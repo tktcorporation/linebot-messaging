@@ -44,7 +44,11 @@ Rails.application.routes.draw do
         resources :response_data, only: [:index], shallow: true
         resources :reply_actions
         resources :images, only: [:show], shallow: true
-        resources :statuses, only: [:create, :destroy, :index], shallow: true
+        resources :statuses, only: [:create, :destroy, :index], shallow: true do
+          member do
+            patch :switch_active
+          end
+        end
         resources :forms do
           member do
             patch :switch_active

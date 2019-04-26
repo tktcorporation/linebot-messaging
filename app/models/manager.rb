@@ -266,6 +266,7 @@ class  Manager
     else
       lineuser.update(pictureUrl: profile['pictureUrl'])
     end
+    lineuser
   end
 
   def self.get_last_message(lineuser_id)
@@ -393,7 +394,7 @@ class  Manager
   def self.follow_event(lineuser)
     lineuser.is_unfollowed = false
     lineuser.save!
-    self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
+    lineuser = self.update_lineuser_profile(lineuser.bot, lineuser.uid, true)
     self.push_slack(lineuser.bot, lineuser.follow_status_text)
     if form = Form.get_active_with_lineuser(lineuser)
       lineuser.create_session(form)

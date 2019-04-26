@@ -11,7 +11,7 @@ class Bot::ChatController < ApplicationController
     @bot = current_user.bots.get(params[:bot_id])
     @lineuser = @bot.lineusers.get(params[:lineuser_id])
     template_list = @bot.quick_replies.includes(:form).where("forms.is_template = true").pluck(:name, :id)
-    @quick_reply_list = @bot.forms.active.quick_replies.pluck(:name, :id) + template_list
+    @quick_reply_list = template_list # + @bot.forms.active.quick_replies.pluck(:name, :id)
     Manager.update_lineuser_profile(@bot, @lineuser.uid, false)
     @status_array = @bot.get_status_array
   end
