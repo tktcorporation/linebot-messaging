@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_24_143115) do
+ActiveRecord::Schema.define(version: 2019_04_26_022300) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(version: 2019_04_24_143115) do
     t.integer "bot_id", null: false
     t.string "name", limit: 50, default: "", null: false
     t.boolean "deleted", null: false
+    t.boolean "is_cv_status", default: false, null: false
   end
 
   create_table "bot_stock_images", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

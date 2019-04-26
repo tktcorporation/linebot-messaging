@@ -3,12 +3,12 @@ class Bot::StatusesController < ApplicationController
   layout 'bot_layout'
 
   def index
-    @bot = Bot.get(params[:bot_id])
-    @statuses = Bot::Status.where(bot_id: @bot.id, deleted: false)
+    @bot = current_user.bots.get(params[:bot_id])
+    @statuses = @bot.statuses.where(bot_id: @bot.id, deleted: false)
   end
 
   def create
-    bot = Bot.get(params[:bot_id])
+    bot = current_user.bots.get(params[:bot_id])
     status = bot.statuses.new(status_params)
     if status.save
       flash[:notice] = "ステータスを追加しました"
@@ -22,10 +22,22 @@ class Bot::StatusesController < ApplicationController
   end
   def destroy
     status = Bot::Status.get(params[:id])
+    redirect_back(fallback_location: root_path, alert: "削除に失敗しました") if status.bot.user_id != current_user.id
     if status.destroy
       flash[:notice] = "削除しました"
     else
       flash[:notice] = "削除に失敗しました"
+    end
+    redirect_back(fallback_location: root_path)
+  end
+
+  def switch_active
+    status = Bot::Status.get(params[:id])
+    redirect_back(fallback_location: root_path, alert: "更新に失敗しました") if status.bot.user_id != current_user.id
+    if status.switch_active
+      flash[:notice] = "更新しました"
+    else
+      flash[:notice] = "更新に失敗しました"
     end
     redirect_back(fallback_location: root_path)
   end
