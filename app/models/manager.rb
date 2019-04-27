@@ -406,6 +406,7 @@ class  Manager
   def self.message_event(event, lineuser)
     lastmessage_id = lineuser.lastmessage_id
     id = "id=" + event.message['id']
+    type = 0
     lineuser.open
     case event.type
     when Line::Bot::Event::MessageType::Text
