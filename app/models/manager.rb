@@ -413,6 +413,7 @@ class  Manager
   def self.message_event(event, lineuser)
     lastmessage_id = lineuser.lastmessage_id
     id = "id=" + event.message['id']
+    lineuser.open
     case event.type
     when Line::Bot::Event::MessageType::Text
       message = self.save_message_from_event(event)

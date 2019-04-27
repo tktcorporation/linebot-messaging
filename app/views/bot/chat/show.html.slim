@@ -155,13 +155,18 @@
               = "{{data.response_text}}"
       form.form data-parsley-validate="" method="post" name="status_form" data-remote="true" v-bind:action="`/lineusers/${lineuser.id}/lineuser_statuses`"
         input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
-        label.label ステータス
-        .field
-          p.control
-            .select
-              select id="page_name" name="bot_lineuser_status[status_id]" v-on:change="submitStatus" v-model="lineuser.status_id"
-                option value="0" 選択してください
-                option v-for="status in statuses" v-bind:value="status.id" {{status.name}}
+        .min-margin
+          label.label ステータス
+          .field
+            p.control
+              .select
+                select id="page_name" name="bot_lineuser_status[status_id]" v-on:change="submitStatus" v-model="lineuser.status_id"
+                  option value="0" 選択してください
+                  option v-for="status in statuses" v-bind:value="status.id" {{status.name}}
+      .min-margin
+        .label スレッド
+        .button v-bind:class="lineuser.is_closed ? 'button' : 'button is-success is-outlined'" v-on:click="switchCloseLineuser()"
+          = "{{lineuser.is_closed ? 'CLOSED' : 'OPEN'}}"
 
 
 = javascript_pack_tag "message_show"
