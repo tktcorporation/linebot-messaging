@@ -36,4 +36,5 @@
         .columns.is-multiline
           - @stock_images.each do |stock_image|
             .column.is-one-third
-              = image_tag stock_image.image.thumb.url, size: '120x120'
+              /= image_tag stock_image.image.thumb.url, size: '120x120'
+              img src="#{stock_image.image.thumb.url}"
