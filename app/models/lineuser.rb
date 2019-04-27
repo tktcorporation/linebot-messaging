@@ -72,7 +72,9 @@ class Lineuser < ApplicationRecord
     # sessionとconvertを一致させる
     converted_lineuser.form_id = session_lineuser.form_id
     converted_lineuser.save!
-    self.status = self.bot.statuses.get_cv_status
+    if !self.status.present?
+      self.status = self.bot.statuses.get_cv_status
+    end
     Manager.push_slack_lineuser_data(self)
   end
 
