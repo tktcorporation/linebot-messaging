@@ -23,7 +23,7 @@ class Message < ApplicationRecord
     self
   end
 
-  def self.create_message(lineuser, to_bot, content)
+  def self.create_normal(lineuser, to_bot, content)
     self.new(lineuser_id: lineuser.id, to_bot: false, content: content, msg_type: 0)
     save!
     self
@@ -40,7 +40,7 @@ class Message < ApplicationRecord
       type = 0
       Rails.logger.fatal "msg_type is not Integer. [Message.create_with_type]"
     end
-    self.new(lineuser_id: lineuser.id, to_bot: true, msg_type: type, content: text)
+    self.new(lineuser_id: lineuser.id, to_bot: true, msg_type: type, content: content)
     save!
     self
   end
