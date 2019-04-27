@@ -56,6 +56,7 @@ class BotController < ApplicationController
 
   def show
     @bot = @current_user.bots.includes(:lineusers, :reminds).get(params[:id])
+    @stock_images = @bot.stock_images.page(1).per(20)
     latest_cv_lineusers_id = ConvertedLineuser.last(10).pluck(:id)
     @latest_cv_lineusers = @bot.lineusers.includes(:status).where(id: latest_cv_lineusers_id)
     @logs = @bot.logs.last(200)
