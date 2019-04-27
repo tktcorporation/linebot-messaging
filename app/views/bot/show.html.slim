@@ -32,9 +32,8 @@
                     /label.label 未CV
                     p = lineuser.quick_reply&.name
       .column.is-6
-        label.label.is-large 最新CVユーザー
+        label.label.is-large 送信済み画像
         .columns.is-multiline
           - @stock_images.each do |stock_image|
             .column.is-one-third
-              /= image_tag stock_image.image.thumb.url, size: '120x120'
               img src="#{stock_image.image.thumb.url}"
