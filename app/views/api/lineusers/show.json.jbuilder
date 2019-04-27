@@ -1,5 +1,5 @@
 json.lineuser do
-  json.extract! @lineuser, :id, :pictureUrl, :name
+  json.extract! @lineuser, :id, :pictureUrl, :name, :is_closed
   json.status_id @lineuser.status&.id ? @lineuser.status.id : 0
   json.converted @lineuser.converted_lineuser.present?
   json.response_data do

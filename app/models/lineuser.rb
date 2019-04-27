@@ -59,6 +59,7 @@ class Lineuser < ApplicationRecord
     end
     lineusers
   end
+
   def add_phase_count
     self.phase += 1
     save
@@ -137,6 +138,10 @@ class Lineuser < ApplicationRecord
     end
   end
 
+  def self.get_open_users
+    self.where(is_closed: false, deleted: false).followed
+  end
+
   def self.update_lastmessage_bulk(lineusers_messages)
       lineuser_models = []
       lineusers_messages.each {|lineuser_message|
@@ -163,6 +168,18 @@ class Lineuser < ApplicationRecord
       invitation_code.save!
       return code
     end
+  end
+
+  def close
+    self.update_attributes!(is_closed: true)
+  end
+
+  def open
+    self.update_attributes!(is_closed: false)
+  end
+
+  def switch_close
+    self.update_attributes!(is_closed: !self.is_closed)
   end
 
   def follow_status_text

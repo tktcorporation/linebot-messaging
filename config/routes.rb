@@ -25,7 +25,11 @@ Rails.application.routes.draw do
           patch :update_name
         end
       end
-      resources :lineusers, only: [:show, :index]
+      resources :lineusers, only: [:show, :index] do
+        member do
+          patch :switch_close
+        end
+      end
     end
   end
 

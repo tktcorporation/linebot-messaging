@@ -113,6 +113,10 @@ body {
     overflow: auto;
 }
 
+.min-margin {
+    margin: 0.3em;
+}
+
 .link-text {
     color: #209cee;
     cursor: pointer;
