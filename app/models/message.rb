@@ -18,21 +18,21 @@ class Message < ApplicationRecord
   end
 
   def self.create_quick_reply_message(lineuser, quick_reply)
-    self.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false, msg_type: 0)
-    save!
-    self
+    message = self.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false, msg_type: 0)
+    message.save!
+    message
   end
 
   def self.create_normal(lineuser, to_bot, content)
-    self.new(lineuser_id: lineuser.id, to_bot: false, content: content, msg_type: 0)
-    save!
-    self
+    message = self.new(lineuser_id: lineuser.id, to_bot: false, content: content, msg_type: 0)
+    message.save!
+    message
   end
 
   def self.create_image(lineuser, to_bot, stock_image)
-    self.new(lineuser_id: lineuser.id, to_bot: false, content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", msg_type: 1)
-    save!
-    self
+    message = self.new(lineuser_id: lineuser.id, to_bot: false, content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", msg_type: 1)
+    message.save!
+    message
   end
 
   def self.create_with_type(lineuser, to_bot, type, content)
@@ -40,9 +40,9 @@ class Message < ApplicationRecord
       type = 0
       Rails.logger.fatal "msg_type is not Integer. [Message.create_with_type]"
     end
-    self.new(lineuser_id: lineuser.id, to_bot: true, msg_type: type, content: content)
-    save!
-    self
+    message = self.new(lineuser_id: lineuser.id, to_bot: true, msg_type: type, content: content)
+    message.save!
+    message
   end
 
   # def self.bulk_insert(lineusers, text, to_bot)
