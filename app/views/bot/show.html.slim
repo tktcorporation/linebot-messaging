@@ -31,4 +31,9 @@
                   - else
                     /label.label 未CV
                     p = lineuser.quick_reply&.name
-
+      .column.is-6
+        label.label.is-large 最新CVユーザー
+        .columns.is-multiline
+          - @stock_images.each do |stock_image|
+            .column.is-one-third
+              = image_tag stock_image.image.thumb.url, size: '120x120'
