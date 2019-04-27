@@ -163,6 +163,14 @@ var app = new Vue({
       },
       reloadLineuser: function() {
         setTimeout(this.fetchLineuser, 2000);
+      },
+      switchCloseLineuser: function() {
+        axios.defaults.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name=csrf-token]').content;
+        axios.patch(`/api/bot/${this.bot_id}/lineusers/${this.lineuser.id}/switch_close`).then((response) => {
+          this.fetchLineuser();
+        }, (error) => {
+          console.log(error);
+        });
       }
   }
 })
