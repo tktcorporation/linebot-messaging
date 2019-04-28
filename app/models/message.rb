@@ -39,7 +39,7 @@ class Message < ApplicationRecord
     Rails.logger.debug "type"
     Rails.logger.debug type
     Rails.logger.debug type.class
-    if !(type.class === Integer)
+    if !(type.class == Integer)
       type = 0
       Rails.logger.fatal "msg_type is not Integer. [Message.create_with_type]"
     end
