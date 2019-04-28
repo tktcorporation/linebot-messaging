@@ -13,7 +13,7 @@ class  Manager
   end
 
   def self.push(lineuser, text)
-    saved_message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: false)
+    saved_message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: false, msg_type: 0)
     bot = lineuser.bot
     saved_message.save!
 
@@ -45,8 +45,7 @@ class  Manager
       lineusers_messages = []
       logs = []
       lineusers.each do |lineuser|
-        saved_message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: false)
-        saved_message.save!
+        saved_message = Message.create_normal(lineuser, false, text)
         lineusers_messages.push([lineuser, saved_message])
         log_text = "メッセージを送信：" + "to：[" + lineuser.name + "]  内容：" + text + ""
         logs.push(log_text)
@@ -61,8 +60,7 @@ class  Manager
   end
 
   def self.push_image(lineuser, stock_image)
-    saved_message = Message.new(content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", lineuser_id: lineuser.id, to_bot: false, msg_type: 1)
-    saved_message.save!
+    saved_message = Message.create_image(lineuser, false, stock_image)
     bot = lineuser.bot
     message = {
       type: 'image',
@@ -82,7 +80,7 @@ class  Manager
 
   def self.postback_event(event, lineuser)
     data = event['postback']['data'].match(/\[(?<reply_type>.+)\]\[(?<id>.+)\](?<text>.+)/)
-    message = Message.new(content: data[:text], lineuser_id: lineuser.id, to_bot: true)
+    message = Message.create_normal(lineuser, true, data[:text])
     message.save!
     lineuser.update_lastmessage(message)
     quick_reply = nil
@@ -213,9 +211,7 @@ class  Manager
     response = self.client(bot).push_message(lineuser.uid, message)
     p response.body
     if response.class == Net::HTTPOK
-      message = Message.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false)
-      if message.save
-        puts("save success")
+      if self.create_quick_reply_message(lineuser, quick_reply)
         lineuser.update_lastmessage(message)
       end
     end
@@ -247,9 +243,7 @@ class  Manager
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
-      message = Message.new(content: "Bot：#{quick_reply.name}\n「#{quick_reply.text}」", lineuser_id: lineuser.id, to_bot: false)
-      message.save!
-      puts("save success")
+      message = Message.create_normal(lineuser, false, content: "Bot：#{quick_reply.name}\n「#{quick_reply.text}」")
       lineuser.update_lastmessage(message)
     else
       p response
@@ -288,7 +282,7 @@ class  Manager
     uid = event['source']['userId']
     text = event.message['text']
     lineuser = Lineuser.get_with_uid(uid)
-    message = Message.create!(content: text, lineuser_id: lineuser.id, to_bot: true)
+    message = Message.create_normal(lineuser, true, text)
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot_id, log_text)
     self.check_reply_action(lineuser, text)
@@ -340,8 +334,7 @@ class  Manager
   def self.save_message(event, type, text)
     uid = event['source']['userId']
     lineuser = Lineuser.get_with_uid(uid)
-    message = Message.new(content: text, lineuser_id: lineuser.id, to_bot: true, msg_type: type)
-    message.save!
+    message = Message.create_with_type(lineuser, true, type, text)
     log_text = "メッセージを受信：" + "from：[" + lineuser.name + "]  内容：" + text
     self.push_log(lineuser.bot.id, log_text)
     puts("seve succes")
@@ -413,6 +406,7 @@ class  Manager
   def self.message_event(event, lineuser)
     lastmessage_id = lineuser.lastmessage_id
     id = "id=" + event.message['id']
+    type = 0
     lineuser.open
     case event.type
     when Line::Bot::Event::MessageType::Text
@@ -440,6 +434,7 @@ class  Manager
           self.advance_lineuser_phase(lineuser, form)
         end
       end
+      type = 6
       text = "[スタンプ]"
     end
     if text.present?
