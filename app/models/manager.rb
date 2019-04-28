@@ -434,6 +434,7 @@ class  Manager
           self.advance_lineuser_phase(lineuser, form)
         end
       end
+      type = 6
       text = "[スタンプ]"
     end
     if text.present?
