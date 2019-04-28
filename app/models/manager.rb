@@ -60,7 +60,7 @@ class  Manager
   end
 
   def self.push_image(lineuser, stock_image)
-    saved_message = Message.create_image(lineuser, false, stock_image)
+    saved_message = Message.create_image(lineuser, stock_image)
     bot = lineuser.bot
     message = {
       type: 'image',
@@ -243,7 +243,7 @@ class  Manager
     end
     response = self.client(bot).push_message(lineuser.uid, message)
     if response.class == Net::HTTPOK
-      message = Message.create_normal(lineuser, false, content: "Bot：#{quick_reply.name}\n「#{quick_reply.text}」")
+      message = Message.create_quick_reply_message(lineuser, quick_reply)
       lineuser.update_lastmessage(message)
     else
       p response
