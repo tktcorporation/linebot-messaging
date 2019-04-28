@@ -18,18 +18,19 @@ class Message < ApplicationRecord
   end
 
   def self.create_quick_reply_message(lineuser, quick_reply)
-    message = self.new(content: "クイックリプライ：" + quick_reply.name, lineuser_id: lineuser.id, to_bot: false, msg_type: 0)
+    message = self.new(content: "Bot：#{quick_reply.name}\n「#{quick_reply.text}」", lineuser_id: lineuser.id, to_bot: false, msg_type: 0)
+
     message.save!
     message
   end
 
   def self.create_normal(lineuser, to_bot, content)
-    message = self.new(lineuser_id: lineuser.id, to_bot: false, content: content, msg_type: 0)
+    message = self.new(lineuser_id: lineuser.id, to_bot: to_bot, content: content, msg_type: 0)
     message.save!
     message
   end
 
-  def self.create_image(lineuser, to_bot, stock_image)
+  def self.create_image(lineuser, stock_image)
     message = self.new(lineuser_id: lineuser.id, to_bot: false, content: "[画像: #{stock_image.id}::#{stock_image.image.url}]", msg_type: 1)
     message.save!
     message
