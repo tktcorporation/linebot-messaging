@@ -22,14 +22,14 @@ var app = new Vue({
     }
   },
   mounted: function() {
-    setInterval(() => { this.time++ }, 6000);
+    setInterval(() => { this.time++ }, 1000);
   },
   watch: {
     time: function(v) {
-      if (v % 20 == 0) {
+      if (v % 120 == 0) {
         this.fetchLineuser();
       }
-      if (v % 10 == 0) {
+      if (v % 120 == 0) {
         this.fetchLineusers();
       }
     }
