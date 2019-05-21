@@ -23,7 +23,7 @@
 
 set :branch, 'develop'
 # server '13.113.141.0', user: 'centos', roles: %w(app web db)
-server '13.113.192.215', user: 'ec2-user', roles: %w(app web db)
+server '3.112.190.67', user: 'ec2-user', roles: %w(app web db)
 
 set :ssh_options, {
    #keys: %w(~/.ssh/hassyadai_with_tkt),
