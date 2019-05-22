@@ -23,7 +23,7 @@
 
 set :branch, 'develop'
 # server '13.113.141.0', user: 'centos', roles: %w(app web db)
-server '13.113.192.215', user: '***REMOVED***', roles: %w(app web db)
+server '***REMOVED***', user: '***REMOVED***', roles: %w(app web db)
 
 set :ssh_options, {
    #keys: %w(~/.ssh/***REMOVED***),
