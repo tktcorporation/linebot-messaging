@@ -58,9 +58,9 @@
             span ユーザー名
           th
             span ステータス
-          - @quick_reply_list.each do |quick_reply|
-            th
-              = quick_reply.name
+          / - @quick_reply_list.each do |quick_reply|
+          /   th
+          /     = quick_reply.name
       tbody
         - @lineusers.each do |lineuser|
           tr
