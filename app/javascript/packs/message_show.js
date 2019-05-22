@@ -23,6 +23,8 @@ var app = new Vue({
   },
   mounted: function() {
     setInterval(() => { this.time++ }, 1000);
+    this.fetchLineusers();
+    this.fetchLineuser();
   },
   watch: {
     time: function(v) {
