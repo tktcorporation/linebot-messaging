@@ -32,7 +32,7 @@
 # }
 
 set :branch, 'master'
-server '13.113.252.166', user: 'ec2-user', roles: %w(app web db)
+server 'ec2-13-115-15-67.ap-northeast-1.compute.amazonaws.com', user: 'ec2-user', roles: %w(app web db)
 
 set :ssh_options, {
   keys: %w(~/.ssh/id_rsa_enloop_catalist.pem),
