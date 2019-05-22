@@ -58,9 +58,9 @@
             span ユーザー名
           th
             span ステータス
-          - @quick_reply_list.each do |quick_reply|
-            th
-              = quick_reply.name
+          / - @quick_reply_list.each do |quick_reply|
+          /   th
+          /     = quick_reply.name
       tbody
         - @lineusers.each do |lineuser|
           tr
@@ -79,11 +79,11 @@
                 /label.label 未CV
                 p = lineuser.quick_reply&.name
 
-            - @quick_reply_list.each do |quick_reply|
-              td
-                - if index = lineuser.response_data.pluck(:quick_reply_id).index(quick_reply.id)
-                  = lineuser.response_data[index].response_text
-                - else
-                  span NULL
+            / - @quick_reply_list.each do |quick_reply|
+            /   td
+            /     - if index = lineuser.response_data.pluck(:quick_reply_id).index(quick_reply.id)
+            /       = lineuser.response_data[index].response_text
+            /     - else
+            /       span NULL
 
 = javascript_pack_tag 'bot_response_data_index'
