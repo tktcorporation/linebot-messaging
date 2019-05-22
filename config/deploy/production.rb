@@ -32,7 +32,7 @@
 # }
 
 set :branch, 'master'
-server '13.113.252.166', user: '***REMOVED***', roles: %w(app web db)
+server '***REMOVED***', user: '***REMOVED***', roles: %w(app web db)
 
 set :ssh_options, {
   keys: %w(***REMOVED***),
