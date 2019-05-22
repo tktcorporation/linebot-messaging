@@ -10,7 +10,7 @@ class Api::LineusersController < ApplicationController
     if params[:name]
       @lineusers = @lineusers.where("name LIKE ?", "%#{params[:name]}%")
     end
-    @lineusers = @lineusers.includes(:lastmessage).order("messages.created_at desc").limit(1000)
+    @lineusers = @lineusers.includes(:lastmessage).order("messages.created_at desc").limit(300)
     @status_array = bot.get_status_array
   end
 
