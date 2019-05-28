@@ -536,7 +536,7 @@ class  Manager
 
   def self.available_time(calendar_event, day, available_array)
     time = Time.local(day.year, day.month, day.day, 0, 0, 0, 0)
-    if calendar_event&.start&.date.present?
+    if calendar_event&.start&.date.present? || !calendar_event.start.present?
       # 全日予定はカウントしない
       # if Time.parse(calendar_event.start.date) <= time && time < Time.parse(calendar_event.end.date)
       #   # filled_array = []
