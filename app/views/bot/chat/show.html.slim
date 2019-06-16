@@ -69,78 +69,65 @@
             | とのトークルーム
             button.button.float-right v-on:click="detailToggle()"
               i.fas.fa-info-circle
-          - if @bot && @lineuser
-            /form.name-form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/update_name`" @submit="reloadLineuser"
-              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
-              input type="hidden" _method="patch"
-              = text_field_tag "name", "", {class: "input", placeholder: "名前の変更"}
-              = button_tag '<i class="fas fa-redo-alt"></i>'.html_safe, :type => "submit", class: "button is-info submit-message"
       #messages-box.scroll-message
-        - if @lineuser
-          .message-box v-for="message in lineuser.messages"
-            div v-bind:class="message.to_bot ? 'user-side' : 'bot-side'"
-              img.lineuser-icon v-bind:src="lineuser.pictureUrl" v-if="message.to_bot"
-              .message v-bind:class="message.to_bot ? '' : 'float-right'" v-html="$options.filters.contentFilter(message)"
-              span.is-size-7 v-bind:class="message.to_bot ? '' : 'float-right bot-message-time'"
-                = "{{message.created_at | timeFormatter()}}"
-
-      - if @bot && @lineuser
-        .message-form
-          div v-if="formSwitch == 0"
-            textarea name="message" id="message" placeholder="メッセージ" required="required" class="input message-input" v-model="message"
-            .inline-block
+        messagebox :lineuser="lineuser"
+      .message-form
+        div v-if="formSwitch == 0"
+          textarea name="message" id="message" placeholder="メッセージ" required="required" class="input message-input" v-model="message"
+          .inline-block
+            div
+              button.button.is-info.submit-message name="button" v-on:click="sendMessage()"
+                i.far.fa-paper-plane
               div
-                button.button.is-info.submit-message name="button" v-on:click="sendMessage()"
-                  i.far.fa-paper-plane
-                div
-                  button.button type="button" v-on:click="switchForm(1)"
-                    i.fas.fa-plus
-          div v-if="formSwitch == 1"
-            .columns.is-multiline.is-mobile
+                button.button type="button" v-on:click="switchForm(1)"
+                  i.fas.fa-plus
+        div v-if="formSwitch == 1"
+          .columns.is-multiline.is-mobile
+            .column.is-one-quarter
+              button.button.is-size-4 v-on:click="switchForm(0)"
+                i.far.fa-comment
+            .column.is-one-quarter
+              button.button.is-size-4 v-on:click="switchForm(2)"
+                i.far.fa-envelope
+            / .column.is-one-quarter
+              button.button.is-size-4 v-on:click="switchForm(3)"
+                i.far.fa-image
+            .column.is-one-quarter
+              button.button.is-size-4 v-on:click="switchForm(4)"
+                i.fas.fa-upload
+        div v-if="formSwitch == 2"
+          button.button.float-right v-on:click="switchForm(0)"
+            i.far.fa-comment
+          form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/push_flex`" @submit="reloadLineuser"
+            input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
+            .select
+              = select :quick_reply, :id, @quick_reply_list, {}
+            = submit_tag "送信", class: "button is-info inline-block"
+        / div v-if="formSwitch == 3"
+          button.button.float-right v-on:click="switchForm(0)"
+            i.far.fa-comment
+          .columns.is-multiline.is-mobile
+            - @bot.stock_images&.order(created_at: :desc)&.each do |stock_image|
               .column.is-one-quarter
-                button.button.is-size-4 v-on:click="switchForm(0)"
-                  i.far.fa-comment
-              .column.is-one-quarter
-                button.button.is-size-4 v-on:click="switchForm(2)"
-                  i.far.fa-envelope
-              / .column.is-one-quarter
-                button.button.is-size-4 v-on:click="switchForm(3)"
-                  i.far.fa-image
-              .column.is-one-quarter
-                button.button.is-size-4 v-on:click="switchForm(4)"
-                  i.fas.fa-upload
+                = link_to push_image_bot_chat_path(params[:bot_id], params[:lineuser_id], params: { stock_image: { id: stock_image.id } }), data: { confirm: '画像を送信します' }, method: :post do
+                  = image_tag stock_image.image.thumb.url, size: '120x120'
+        div v-if="formSwitch == 4"
+          button.button.float-right v-on:click="switchForm(0)"
+            i.far.fa-comment
+          form data-parsley-validate="" method="post" data-remote="true" enctype="multipart/form-data" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
+            input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
+            input type="hidden" name="lineuser[id]" v-bind:value="lineuser.id"
+            .file.has-name
+              label.file-label
+                = file_field_tag "bot[image]", required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
+                span.file-cta
+                  span.file-icon
+                    i.fas.fa-upload
+                  span.file-label Choose a file…
+                span.file-name#filename = "{{filename}}"
+            = submit_tag "画像を送信", class: "button is-info"
 
-          div v-if="formSwitch == 2"
-            button.button.float-right v-on:click="switchForm(0)"
-              i.far.fa-comment
-            form data-parsley-validate="" method="post" data-remote="true" v-bind:action="`/bot/${bot_id}/chat/${lineuser.id}/push_flex`" @submit="reloadLineuser"
-              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
-              .select
-                = select :quick_reply, :id, @quick_reply_list, {}
-              = submit_tag "送信", class: "button is-info inline-block"
-          / div v-if="formSwitch == 3"
-            button.button.float-right v-on:click="switchForm(0)"
-              i.far.fa-comment
-            .columns.is-multiline.is-mobile
-              - @bot.stock_images&.order(created_at: :desc)&.each do |stock_image|
-                .column.is-one-quarter
-                  = link_to push_image_bot_chat_path(params[:bot_id], params[:lineuser_id], params: { stock_image: { id: stock_image.id } }), data: { confirm: '画像を送信します' }, method: :post do
-                    = image_tag stock_image.image.thumb.url, size: '120x120'
-          div v-if="formSwitch == 4"
-            button.button.float-right v-on:click="switchForm(0)"
-              i.far.fa-comment
-            form data-parsley-validate="" method="post" data-remote="true" enctype="multipart/form-data" v-bind:action="`/bot/${bot_id}/set_images`" @submit="reloadLineuser"
-              input type="hidden" name="authenticity_token" value="#{form_authenticity_token}"
-              input type="hidden" name="lineuser[id]" v-bind:value="lineuser.id"
-              .file.has-name
-                label.file-label
-                  = file_field_tag "bot[image]", required: "", class: "file-input", id: "file", "v-on:change"=>"changeFileName()"
-                  span.file-cta
-                    span.file-icon
-                      i.fas.fa-upload
-                    span.file-label Choose a file…
-                  span.file-name#filename = "{{filename}}"
-              = submit_tag "画像を送信", class: "button is-info"
+
 
     .column.is-4.overflow v-show="detailShow"
       .label ="{{lineuser.converted ? 'CV済み' : '未CV'}}"

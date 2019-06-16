@@ -3,14 +3,17 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^4.0.2",
-    "axios": "^0.18.0",
+    "@rails/webpacker": "^4.0.7",
+    "axios": "^0.18.1",
+    "core-js": "^2.6.9",
     "postcss-cssnext": "^3.1.0",
-    "vue": "^2.6.9",
+    "pug": "^2.0.3",
+    "pug-plain-loader": "^1.0.0",
+    "vue": "^2.6.10",
     "vue-loader": "^15.7.0",
-    "vue-template-compiler": "^2.6.9"
+    "vue-template-compiler": "^2.6.10"
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.7.1"
   }
 }
