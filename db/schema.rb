@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_27_065620) do
+ActiveRecord::Schema.define(version: 2020_03_12_154038) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -138,7 +138,7 @@ ActiveRecord::Schema.define(version: 2019_04_27_065620) do
     t.string "name", limit: 50
     t.string "describe_text"
     t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.boolean "deleted", default: false, null: false
     t.boolean "is_active", default: false, null: false
     t.integer "first_reply_id"
@@ -152,7 +152,7 @@ ActiveRecord::Schema.define(version: 2019_04_27_065620) do
     t.string "refresh_token"
     t.integer "expires_in"
     t.integer "bot_id"
-    t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.timestamp "updated_at"
     t.string "email"
     t.string "client_secret"
