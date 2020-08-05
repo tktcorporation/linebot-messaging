@@ -22,12 +22,12 @@
 # role :db,  %w{deploy@example.com}
 
 set :branch, 'develop'
-# server '13.113.141.0', user: 'centos', roles: %w(app web db)
-server '3.112.190.67', user: 'ec2-user', roles: %w(app web db)
+# server '0.0.0.0', user: 'centos', roles: %w(app web db)
+server '0.0.0.0', user: 'user', roles: %w(app web db)
 
 set :ssh_options, {
-   #keys: %w(~/.ssh/hassyadai_with_tkt),
-  keys: %w(~/.ssh/id_rsa_enloop_catalist.pem),
+   #keys: %w(~/.ssh/example.pem),
+  keys: %w(~/.ssh/example.pem),
   forward_agent: true,
   auth_methods: %w(publickey)
 }
