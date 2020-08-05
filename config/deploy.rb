@@ -3,7 +3,7 @@ lock '3.11.0'
 set :application, 'linebot-messaging'
 set :repo_url, 'git@github.com:tktcorporation/linebot-messaging.git'
 # set :user, 'centos'
-set :user, '***REMOVED***'
+set :user, 'user'
 set :use_sudo, false
 set :pty, true
 # set :staging, :production
@@ -129,7 +129,7 @@ namespace :setup do
   task :nginx do
     on roles(:app) do |host|
       # 後ほど作成するnginxのファイル名を記述してください
-      %w[***REMOVED***.conf].each do |f|
+      %w[Rails.application.credentials.dig(:nginx, :conf_file_name)].each do |f|
         upload! "config/#{f}", "#{shared_path}/config/#{f}"
         sudo :cp, "#{shared_path}/config/#{f}", "/etc/nginx/conf.d/#{f}"
         sudo "nginx -s reload"
@@ -141,10 +141,10 @@ end
 
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 # set :ssh_options, {
-#     keys: %w(~/.ssh/***REMOVED***),
+#     keys: %w(~/.ssh/example.pem),
 #     auth_methods: %w(public_key)
 # }
-# ssh_command = 'ssh centos@13.113.141.0 -W %h:%p'
+# ssh_command = 'ssh centos@0.0.0.0 -W %h:%p'
 # set :ssh_options, proxy: Net::SSH::Proxy::Command.new(ssh_command)
 # namespace :deploy do
 #   task :restart do

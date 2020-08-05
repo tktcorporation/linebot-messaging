@@ -23,19 +23,19 @@
 
 # set :branch, 'develop'
 
-# server '13.113.141.0', user: 'centos', roles: %w(app web db)
+# server '0.0.0.0', user: 'centos', roles: %w(app web db)
 
 # set :ssh_options, {
-#   keys: %w(~/.ssh/***REMOVED***),
+#   keys: %w(~/.ssh/example.pem),
 #   forward_agent: true,
 #   auth_methods: %w(publickey)
 # }
 
 set :branch, 'master'
-server '***REMOVED***', user: '***REMOVED***', roles: %w(app web db)
+server Rails.application.credentials.dig(:aws, :s3_host), user: Rails.application.credentials.dig(:aws, :server_user), roles: %w(app web db)
 
 set :ssh_options, {
-  keys: %w(***REMOVED***),
+  keys: %w(Rails.application.credentials.dig(:aws, :ssh_key_file_path)),
   forward_agent: true,
   auth_methods: %w(publickey)
 }
